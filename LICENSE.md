@@ -19,7 +19,7 @@ Any violation of this license will result in legal action in accordance with nat
 
 For commercial licensing inquiries, please contact:  
 Viraza SARL – Kinshasa, DRC  
-Email: [email address]
+Email: commercial@viraza.net
 
 ---
 
@@ -42,4 +42,4 @@ Toute violation de cette licence expose son auteur à des poursuites conforméme
 
 Pour toute demande de partenariat ou licence commerciale, veuillez contacter :  
 Viraza SARL – Kinshasa, RDC  
-Email : [adresse-email]
+Email : commercial@viraza.net

@@ -29,7 +29,7 @@ We expect all contributors to:
 
 ### Contact
 For any inquiry or partnership request:  
-📧 [email address]  
+📧 dev@viraza.net
 📍 Viraza SARL – Kinshasa, DRC
 
 ---
@@ -63,6 +63,6 @@ Nous attendons de tous les contributeurs :
 
 ### Contact
 Pour toute question ou demande de partenariat :  
-📧 [adresse-email]  
+📧 dev@viraza.net
 📍 Viraza SARL – Kinshasa, RDC  
 
