@@ -1,0 +1,28 @@
+<?php class Expense extends Controller {
+    public function __construct()
+    {
+        parent::__construct();
+        $this->users = $this->loadModel('users');
+        $this->fees = $this->loadModel('fees');
+        $this->expenses = $this->loadModel('expenses');
+    }
+    public function index() {
+        $this->compact('User', $this->users);
+        $this->compact('Fee', $this->fees);
+        $this->compact('Expense', $this->expenses);
+        $app = app();
+        $app->ASSETS['css'] .= '<link rel="stylesheet" href="/assets/css/blog.min.css"/>';
+        $app->ASSETS['_js'] .= '<script src="/assets/vendor/swiperSlider/swiper-bundle.min.js"></script>';
+        $app->ASSETS['js'] .= '<script src="/assets/js/blog.js"></script>';
+        $app->ASSETS['_css'] .= '<link rel="stylesheet" href="/assets/vendor/swiperSlider/swiper-bundle.min.css">';
+        $app->ASSETS['_js'] .= '<script src="/assets/vendor/swiperSlider/swiper-bundle.min.js"></script>';
+        $app->ASSETS['css'] .= '<style>li.card.card-slide.swiper-slide {height: fit-content;}</style>';
+        $app->ASSETS['_js'] .= '<script src="/assets/js/plugins/circle-progress.js"></script>';
+        $app->ASSETS['_js'] .= '<script src="/assets/js/plugins/custom-circle-progress.js" defer></script>';
+        $app->ASSETS['js'] .= '<script src="../e-commerce/assets/js/ecommerce.js" defer></script>';
+        $app->ASSETS['_css'] .= '<link rel="stylesheet" href="/assets/css/hope-ui.min.css?v=2.2.0" />';
+        $app->ASSETS['_css'] .= '<link rel="stylesheet" href="/assets/css/pro.min.css?v=2.2.0" />';
+
+        return $this->render();
+    }
+}

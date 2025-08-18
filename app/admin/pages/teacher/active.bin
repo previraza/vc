@@ -1,0 +1,110 @@
+<?php viewOnlyBy('ADMIN'); $pageTitle = "Eseingant Suspandues" ?>
+<?php viewOnlyBy('ADMIN', 'SG', 'DG','SR','AB','SA'); ?>
+
+<div class="card height-auto">
+    <div class="card-body">
+        <div class="heading-layout1">
+            <div class="item-title">
+                <h3></h3>
+            </div>
+           <div class="dropdown">
+                <a class="dropdown-toggle" href="#" role="button" 
+                data-toggle="dropdown" aria-expanded="false">...</a>
+
+                <div class="dropdown-menu dropdown-menu-right">
+                    
+                    <a class="dropdown-item" href="#" data-action="print"><i class="fas fa-print"></i>print</a>
+                    
+                    <a class="dropdown-item" href="#" data-action="reload"><i class="fas fa-redo-alt text-orange-peel"></i>Actualiser</a>
+                </div>
+            </div>
+        </div>
+        <form class="mg-b-20" method="POST">
+            <div class="row gutters-8">
+                <div class="col-xl-3 col-lg-6 col-12 form-group">
+                    <label>Spécialité</label>
+                    <select class="select2" name="speciality">
+                        <option selected value="*">Choisir la spécialité</option>
+                        <option value="LANG">Anglais</option>
+                        <option value="AVIA">Aviation</option>
+                        <option value="ELEC">Electricité</option>
+                        <option value="ETRO">Electronique</option>
+                        <option value="MATH">Mathématiques</option>
+                        <option value="LANG">Francais</option>
+                        <option value="INFO">Informatique</option>
+                        <option value="PHYS">Physique</option>
+                        <option value="MAIN">Maintenance</option>
+                        <option value="MANI">Manipulation</option>
+                        <option value="MECA">Mécanique</option>
+                        <option value="TELE">Télécommunication</option>
+                        <input type="hidden" name="CON_47" value="true">
+                    </select>
+                </div>
+                <div class="col-xl-8 col-lg-6 col-12 form-group">
+                    <label></label>
+                    <input type="text" name="name" id="optName" class="form-control" placeholder="<?= isset($_POST['name']) ? $_POST['name'] : '*'?>">
+                </div>
+                <div class="col-1-xxxl col-xl-2 col-lg-3 col-12 form-group">
+                    <label></label>
+                    <button type="submit" class="fw-btn-fill btn-gradient-yellow">RECHERCHE</button>
+                </div>
+            </div>
+        </form>
+        <div class="table-responsive">
+            <table class="table display data-table text-nowrap">
+                <thead>
+                    <tr>
+                        <th> 
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input checkAll" id="assosLabel">
+                                <label for="assosLabel" class="form-check-label">Id</label>
+                            </div>
+                        </th>
+                        <th>Photo</th>
+                        <th>Nom Complet</th>
+                        <th>Genre</th>
+                        <th>Spécialité</th>
+                        <th>Phone</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php $rqt = mysqli_query($db, 
+                                "SELECT teachers.* FROM teachers WHERE teachers.active = 0 ORDER BY title DESC, firstname"
+                                .((isset($_POST['speciality']) && $_POST['speciality'] != "*") ? " AND speciality = '$_POST[speciality]'":'')
+                                .((isset($_POST['name']) && $_POST['name'] != "*") ? " AND CONCAT(firstname, ' ', lastname) LIKE '%$_POST[name]%'":'')
+                            );
+                        while($row = mysqli_fetch_array($rqt)){ $res = (object) $row;?>
+                        <tr>
+                            <td <?= ($res->user_id == '0') ? 'class="bg-warning"' : null ?>>
+                                <div class="form-check">
+                                    <input type="checkbox" class="form-check-input" id="assosLabelSS">
+                                <label for="assosLabelSS" class="form-check-label">Id</label>
+                                </div>
+                            </td>
+                            <td class="text-center"><img src="/layouts/default/img/figure/student2.webp" alt="teacher"></td>
+                            <td><?= "$res->firstname $res->lastname" ?></td>
+                            <td><?= $res->gender ?></td>
+                            <td><?= $res->speciality ?></td>
+                            <td><?= $res->phone ?></td>
+                            <td>
+                                <div class="dropdown">
+                                    <a href="#" class="dropdown-toggle" data-toggle="dropdown"
+                                        aria-expanded="false">
+                                        <span class="flaticon-more-button-of-three-dots"></span>
+                                    </a>
+                                    <div class="dropdown-menu dropdown-menu-right">
+                                        <a class="dropdown-item" href="?fa69951bc733eb82713e936be33597e1=DATA_CRYPTING_ON:fa69951bc733eb82713e936be33597e1=WABTECHS_CRYPTING_ON: e91497f38407364c8e86ade9098950d978814190&MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3VIRAZA_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3&MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3&WABTECHS_CRYPTING_ON_LAVINGOL&MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3&b557c222c8ddcdf87e033706aad08e4ef7cf90d3=teacher--details--<?= $res->id ?>"><i class="fas fa-redo-alt text-blue"></i>Profile</a>
+                                        <a class="dropdown-item" href="?fa69951bc733eb82713e936be33597e1=DATA_CRYPTING_ON:fa69951bc733eb82713e936be33597e1=WABTECHS_CRYPTING_ON: e91497f38407364c8e86ade9098950d978814190&MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3VIRAZA_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3&MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3&WABTECHS_CRYPTING_ON_LAVINGOL&MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3&b557c222c8ddcdf87e033706aad08e4ef7cf90d3=teacher--edit--<?= $res->id ?>"><i class="fas fa-edit text-dark-pastel-green"></i>Modifier</a>
+                                        <a class="dropdown-item" href="?fa69951bc733eb82713e936be33597e1=DATA_CRYPTING_ON:fa69951bc733eb82713e936be33597e1=WABTECHS_CRYPTING_ON: e91497f38407364c8e86ade9098950d978814190&MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3VIRAZA_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3&MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3&WABTECHS_CRYPTING_ON_LAVINGOL&MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3&b557c222c8ddcdf87e033706aad08e4ef7cf90d3=teacher--enable--<?= $res->id ?>"><i class="fas fa-cogs text-orange-peel"></i>Activer</a>
+                                        <a class="dropdown-item" href="?fa69951bc733eb82713e936be33597e1=DATA_CRYPTING_ON:fa69951bc733eb82713e936be33597e1=WABTECHS_CRYPTING_ON: e91497f38407364c8e86ade9098950d978814190&MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3VIRAZA_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3&MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3&WABTECHS_CRYPTING_ON_LAVINGOL&MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3&b557c222c8ddcdf87e033706aad08e4ef7cf90d3=teacher--delete.$--<?= $res->id ?>"><i class="fas fa-times text-orange-red"></i>Supprimer</a>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    <?php } ?>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

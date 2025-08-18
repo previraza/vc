@@ -1,0 +1,239 @@
+<?php viewOnlyBy('ADMIN'); $pageTitle = "Modification des information de l'Enseignant" ?>
+
+<?php if(isset($links[2]) && is_numeric($this_id = $links[2]) && $r = $db_poo->query("SELECT * FROM teachers WHERE id = $this_id")->fetch_object()){?>
+<div class="card height-auto">
+    <div class="card-body">
+        <div class="heading-layout1">
+            <div class="item-title">
+                <h3>Modifier les informations de l'Enseignant N° <?=$r->id?></h3>
+            </div>
+            <div class="dropdown">
+                <a class="dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-expanded="false">...</a>
+                <div class="dropdown-menu dropdown-menu-right">
+                    <a class="dropdown-item" href="#" data-action="print"><i class="fas fa-print"></i>print</a>
+                    <a class="dropdown-item" href="#" data-action="reload"><i class="fas fa-redo-alt text-orange-peel"></i>Actualiser</a>
+                </div>
+            </div>
+        </div>
+        <form class=new-added-form id=editTeacher>
+            <div class=row>
+                <input type="hidden" name="CON_47" value="<?=$r->user_id?>">
+                <input type="hidden" name="this_id" value="<?=$r->id?>">
+                <div class="col-xl-3 col-lg-6 col-12 form-group">
+                    <label>Nom *</label>
+                    <input type="text" placeholder="" name="firstname" value="<?=$r->firstname?>" class="form-control">
+                </div>
+                <div class="col-xl-3 col-lg-6 col-12 form-group">
+                    <label>Postnom *</label>
+                    <input type="text" placeholder="" name="lastname" value="<?=$r->lastname?>" class="form-control">
+                </div>
+                <div class="col-xl-3 col-lg-6 col-12 form-group">
+                    <label>Sexe *</label>
+                    <select class="select2" name="gender">
+                        <option <?=($r->gender == 'M')?'SELECTED':NULL?> value="M">Male</option>
+                        <option <?=($r->gender == 'F')?'SELECTED':NULL?> value="F">Female</option>
+                        <option <?=($r->gender == 'A')?'SELECTED':NULL?> value="A">Others</option>
+                    </select>
+                </div>
+                <div class="col-xl-3 col-lg-6 col-12 form-group">
+                    <label>Matricule</label>
+                    <input type="text" placeholder="" name="matricule" value="<?=$r->matricul?>" class="form-control">
+                </div>
+                <div class="col-xl-3 col-lg-6 col-12 form-group">
+                    <label>Naissance *</label>
+                    <input type="text" placeholder="yyyy/mm/dd" value="<?=$r->birthday?>" class="form-control air-datepicker" name="birthday">
+                    <i class="far fa-calendar-alt"></i>
+                </div>
+                <div class="col-xl-3 col-lg-6 col-12 form-group">
+                    <label>Père</label>
+                    <input type="text" placeholder="" value="<?=$r->father?>" class="form-control" name="father">
+                </div>
+                <div class="col-xl-3 col-lg-6 col-12 form-group">
+                    <label>Mère</label>
+                    <input type="text" placeholder="" value="<?=$r->mother?>" class="form-control" name="mother">
+                </div>
+                <div class="col-xl-3 col-lg-6 col-12 form-group">
+                    <label>Attribution *</label>
+                    <select class="select2" name="role">
+                        <option <?=($r->role == 'EN')?'SELECTED':NULL?> value=EN>Enseignant</option>
+                        <option <?=($r->role == 'SJ')?'SELECTED':NULL?> value=SJ>Secretaire de Jury</option>
+                        <option <?=($r->role == 'CJ')?'SELECTED':NULL?> value=CJ>Chef de Jury</option>
+                        <option <?=($r->role == 'CS')?'SELECTED':NULL?> value=CS>Chef de <?=$mci?></option>
+                        <option <?=($r->role == 'DC')?'SELECTED':NULL?> value=DC>Directeur de Cabinet</option>
+                        <option <?=($r->role == 'AE')?'SELECTED':NULL?> value=AE>Administrateur des etudiants</option>
+                        <option <?=($r->role == 'AB')?'SELECTED':NULL?> value=AB>Administrateur de Budget</option>
+                        <option <?=($r->role == 'SA')?'SELECTED':NULL?> value=SA>Secrétaire Général Administratif</option>
+                        <option <?=($r->role == 'SR')?'SELECTED':NULL?> value=SR>Secrétaire Général Académique / Recherche</option>
+                        <option <?=($r->role == 'SG')?'SELECTED':NULL?> value=SG>Secrétaire Général Académique</option>
+                        <option <?=($r->role == 'DG')?'SELECTED':NULL?> value=DG>Directeur Général</option>
+                    </select>
+                </div>
+                <div class="col-xl-3 col-lg-6 col-12 form-group">
+                    <label>Grade *</label>
+                    <select class="select2" name="title">
+                        <option <?=($r->title == 'CO')?'SELECTED':NULL?> value="CO">Collaborateur</option>
+                        <option <?=($r->title == 'ASS')?'SELECTED':NULL?> value="ASS">Assistant de Recherche</option>
+                        <option <?=($r->title == 'ASS1')?'SELECTED':NULL?> value="ASS1">Assistant Niveau 1</option>
+                        <option <?=($r->title == 'ASS2')?'SELECTED':NULL?> value="ASS2">Assistant Niveau 2</option>
+                        <option <?=($r->title == 'CT')?'SELECTED':NULL?> value="CT">Chef de Travaux</option>
+                        <option <?=($r->title == 'PA')?'SELECTED':NULL?> value="PA">Professeur Associer</option>
+                        <option <?=($r->title == 'P')?'SELECTED':NULL?> value="P">Professeur</option>
+                        <option <?=($r->title == 'PO')?'SELECTED':NULL?> value="PO">Professeur Ordinaire</option>
+                        <option <?=($r->title == 'PE')?'SELECTED':NULL?> value="PE">Professeur Emerite</option>
+                    </select>
+                </div>
+                <div class="col-xl-3 col-lg-6 col-12 form-group">
+                    <label>Diplôme</label>
+                    <input type="text" placeholder="" value="<?=$r->speciality?>" class="form-control" name="speciality">
+                </div>
+                <div class="col-xl-3 col-lg-6 col-12 form-group">
+                    <label>Engagement *</label>
+                    <input type="text" placeholder="yyyy/mm/dd" value="<?=$r->Joining_date?>" class="form-control air-datepicker" name="Joining_date">
+                    <i class="far fa-calendar-alt"></i>
+                </div>
+                <div class="col-xl-3 col-lg-6 col-12 form-group">
+                    <label>Acte de nomination *</label>
+                    <input type="text" placeholder="" value="<?=$r->acte?>" class="form-control" name="acte">
+                </div>
+                <div class="col-xl-3 col-lg-6 col-12 form-group">
+                    <label>Nationalité *</label>
+                    <input type="text" placeholder="" value="<?=$r->country?>" class="form-control" name="country">
+                </div>
+                <div class="col-xl-3 col-lg-6 col-12 form-group">
+                    <label>Religion *</label>
+                    <select class="select2" name="religion">
+                        <option <?=($r->religion == '')?'SELECTED':NULL?> value=>Selectioner religion</option>
+                        <option <?=($r->religion == '3')?'SELECTED':NULL?> value=3>Chrétien</option>
+                        <option <?=($r->religion == '1')?'SELECTED':NULL?> value=1>Islamiste</option>
+                        <option <?=($r->religion == '2')?'SELECTED':NULL?> value=2>Hindu</option>
+                        <option <?=($r->religion == '3')?'SELECTED':NULL?> value=3>Buddiste</option>
+                        <option <?=($r->religion == '0')?'SELECTED':NULL?> value=0>Autres</option>
+                    </select>
+                </div>
+                <div class="col-xl-3 col-lg-6 col-12 form-group">
+                    <label>E-Mail</label>
+                    <input type="email" placeholder="" value="<?=$r->email?>" class="form-control" name="email">
+                </div>
+                <div class="col-xl-3 col-lg-6 col-12 form-group">
+                    <label>Address</label>
+                    <input type="text" placeholder="" value="<?=$r->address?>" class="form-control" name="address">
+                </div>
+                <div class="col-xl-3 col-lg-6 col-12 form-group">
+                    <label>Phone <span class="btn btn-info pl-3 h-100 ml10">+</span></label>
+                    <input type="text" placeholder="" value="<?=$r->phone?>" class="form-control" name="phone">
+                </div>
+                <div class="col-xl-3 col-lg-6 col-12 form-group">
+                    <label>Status *</label>
+                    <select class="select2" name="activity">
+                        <option <?=($r->activity == 'A')?'SELECTED':NULL?> value="A">En Activité</option>
+                        <option <?=($r->activity == 'M')?'SELECTED':NULL?> value="M">En Congé Maladie</option>
+                        <option <?=($r->activity == 'F')?'SELECTED':NULL?> value="F">En Formation</option>
+                        <option <?=($r->activity == '0')?'SELECTED':NULL?> value="0">Autres</option>
+                    </select>
+                </div>
+                <div class="col-lg-6 col-12 form-group">
+                    <label>Observation</label>
+                    <textarea class="textarea form-control" value="<?=$r->observation?>" name="observation" id="form-message" cols="10" rows="5"></textarea>
+                </div>
+                <div class="mx-4 alert hidden alert-danger alert-dismissible fade show" role="alert" id="errorRapport">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                        <span class="sr-only">Close</span>
+                    </button>
+                    <strong>Erreur : </strong>Une erreur s'est produit pendant l'ajout.<br>Si celà persiste veuillez contacter votre administrateur système.
+                </div>
+                <div class="col-12 form-group mg-t-8">
+                    <button type="submit" id="addStudent" class="btn-fill-lg btn-gradient-yellow btn-hover-bluedark">Save</button>
+                    <button type="reset" class="btn-fill-lg bg-blue-dark btn-hover-yellow">Reset</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<div class="card height-auto">
+    <div class="card-body">
+        <div class="heading-layout1">
+            <div class="item-title">
+                <h3>Informations Suplémentaires</h3>
+            </div>
+        </div>
+        <form class="new-added-form" id="editTeacher">
+            <div class="row">
+                <div class="col-lg-6 col-12 form-group">
+                    <label>Biographie</label>
+                    <textarea value="<?=$r->biographie?>" form=editTeacher class="textarea form-control" name="biographie" placeholder="Quelques détails sur moi" id="form-message" cols="10" rows="5"></textarea>
+                </div>
+                <div class="col-xl-3 col-lg-6 col-12 form-group">
+                    <label>Site Web *</label>
+                    <input value="<?=$r->siteweb?>" form=editTeacher type="text" placeholder="" name="siteweb" class="form-control">
+                </div>
+                <div class="col-xl-3 col-6 form-group">
+                    <label>Facebook *</label>
+                    <input value="<?=$r->facebook?>" form=editTeacher type="text" placeholder="" name="facebook" class="form-control">
+                </div>
+                <div class="col-xl-3 col-6 form-group">
+                    <label>LinkedIn *</label>
+                    <input value="<?=$r->linkedin?>" form=editTeacher type="text" placeholder="" name="linkedin" class="form-control">
+                </div>
+                <div class="col-xl-3 col-6 form-group">
+                    <label>Twitter *</label>
+                    <input value="<?=$r->twitter?>" form=editTeacher type="text" placeholder="" name="twitter" class="form-control">
+                </div>
+                <div class="col-xl-3 col-6 form-group">
+                    <label>Telegram *</label>
+                    <input value="<?=$r->telegram?>" form=editTeacher type="text" placeholder="" name="telegram" class="form-control">
+                </div>
+                <div class="col-xl-3 col-lg-6 col-12 form-group">
+                    <label>Etat-Civil *</label>
+                    <select form=editTeacher  class="select2" name="etatcivil">
+                        <option <?=($r->etatcivil == 'C')?'SELECTED':NULL?> value="C">Célibataire</option>
+                        <option <?=($r->etatcivil == 'M')?'SELECTED':NULL?> value="M">Marié (e)</option>
+                        <option <?=($r->etatcivil == 'D')?'SELECTED':NULL?> value="D">Divorcé (e)</option>
+                        <option <?=($r->etatcivil == 'V')?'SELECTED':NULL?> value="V">Veuf (ve)</option>
+                        <option <?=($r->etatcivil == 'A')?'SELECTED':NULL?> value="A">Autre</option>
+                    </select>
+                </div>
+                <div class="col-xl-3 col-lg-6 col-12 form-group">
+                    <label>Enfants <span class="btn btn-info pl-3 h-100 ml10">+</span></label>
+                    <input value="<?=$r->child?>" form=editTeacher type="text" placeholder="" class="form-control" name="child">
+                </div>
+                <div class="col-lg-9 col-12 form-group">
+                    <label>Parcours</label>
+                    <textarea value="<?=$r->parcours?>" form=editTeacher class="textarea form-control" name="parcours" placeholder="Mon parcours" id="form-message" cols="10" rows="5"></textarea>
+                </div>
+                <div class="col-xl-4 col-lg-4 col-4 form-group">
+                    <label>Communication *</label>
+                    <input value="<?=$r->communication?>" form=editTeacher type="number" max=100 min=25 class="form-control air-number" name=communication>
+                </div>
+                <div class="col-xl-4 col-lg-4 col-4 form-group">
+                    <label>Consultation *</label>
+                    <input value="<?=$r->consultation?>" form=editTeacher type="number" max=100 min=25 class="form-control air-number" name=consultation>
+                </div>
+                <div class="col-xl-4 col-lg-4 col-4 form-group">
+                    <label>Management *</label>
+                    <input value="<?=$r->management?>" form=editTeacher type="number" max=100 min=25 class="form-control air-number" name=management>
+                </div>
+                <div class="col-12 form-group mg-t-8">
+                    <button form=editTeacher type="submit" id="addStudent" class="btn-fill-lg btn-gradient-yellow btn-hover-bluedark">Save</button>
+                    <button form=editTeacher type="reset" class="btn-fill-lg bg-blue-dark btn-hover-yellow">Reset</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<?php }else{?>
+    <div class="card height-auto">
+    <div class="card-body">
+        <div class="heading-layout1">
+            <div class="item-title">
+                <h3>l'Enseignant selectioner est indisponible</h3>
+            </div>
+        </div>
+        <div class="body-layout1">
+            <div class="item-title">
+                <p>L'enseignants dont vous essayer de modifier le profile est indisponible pour l'instant...</p>
+            </div>
+        </div>
+    </div>
+</div>
+<?php } ?>

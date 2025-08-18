@@ -1,0 +1,28 @@
+<?php class RoadmapModel extends database {
+    public static $db;
+    public $table = 'roadmap';
+
+    public function all($state = null) {
+        $states = ['perform'=>1,'waiting'=>2,'report'=>3,'cancel'=>4,'fail'=>5];
+        return $this->get_result("SELECT roadmap.*, accounts.fullname AS driver, CONCAT(cars.brand, ' ', cars.model, ' (', cars.matricul, ')') AS car,
+            CASE WHEN start_date = CURRENT_DATE THEN 'primary'
+                 WHEN start_date > CURRENT_DATE THEN 'info'
+                 WHEN roadmap.state = 1 THEN 'success' ELSE 'danger'
+            END AS color
+        FROM roadmap JOIN accounts ON accounts.id = roadmap.driver JOIN cars ON cars.id = roadmap.car WHERE roadmap.deleted_at IS NULL ".(
+            !is_null($state) ? " AND roadmap.state = $states[$state]" : null
+        ));
+    }
+
+    public function allTrashed($state = null) {
+        $states = ['perform'=>1,'waiting'=>2,'report'=>3,'cancel'=>4,'fail'=>5];
+        return $this->get_result("SELECT roadmap.*, accounts.fullname AS driver, CONCAT(cars.brand, ' ', cars.model, ' (', cars.matricul, ')') AS car,
+            CASE WHEN start_date = CURRENT_DATE THEN 'primary'
+                 WHEN start_date > CURRENT_DATE THEN 'info'
+                 WHEN roadmap.state = 1 THEN 'success' ELSE 'danger'
+            END AS color
+        FROM roadmap JOIN accounts ON accounts.id = roadmap.driver JOIN cars ON cars.id = roadmap.car WHERE roadmap.deleted_at IS NOT NULL ".(
+            !is_null($state) ? " AND roadmap.state = $states[$state]" : null
+        ));
+    }
+}

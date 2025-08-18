@@ -1,0 +1,91 @@
+$('#editing').on('click', (e) => {
+    $('input[type="number"], input[type="submit"]', $('.editable td.text-center.writable.activity-oin.wrt-op').addClass('active')).removeAttr('disabled')
+    $('input[type="number"]').on('change',e=>{
+        tr = $(e.currentTarget).parents('tr')[0],
+        allInput = tr.querySelectorAll('input[type=number]');
+        allTd = tr.querySelectorAll('td');
+        allTd[5].innerText = mg = (parseFloat(allInput[0].value) + parseFloat(allInput[1].value))/2;
+        allTd[8].innerText = ((tg = (mg + parseFloat(allInput[2].value))/2)<10&&parseFloat(allInput[3].value)!=0)?parseFloat(allInput[3].value):tg
+    })
+});
+$('.dropdown-item.editing_cote').on('click', (e) => {
+    $('input[type="number"], input[type="submit"]', $('#' + e.target.dataset.id + ' td.text-center.writable.activity-oin.wrt-op').addClass('active')).removeAttr('disabled')
+    $('input[type="number"]').on('change',e=>{
+        tr = $(e.currentTarget).parents('tr')[0],
+        allInput = tr.querySelectorAll('input[type=number]');
+        allTd = tr.querySelectorAll('td');
+        allTd[5].innerText = mg = (parseFloat(allInput[0].value) + parseFloat(allInput[1].value))/2;
+        allTd[8].innerText = ((tg = (mg + parseFloat(allInput[2].value))/2)<10&&parseFloat(allInput[3].value)!=0)?parseFloat(allInput[3].value):tg
+    })
+});
+$('form.Former_edit_cote').on('submit', (e) => {
+    e.preventDefault();
+    var data = new FormData(e.currentTarget);
+    $.ajax({
+        url: "/app/settings/set/cotes.php?sending_by=mcisme",
+        data: data,
+        type: "POST",
+        contentType: false,
+        cache: false,
+        processData: false,
+        success: function(response) {
+            try {
+                var res = JSON.parse(response);
+                if (res.status == 'succes') $('#editing_' + e.target.dataset.id).removeClass('bg-warning').changeClass('bg-danger', 'bg-success text-white');
+                else if (res.status == 'error') {
+                    $('#editing_' + e.target.dataset.id).changeClass('bg-success text-white', 'bg-danger')
+                    console.log(response);
+                }
+            } catch (error) {
+                $('#editing_' + e.target.dataset.id).changeClass('bg-success text-white', 'bg-danger')
+                console.log(response, error);
+            }
+        }
+    });
+    window.r = data;
+});
+$("a[data-js][data-location]").on('clink', (e) => location[e.target.dataset.location]());
+window.submitAll = function() {
+    document.querySelectorAll('input[type=submit]').forEach((e) => e.click());
+}
+$('table.dataTable tbody').on('change', () => {
+    $('.dropdown-item.editing_cote').on('click', (e) => {
+        $('input[type="number"], input[type="submit"]', $('#' + e.target.dataset.id + ' td.text-center.writable.activity-oin.wrt-op').addClass('active')).removeAttr('disabled')
+        $('input[type="number"]').on('click',e=>{
+            tr = $(e.currentTarget).parents('tr')[0],
+            allInput = tr.querySelectorAll('input[type=number]');
+            allTd = tr.querySelectorAll('td');
+            allTd[5].innerText = mg = (parseFloat(allInput[0].value) + parseFloat(allInput[1].value))/2;
+            allTd[8].innerText = ((tg = (mg + parseFloat(allInput[2].value))/2)<10&&parseFloat(allInput[3].value)!=0)?parseFloat(allInput[3].value):tg
+        })
+    });$('form.Former_edit_cote').on('submit', (e) => {
+        e.preventDefault();
+        var data = new FormData(e.currentTarget);
+        $.ajax({
+            url: "/app/settings/set/cotes.php?sending_by=mcisme",
+            data: data,
+            type: "POST",
+            contentType: false,
+            cache: false,
+            processData: false,
+            success: function(response) {
+                try {
+                    var res = JSON.parse(response);
+                    if (res.status == 'succes') $('#editing_' + e.target.dataset.id).removeClass('bg-warning').changeClass('bg-danger', 'bg-success text-white');
+                    else if (res.status == 'error') {
+                        $('#editing_' + e.target.dataset.id).changeClass('bg-success text-white', 'bg-danger')
+                        console.log(response);
+                    }
+                } catch (error) {
+                    $('#editing_' + e.target.dataset.id).changeClass('bg-success text-white', 'bg-danger')
+                    console.log(response, error);
+                }
+            }
+        });
+        window.r = data;
+    });
+    $("a[data-js][data-location]").on('clink', (e) => location[e.target.dataset.location]());
+    window.submitAll = function() {
+        document.querySelectorAll('input[type=submit]').forEach((e) => e.click());
+    }
+})

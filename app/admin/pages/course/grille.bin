@@ -1,0 +1,93 @@
+<?php $pageTitle = "Fiche de cotes" ?>
+<div class="card height-auto">
+    <div class="card-body">
+        <div class="heading-layout1">
+            <div class="item-title">
+                <h3>Fiche de cote</h3>
+            </div>
+           <div class="dropdown">
+                <a class="dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-expanded="false">...</a>
+                    <div class="dropdown-menu dropdown-menu-right">
+                    <a class="dropdown-item" href="#" data-action="print"><i class="fas fa-print"></i>print</a>
+                        <a class="dropdown-item" href="#" data-action="reload"><i class="fas fa-redo-alt text-orange-peel"></i>Actualiser</a>
+                    </div>
+                </div>
+            </div>
+            <form class="mg-b-20" method="POST">
+                <div class="row gutters-8">
+                    <div class="col-xl-3 col-lg-6 col-12 form-group">
+                        <label><?=$mci?></label>
+                        <select class="select2" name="section" id="s_sec">
+                            <?php $rqt = mysqli_query($db, "SELECT * FROM sections WHERE active = 1") or die(debug(mysqli_error($db)));
+                                while ($ROW = mysqli_fetch_array($rqt)){ $row = (object) $ROW; $_fs = isset($_fs) ? $_fs : $ROW['id']?>
+                                    <option value="<?= $row->id ?>"><?= $row->name ?></option>
+                            <?php } ?>
+                            <option value="*">Toutes les <?=$mci?>s</option>
+                        </select>
+                    </div>
+                    <div class="col-xl-3 col-lg-6 col-12 form-group">
+                        <label>Option</label>
+                        <select class="select2" name="option" id="s_opt">
+                            <?php $rqt = mysqli_query($db, "SELECT * FROM options WHERE active = 1 AND ".($_fs=='*'?'1':'section = '.$_fs)) or die(debug(mysqli_error($db)));
+                                while ($ROW = mysqli_fetch_array($rqt)){ $row = (object) $ROW; ?>
+                                    <option value="<?= $row->id ?>"><?= $row->name ?></option>
+                                <?php } ?>
+                                <option value="*">Toutes les options</option>
+                        </select>
+                    </div>
+                    <div class="col-xl-3 col-lg-6 col-12 form-group">
+                        <label>Niveau</label>
+                        <select class="select2" name="level">
+                            <option selected value="*">Tous les niveaux</option>
+                            <?php $rqt = mysqli_query($db, "SELECT * FROM level WHERE active = 1") or die(debug(mysqli_error($db)));
+                                while ($ROW = mysqli_fetch_array($rqt)){ $row = (object) $ROW; ?>
+                                    <option value="<?= $row->id ?>"><?= $row->name ?></option>
+                            <?php } ?>
+                            <input type="hidden" name="CON_47" value="true">
+                        </select>
+                    </div>
+                    <div class="col-xl-3 col-lg-6 col-12 form-group">
+                        <label>Promotion *</label>
+                        <select class="select2" name="promotion">
+                            <option selected value="*">Année Académique </option>
+                            <?php $year = 2023;
+                                while ($year > 2021){ ?>
+                                    <option value="<?= --$year ?>"><?= $year." - ".($year+1); ?></option>
+                            <?php } ?>
+                            <input type="hidden" name="CON_47" value="true">
+                        </select>
+                    </div>
+                    <div class="col-6-xxxl col-xl-4 col-lg-3 col-12 form-group">
+                        <input type="text" placeholder="Non de l'étudiant" class="form-control" name="student_name">
+                    </div>
+                    <div class="col-xl-8 col-12 form-group">
+                        <select class="select2" name="course">
+                            <?php $rqt_scop12 = mysqli_query($db, "SELECT courses.id, courses.name, sections.name AS section_name, options.name AS option_name, level.name AS level_name, classes.name AS classe_name FROM courses JOIN classes ON classes.id = courses.class JOIN sections ON sections.id = classes.section JOIN options ON options.id = classes.option JOIN level ON level.id = classes.level WHERE courses.active = 1 AND courses.delete = 0 AND classes.active = 1 AND classes.delete = 0"); while ($row = mysqli_fetch_array($rqt_scop12)){ ?>
+                                <option <?= (isset($_POST['course']) && $_POST['course'] == $row['id']) ? 'selected' : (!isset($_POST['course']) && isset($links[2]) && $links[2] == $row['id'] ? 'selected' : null)?> value="<?= $row['id'] ?>"><?=  "$row[section_name] / $row[option_name] / $row[level_name] / $row[classe_name] / $row[name]" ?></option>
+                            <?php } ?>
+                        </select>
+                    </div>
+                    <div class="col-2-xxxl col-xl-2 col-lg-3 col-12 form-group">
+                        <button type="submit" class="fw-btn-fill btn-gradient-yellow">RECHERCHE</button>
+                    </div>
+                </div>
+            </form>
+            <div class="table-responsive">
+                <table class="table display dataTable-dyn-table text-nowrap">
+                    <thead>
+                        <tr>
+                            <th>Photo</th>
+                            <th>Nom Complet</th>
+                            <th class="text-center">TOTAL TP</th>
+                            <th class="text-center">TOTAL INT</th>
+                            <th class="text-center">MOY</th>
+                            <th class="text-center">EXAM</th>
+                            <th class="text-center">RATR</th>
+                            <th class="text-center">TOTAL</th>
+                        </tr>
+                    </thead>
+                    <tbody class=dataTable-dyn-body></tbody>
+                </table>
+            </div>
+        </div>
+    </div>

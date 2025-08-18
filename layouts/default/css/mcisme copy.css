@@ -1,0 +1,622 @@
+/* 1. Link and logo at top  */
+
+.header-top {
+    position: fixed;
+    z-index: 20;
+    top: 0;
+    left: 56px;
+    height: 56px;
+    right: 50%;
+}
+
+.header-top .menu-icon {
+    display: block;
+    float: left;
+    margin-top: 56px;
+    padding-right: 16px;
+    -webkit-transition: 0.3s;
+    transition: 0.3s;
+}
+
+.header-top .menu-icon .bars {
+    content: "";
+    display: block;
+    width: 32px;
+    height: 32px;
+    float: left;
+}
+
+.header-top .menu-icon .bars .bar1,
+.header-top .menu-icon .bars .bar2,
+.header-top .menu-icon .bars .bar3 {
+    display: block;
+    content: "";
+    height: 2px;
+    width: 32px;
+    background: #fff;
+    margin-bottom: 10px;
+    -webkit-transition: 0.3s;
+    transition: 0.3s;
+}
+
+.header-top .menu-icon .bars .bar2 {
+    width: 16px;
+}
+
+.header-top .menu-icon:hover .bars .bar1,
+.header-top .menu-icon:hover .bars .bar3 {
+    width: 16px;
+}
+
+.header-top .menu-icon:hover .bars .bar2 {
+    width: 32px;
+}
+
+.header-top .menu-icon .txt {
+    float: left;
+    font-family: "Montserrat";
+    font-size: 16px;
+    color: #fff;
+    padding-top: 0px;
+    padding-left: 16px;
+}
+
+.header-top .menu {
+    position: absolute;
+    left: 32px;
+    top: 56px;
+    margin-top: -8px;
+    visibility: hidden;
+    opacity: 0;
+    -webkit-transform: translateX(56px);
+    transform: translateX(56px);
+    -webkit-transition: 0.3s;
+    transition: 0.3s;
+    margin-left: 40px;
+    padding-left: 0;
+}
+
+.header-top .menu li {
+    display: block;
+    float: left;
+    font-family: "Montserrat";
+    font-size: 16px;
+}
+
+.header-top .menu a {
+    display: inline-block;
+    padding: 8px 16px;
+    color: #fff;
+    position: relative;
+}
+
+.header-top .menu a:after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 16px;
+    right: 16px;
+    height: 0;
+    border-bottom: 2px solid #fff;
+    opacity: 0;
+    -webkit-transition: 0.3s;
+    transition: 0.3s;
+}
+
+.header-top .menu a:hover:after {
+    bottom: 8px;
+    opacity: 1;
+}
+
+.header-top.menu-resp {
+    z-index: 1000;
+}
+
+.header-top.menu-resp .menu-icon {
+    z-index: 1002;
+    position: fixed;
+}
+
+.header-top.menu-resp .menu {
+    position: fixed;
+    z-index: 1001;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: #1d1d1d;
+    padding-top: 24px;
+}
+
+.header-top.menu-resp .menu li {
+    display: block;
+    float: none;
+    width: 100%;
+    text-align: center;
+    font-size: 24px;
+}
+
+.header-top.menu-visible .menu-icon .txt {
+    visibility: hidden;
+    opacity: 0;
+}
+
+.header-top.menu-visible .menu {
+    visibility: visible;
+    opacity: 1;
+    -webkit-transform: none;
+    transform: none;
+}
+
+.header-top.menu-visible .menu-icon .bars .bar1,
+.header-top.menu-visible .menu-icon .bars .bar3 {
+    width: 16px;
+}
+
+.header-top.menu-visible .menu-icon .bars .bar2 {
+    width: 32px;
+}
+
+.header-top.menu-visible .menu-icon:hover .bars .bar1,
+.header-top.menu-visible .menu-icon:hover .bars .bar3 {
+    width: 32px;
+}
+
+.header-top.menu-visible .menu-icon:hover .bars .bar2 {
+    width: 16px;
+}
+
+a:hover {
+    cursor: pointer
+}
+
+.btn-default {
+    color: #fff;
+    text-shadow: none;
+    background-color: transparent;
+    border: 2px solid #fff;
+    border-radius: 20px;
+    padding: .5rem 2rem
+}
+
+.btn-default:hover,
+.btn-default:focus {
+    background-color: rgba(255, 255, 255, .3)
+}
+
+.modal.fade.modal-black .modal-content {
+    background-color: #303546;
+    color: #fff;
+    text-align: left;
+}
+
+.modal.fade.modal-black .modal-header,
+.modal.fade.modal-black .modal-footer {
+    border: 0;
+}
+
+.modal.fade.modal-black .close {
+    color: #fff
+}
+
+.modal.fade.modal-black .form-control {
+    margin-top: 1rem;
+    background: rgba(0, 0, 0, .4);
+    color: #fff
+}
+
+.modal.fade.modal-black .form-control:focus {
+    border-color: #49506a
+}
+
+.modal-title {
+    color: aliceblue;
+    font-family: 'Montserrat';
+}
+
+.h5,
+h5 {
+    font-size: 1.25rem;
+}
+
+.h1,
+.h2,
+.h3,
+.h4,
+.h5,
+.h6,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+    line-height: 1.2;
+}
+
+.page-nav {
+    z-index: 100;
+    position: fixed;
+    top: 7.5px;
+    left: auto;
+    right: 15px;
+    margin-left: 9px;
+    color: #fff;
+    font-size: 18px;
+    font-family: 'Montserrat';
+    font-weight: 300;
+}
+
+.page-nav a {
+    color: #fff;
+    -webkit-transition: 0.3s;
+    transition: 0.3s;
+    float: left;
+    display: block;
+    margin-right: 8px;
+    padding: 4px;
+    width: 32px;
+    height: 32px;
+    text-align: center;
+    background: rgba(255, 255, 255, 0.15);
+    color: #fff;
+}
+
+.page-nav a .ion {
+    font-size: 1.2em;
+}
+
+.page-nav a:hover {
+    opacity: 0.8;
+}
+
+.page-nav a .title {
+    font-size: 10px;
+    position: absolute;
+    right: 8px;
+    left: auto;
+    text-align: right;
+    width: 90px;
+    bottom: -28px;
+    font-family: "Montserrat";
+    text-transform: uppercase;
+    transition: 0.3s;
+    opacity: 0;
+    visibility: hidden;
+    margin-bottom: -20px;
+    margin-right: 10px;
+}
+
+.page-nav a:hover .title {
+    opacity: 1;
+    bottom: -18px;
+    visibility: visible;
+    font-size: inherit;
+    font-family: sans-serif;
+}
+
+nav.page-nav div a {
+    width: 5rem;
+    height: 5rem;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+nav.page-nav div a .ion {
+    font-size: 3rem;
+}
+
+
+/* 6.4 Clock countdown */
+
+.pane-when {
+    position: fixed;
+    top: auto;
+    bottom: 56px;
+    right: 56px;
+    color: #fff;
+    z-index: 1;
+}
+
+.pane-when .header {
+    float: right;
+    width: 50%;
+    min-width: 280px;
+    max-width: 360px;
+    text-align: right;
+    border-bottom: 2px solid #fff;
+    font-family: "Montserrat";
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+}
+
+.pane-when .header p {
+    margin: 0;
+}
+
+.pane-when .clock {
+    float: inherit;
+    width: 100%;
+    min-width: 280px;
+    text-align: right;
+    font-family: "GeosansLight";
+    position: relative;
+    margin-bottom: -30px;
+    margin-left: 25px;
+}
+
+.pane-when .clock .big {
+    display: inline-block;
+    position: relative;
+    vertical-align: baseline;
+    font-size: 110px;
+    line-height: 0.8;
+    margin-right: 0px;
+}
+
+.pane-when .clock .big .day {
+    display: block;
+}
+
+.pane-when .clock .big .txt {
+    position: absolute;
+    right: auto;
+    left: 100%;
+    top: 0;
+    bottom: auto;
+    font-size: 18px;
+    text-align: left;
+}
+
+.pane-when .clock .big:after {
+    position: absolute;
+    font-size: 72px;
+    bottom: 2px;
+    right: -10px;
+}
+
+.pane-when .clock .medium {
+    display: inline-block;
+    width: 180px;
+    position: relative;
+    font-size: 72px;
+    word-spacing: -16px;
+}
+
+.pane-when .clock .medium .hours,
+.pane-when .clock .medium .minutes {
+    display: inline-block;
+    width: auto;
+    text-align: center;
+}
+
+.pane-when .clock .medium .hours {
+    width: auto;
+}
+
+.pane-when .clock .small {
+    display: inline-block;
+    position: relative;
+    font-size: 18px;
+    line-height: 1;
+    right: 50px;
+    top: -62px;
+}
+
+
+/* 6.3 Home page */
+
+.page-home .content,
+.page-home.page-cent .content {
+    position: absolute;
+    width: 50%;
+}
+
+.page-home .content p {
+    margin-bottom: -4px;
+}
+
+.page-home .logo-container {
+    position: absolute;
+    top: 100px;
+    width: 100%;
+    text-align: center;
+}
+
+.page-home .logo-container img.h-logo {
+    position: relative;
+    display: inline-block;
+    height: 100px;
+    width: auto;
+}
+
+.page-home .content .header {
+    margin: 0 auto;
+    text-align: left;
+    position: relative;
+}
+
+.page-home .content .header>div {
+    position: relative;
+}
+
+.page-home .content h2 {
+    text-transform: uppercase;
+    font-size: 56px;
+    text-align: left;
+    line-height: 1em;
+}
+
+.page-home .content h3 {
+    text-align: left;
+    text-transform: uppercase;
+    font-size: 32px;
+    line-height: 1em;
+    font-weight: bold;
+    border-left: 4px solid currentColor;
+    padding-left: 10px;
+    margin-left: 0px;
+    max-width: 180px;
+}
+
+.page .content .subhead {
+    display: block;
+    text-align: left;
+    position: absolute;
+    position: relative;
+    color: #fff;
+    -webkit-transition: 0.3s;
+    transition: 0.3s;
+}
+
+.page .content .subhead a {
+    color: inherit;
+}
+
+.img-logo-v {
+    width: 90px;
+    height: 70px;
+    margin-left: -20px;
+    margin-right: -10px;
+}
+
+.link.absolute.pt-3 a {
+    opacity: 0.8;
+}
+
+.link.absolute.pt-3 a:hover {
+    opacity: 1;
+}
+
+@media (max-width: 1000px) {
+    nav.page-nav div a {
+        width: 4rem;
+        height: 4rem;
+    }
+    nav.page-nav div a .ion {
+        font-size: 2.5rem;
+    }
+}
+
+@media (max-width: 1000px) {
+    nav.page-nav div a {
+        width: 3rem;
+        height: 3rem;
+    }
+    nav.page-nav div a .ion {
+        font-size: 2rem;
+    }
+    .pane-when .header p {
+        text-align: center;
+        padding-bottom: 10px;
+    }
+    .pane-when {
+        position: relative;
+        top: 1rem;
+        right: 0;
+    }
+    main#mainpage {
+        padding: 0 3rem !important;
+        margin-top: -10px;
+    }
+    .pane-when .clock {
+        text-align: center;
+        display: inherit;
+    }
+    .pane-when .header {
+        display: contents;
+    }
+    .page-home .content,
+    .page-home.page-cent .content {
+        margin-top: 60px;
+    }
+}
+
+@media (max-width: 900px) {
+    nav.page-nav div a {
+        width: 3rem;
+        height: 3rem;
+    }
+    nav.page-nav div a .ion {
+        font-size: 1.5rem;
+    }
+}
+
+@media (max-width: 850px) {
+    .page-nav {
+        top: 45px;
+        left: 5px;
+    }
+    .page-nav>div {
+        display: flex;
+        flex-direction: column;
+    }
+    .page-nav>div>a {
+        margin: 5px 0;
+    }
+    h1,
+    h2.title {
+        font-size: 3vh;
+    }
+}
+
+@media (max-width: 800px) {
+    nav.page-nav div a {
+        width: 2.5rem;
+        height: 2.5rem;
+    }
+    nav.page-nav div a .ion {
+        font-size: 1.2rem;
+    }
+}
+
+@media (max-width: 700px) {
+    nav.page-nav div a {
+        width: 2rem;
+        height: 2rem;
+    }
+    nav.page-nav div a .ion {
+        font-size: 1rem;
+    }
+    h1,
+    h2.title {
+        font-size: 2vh;
+    }
+    .page-home .content p {
+        font-size: 14px;
+    }
+}
+
+@media (max-width: 600px) {}
+
+@media (max-width: 500px) {
+    .header-top .menu {
+        background: #17a2b8;
+        border-radius: 10px;
+    }
+}
+
+.write-mode-tb {
+    width: 20px
+}
+
+.write-mode-tb>span {
+    transform: rotate(-90deg);
+    white-space: nowrap;
+    max-width: 20px;
+    margin-top: 200px;
+    display: flex;
+}
+
+tbody>tr td:first-child {
+    width: 20px;
+}
+
+td.static.account-stable.activity-oin.wrt-oa {
+    background: #8888;
+    font-weight: bold;
+}

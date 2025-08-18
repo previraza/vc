@@ -1,0 +1,34 @@
+if (typeof(window.initiated) == "undefined") {
+    window.initiated = true;
+    (function(contenair) {
+        $(document).dynamicLink({
+            contenair: contenair || "#content",
+            before: (element) => {
+                $("#contain > div.dashboard-content-one.position-relative").addClass('showLoader');
+            },
+            after: (element, response) => {
+                $("#contain > div.dashboard-content-one.position-relative").removeClass('showLoader');
+                $.getScript("/layouts/default/js/mainDynamic.js");
+                var r = JSON.parse(r),
+                    bc = $('#breadcrumbs'),
+                    href = "?fa69951bc733eb82713e936be33597e1=DATA_CRYPTING_ON:fa69951bc733eb82713e936be33597e1=WABTECHS_CRYPTING_ON: e91497f38407364c8e86ade9098950d978814190&MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3VIRAZA_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3&MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3&WABTECHS_CRYPTING_ON_LAVINGOL&MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3&b557c222c8ddcdf87e033706aad08e4ef7cf90d3=";
+                bc.html('<li><a href="/app">Home</a></li>');
+                for (let i = 0; i < r.links.length; i++) {
+                    var li = document.createElement('li'),
+                        a = document.createElement('a');
+                    if (i + 1 !== r.links.length) a.href = href += r.links[i];
+                    a.innerText = r.links[i];
+                    li.appendChild(a);
+                    bc.append(li)
+                    href += "--"
+                }
+                $("#breadcrumbs-h").text(r.title);
+            }
+        })
+    })('#explorer');
+    var l = $('.account-settings-box .all-user-box a.media.media-none--xs');
+    l.on('click', (e) => {
+        l.removeClass('active');
+        $(e.currentTarget).addClass('active');
+    })[0].click();
+}

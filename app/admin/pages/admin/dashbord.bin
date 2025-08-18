@@ -1,0 +1,351 @@
+<?php $pageTitle = "Tableau de bord Administratif";
+    $students = mysqli_query($db, "SELECT students.*, sections.name AS section_name, sections.id AS section_id FROM students LEFT JOIN classes ON classes.id = students.class LEFT JOIN sections ON sections.id = classes.section WHERE students.delete = 0 AND students.active = 1 AND students.valide = 1 ORDER BY firstname");
+    $teachers = mysqli_query($db, "SELECT * FROM teachers WHERE teachers.delete = 0 AND teachers.active = 1 AND teachers.valide = 1 ORDER BY title DESC, firstname");
+    $sections = mysqli_query($db, "SELECT * FROM sections WHERE sections.delete = 0 AND sections.active = 1");
+    $payments = mysqli_query($db, "SELECT *, MONTH(date) AS month FROM payments WHERE `delete` = 0 AND active = 1 AND valide = 1 AND student != 0 AND YEAR(CURRENT_DATE+1) = CONCAT(CURRENT_DATE)") ;
+
+    $TOT_STD = $TOT_FRAIS = 0;
+    $STD_SEX = $TOT_PROF = $STD_SEC = $TYPE_PAY = $FRAIS = $MONTH_F = $MONTH_D = $SECTION = [];
+    while($section = mysqli_fetch_array($sections)){
+        $SECTION[] = $section;
+        isset($STD_SEC[$section['id']]) ? $TOT_PROF[$section['id']] ++ : $TOT_PROF[$section['id']] = 1;
+    }
+    while($payment = mysqli_fetch_array($payments)){
+        $FRAIS[$payment['type']]=isset($FRAIS[$payment['type']])?$FRAIS[$payment['type']]+$payment['sum']:$payment['sum'];
+        isset($TYPE_PAY[$payment['type']])?$TYPE_PAY[$payment['type']]++:$TYPE_PAY[$payment['type']]=1;
+        $TOT_FRAIS+=$payment['devise']=='$'?$payment['sum']*$univ_data->taux:$payment['sum'];
+
+        if($payment['devise']=='$') $MONTH_D[$payment['month']]=isset($MONTH_D[$payment['month']])?$MONTH_D[$payment['month']]+$payment['sum']:$payment['sum'];
+        elseif($payment['devise']=='Fc') $MONTH_F[$payment['month']]=isset($MONTH_F[$payment['month']])?$MONTH_F[$payment['month']]+$payment['sum']:$payment['sum'];
+    }
+    while($student = mysqli_fetch_array($students)){
+        $TOT_STD++;
+        isset($STD_SEX[$student['gender']])?$STD_SEX[$student['gender']]++:$STD_SEX[$student['gender']]=1;
+        isset($STD_SEC[$student['section_id']])?$STD_SEC[$student['section_id']]++:$STD_SEC[$student['section_id']]=1;
+    }
+    while($teacher = mysqli_fetch_array($teachers)){
+        isset($TOT_PROF[$teacher['title']]) ? $TOT_PROF[$teacher['title']] ++ : $TOT_PROF[$teacher['title']] = 1;
+    }
+
+    $STD_F      = isset($STD_SEX['F']) ? $STD_SEX['F'] : 0;
+    $STD_M      = isset($STD_SEX['M']) ? $STD_SEX['M'] : 0;
+    $STD_A      = isset($STD_SEX['M']) ? array_sum($STD_SEC) - ($STD_F+$STD_M) : 0;
+    $PROF_P     = (isset($TOT_PROF['PA']) ? $TOT_PROF['PA'] : 0)
+                +(isset($TOT_PROF['P']) ? $TOT_PROF['P'] : 0)
+                +(isset($TOT_PROF['PO']) ? $TOT_PROF['PO'] : 0)
+                +(isset($TOT_PROF['PM']) ? $TOT_PROF['PM'] : 0);
+
+    $PROF_CT    = isset($TOT_PROF['CT']) ? $TOT_PROF['CT'] : 0;
+    $PROF_ASS   = (isset($TOT_PROF['ASS1']) ? $TOT_PROF['ASS1'] : 0)
+                +(isset($TOT_PROF['ASS2']) ? $TOT_PROF['ASS2'] : 0)
+                +(isset($TOT_PROF['ASSR']) ? $TOT_PROF['ASSR'] : 0);
+                
+    $SOLDE_I_R  = (isset($FRAIS['INSCR']) ? $FRAIS['INSCR'] : 0)
+                +(isset($FRAIS['REINS']) ? $FRAIS['REINS'] : 0);
+
+    $SOLDE_ENR  = (isset($FRAIS['ENR01']) ? $FRAIS['ENR01'] : 0)
+                +(isset($FRAIS['ENRO2']) ? $FRAIS['ENRO2'] : 0)
+                +(isset($FRAIS['ENRO3']) ? $FRAIS['ENRO3'] : 0);
+
+                $SOLDE_FET  = (isset($FRAIS['FRST1']) ? $FRAIS['FRST1'] : 0)
+                +(isset($FRAIS['FRST2']) ? $FRAIS['FRST2'] : 0)
+                +(isset($FRAIS['FRST3']) ? $FRAIS['FRST3'] : 0);
+                
+    $SOLDE_I_R_N  = (isset($TYPE_PAY['INSCR']) ? $TYPE_PAY['INSCR'] : 0)
+                +(isset($TYPE_PAY['REINS']) ? $TYPE_PAY['REINS'] : 0);
+
+
+    $SOLDE_ENR_N  = (isset($TYPE_PAY['ENR01']) ? $TYPE_PAY['ENR01'] : 0)
+                +(isset($TYPE_PAY['ENRO2']) ? $TYPE_PAY['ENRO2'] : 0)
+                +(isset($TYPE_PAY['ENRO3']) ? $TYPE_PAY['ENRO3'] : 0);
+
+    $SOLDE_FET_N  = (isset($TYPE_PAY['FRST1']) ? $TYPE_PAY['FRST1'] : 0)
+                +(isset($FRAIS['FRST2']) ? $TYPE_PAY['FRST2'] : 0)
+                +(isset($FRAIS['FRST3']) ? $TYPE_PAY['FRST3'] : 0);
+
+    $SUP_MONTH_F = count($MONTH_F) > 0 ? max(array_keys($MONTH_F)) : [];
+    $SUP_MONTH_D = count($MONTH_D) > 0 ? max(array_keys($MONTH_D)) : [];
+?>
+
+<div class="row gutters-20">
+    <div class="col-xl-3 col-sm-6 col-12">
+        <div class="dashboard-summery-one mg-b-20">
+            <div class="row align-items-center">
+                <div class="col-6">
+                    <div class="item-icon bg-light-green ">
+                        <i class="flaticon-classmates text-green"></i>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="item-content">
+                        <div class="item-title">Etudians</div>
+                        <div class="item-number"><span class="counter" data-num="<?= $TOT_STD ?>"><?= $TOT_STD ?></span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-3 col-sm-6 col-12">
+        <div class="dashboard-summery-one mg-b-20">
+            <div class="row align-items-center">
+                <div class="col-6">
+                    <div class="item-icon bg-light-blue">
+                        <i class="flaticon-multiple-users-silhouette text-blue"></i>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="item-content">
+                        <div class="item-title">Professeurs</div>
+                        <div class="item-number"><span class="counter" data-num="<?= $PROF_P ?>"><?= $PROF_P ?></span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-3 col-sm-6 col-12">
+        <div class="dashboard-summery-one mg-b-20">
+            <div class="row align-items-center">
+                <div class="col-6">
+                    <div class="item-icon bg-light-yellow">
+                        <i class="flaticon-couple text-orange"></i>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="item-content">
+                        <div class="item-title">Chef de travaux</div>
+                        <div class="item-number"><span class="counter" data-num="<?= $PROF_CT ?>"><?= $PROF_CT ?></span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-3 col-sm-6 col-12">
+        <div class="dashboard-summery-one mg-b-20">
+            <div class="row align-items-center">
+                <div class="col-6">
+                    <div class="item-icon bg-light-red">
+                        <i class="flaticon-user text-red"></i>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="item-content">
+                        <div class="item-title">Assistants</div>
+                        <div class="item-number"><span class="counter" data-num="<?= $PROF_ASS ?>"><?= $PROF_ASS ?></span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row gutters-20">
+    <div class="col-12 col-xl-6 col-6-xxxl">
+        <div class="card dashboard-card-two pd-b-20">
+            <div class="card-body">
+                <div class="heading-layout1">
+                    <div class="item-title">
+                        <h3>Totale Frais</h3>
+                    </div>
+                    <div class="dropdown">
+                        <a class="dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-expanded="false">...</a>
+
+                        <div class="dropdown-menu dropdown-menu-right">
+                            <a class="dropdown-item" href="#" data-action="print"><i class="fas fa-print"></i>print</a>
+                            <a class="dropdown-item" href="#" data-action="reload"><i class="fas fa-redo-alt text-orange-peel"></i>Actualiser</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="expense-report">
+                    <div class="monthly-expense pseudo-bg-Aquamarine">
+                        <div class="expense-date">Frais d'Inscription et Reinscription</div>
+                        <div class="expense-amount"><span></span> <?= $SOLDE_I_R ?> $</div>
+                    </div>
+                    <div class="monthly-expense pseudo-bg-blue">
+                        <div class="expense-date">Frais d'Enrolement</div>
+                        <div class="expense-amount"><span></span> <?= $SOLDE_ENR ?> Fc</div>
+                    </div>
+                    <div class="monthly-expense pseudo-bg-yellow">
+                        <div class="expense-date">Frais Etude</div>
+                        <div class="expense-amount"><span></span><?= $SOLDE_FET ?> Fc</div>
+                    </div>
+                </div>
+                <div class="expense-chart-wrap">
+                    <div class="chartjs-size-monitor" style="position: absolute; inset: 0px; overflow: hidden; pointer-events: none; visibility: hidden; z-index: -1;">
+                        <div class="chartjs-size-monitor-expand" style="position:absolute;left:0;top:0;right:0;bottom:0;overflow:hidden;pointer-events:none;visibility:hidden;z-index:-1;">
+                            <div style="position:absolute;width:1000000px;height:1000000px;left:0;top:0"></div>
+                        </div>
+                        <div class="chartjs-size-monitor-shrink" style="position:absolute;left:0;top:0;right:0;bottom:0;overflow:hidden;pointer-events:none;visibility:hidden;z-index:-1;">
+                            <div style="position:absolute;width:200%;height:200%;left:0; top:0"></div>
+                        </div>
+                    </div>
+                    <canvas chart-values="<?= "$SOLDE_I_R_N|$SOLDE_ENR_N|$SOLDE_FET_N" ?>" chart-bgcolor="#40dfcd|#417dfc|#ffaa01" chart-labels="Frais d'Inscription et de Reinscription|Frais d'Enrolement|Frais d'Etude" chart-label="Nombre de payements" id="expense-bar-chart" width="381" height="300" style="display: block; width: 381px; height: 300px;" class="chartjs-render-monitor"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-12 col-xl-6 col-6-xxxl">
+        <div class="card dashboard-card-four pd-b-20">
+            <div class="card-body">
+                <div class="heading-layout1">
+                    <div class="item-title">
+                        <h3>Calendrier Académique</h3>
+                    </div>
+                    <div class="dropdown">
+                        <a class="dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-expanded="false">...</a>
+
+                        <div class="dropdown-menu dropdown-menu-right">
+                            <a class="dropdown-item" href="#" data-action="print"><i class="fas fa-print"></i>print</a>
+                            <a class="dropdown-item" href="#" data-action="reload"><i class="fas fa-redo-alt text-orange-peel"></i>Actualiser</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="calender-wrap">
+                    <div id="fc-calender" class="fc-calender fc fc-unthemed fc-ltr"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-12 col-xl-12 col-12-xxxl">
+        <div class="card dashboard-card-one pd-b-20">
+            <div class="card-body">
+                <div class="heading-layout1">
+                    <div class="item-title">
+                        <h3>Payement de frais</h3>
+                    </div>
+                    <div class="dropdown">
+                        <a class="dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-expanded="false">...</a>
+                        <div class="dropdown-menu dropdown-menu-right">
+                            <a class="dropdown-item" href="#" data-action="print"><i class="fas fa-print"></i>Print</a>
+                            <a class="dropdown-item" href="#" data-action="reload"><i class="fas fa-redo-alt text-orange-peel"></i>Actualiser</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="earning-report">
+                    <div class="item-content">
+                        <div class="single-item pseudo-bg-blue">
+                            <h4>Frais en Franc</h4>
+                            <span><?= $SOLDE_FET ?></span>
+                        </div>
+                        <div class="single-item pseudo-bg-red">
+                            <h4>Frais en Dollars</h4>
+                            <span><?= 15 ?></span>
+                        </div>
+                    </div>
+                    <div class="dropdown">
+                        <a class="date-dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-expanded="false">2020-2021</a>
+                        <div class="dropdown-menu dropdown-menu-right">
+                            <a class="dropdown-item" href="#">2020-2021</a>
+                            <a class="dropdown-item" href="#">2019-2020</a>
+                            <a class="dropdown-item" href="#">2018-2019</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="earning-chart-wrap">
+                    <div class="chartjs-size-monitor" style="position: absolute; inset: 0px; overflow: hidden; pointer-events: none; visibility: hidden; z-index: -1;">
+                        <div class="chartjs-size-monitor-expand" style="position:absolute;left:0;top:0;right:0;bottom:0;overflow:hidden;pointer-events:none;visibility:hidden;z-index:-1;">
+                            <div style="position:absolute;width:1000000px;height:1000000px;left:0;top:0"></div>
+                        </div>
+                        <div class="chartjs-size-monitor-shrink" style="position:absolute;left:0;top:0;right:0;bottom:0;overflow:hidden;pointer-events:none;visibility:hidden;z-index:-1;">
+                            <div style="position:absolute;width:200%;height:200%;left:0; top:0"></div>
+                        </div>
+                    </div>
+                    <canvas chart-data-1="<?php $R = "";
+                        if(!empty($SUP_MONTH_F))
+                            for ($i=0; $i <= $SUP_MONTH_F; $i++) { 
+                                $R.=((isset($MONTH_F[$i]) ? $MONTH_F[$i] : 0)."|");
+                            };
+                        echo $R."0";
+                    ?>" chart-data-2="<?php $R = "";
+                        if(!empty($SUP_MONTH_F))
+                            for ($i=0; $i <= $SUP_MONTH_D; $i++) { 
+                                $R.=((isset($MONTH_D[$i]) ? $MONTH_D[$i] : 0)."|");
+                            };
+                        echo $R."0";
+                ?>" chart-label-1 id="earning-line-chart" width="842" height="320" style="display: block; width: 842px; height: 320px;" class="chartjs-render-monitor"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-12 col-xl-6 col-6-xxxl">
+        <div class="card dashboard-card-five pd-b-20">
+            <div class="card-body pd-b-14">
+                <div class="heading-layout1">
+                    <div class="item-title">
+                        <h3>Effectif Par <?=$mci?>s</h3>
+                    </div>
+                    <div class="dropdown">
+                        <a class="dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-expanded="false">...</a>
+
+                        <div class="dropdown-menu dropdown-menu-right">
+                            <a class="dropdown-item" href="#" data-action="print"><i class="fas fa-print"></i>print</a>
+                            <a class="dropdown-item" href="#" data-action="reload"><i class="fas fa-redo-alt text-orange-peel"></i>Actualiser</a>
+                        </div>
+                    </div>
+                </div>
+                <h6 class="traffic-title">Totales des Etudiants</h6>
+                <div class="traffic-number"><span class="counter" data-num="<?= array_sum($STD_SEC) ?>"><?= array_sum($STD_SEC) ?></span></div>
+                <div class="traffic-table table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th><?=$mci?></th>
+                                <th>Effectifs</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php foreach ($SECTION as $key => $section) { ?>
+                                <tr>
+                                    <td class="t-title pseudo-bg-Aquamarine"><?= $section['name'] ?></td>
+                                    <td><?= isset($STD_SEC[$section[0]])?$STD_SEC[$section[0]]:0 ?></td>
+                                </tr>
+                            <?php } ?>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-12 col-xl-6 col-6-xxxl">
+        <div class="card dashboard-card-three pd-b-20">
+            <div class="card-body">
+                <div class="heading-layout1">
+                    <div class="item-title">
+                        <h3>Etudiants</h3>
+                    </div>
+                    <div class="dropdown">
+                        <a class="dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-expanded="false">...</a>
+                        <div class="dropdown-menu dropdown-menu-right">
+                            <a class="dropdown-item" href="#" data-action="print"><i class="fas fa-print"></i>print</a>
+                            <a class="dropdown-item" href="#" data-action="reload"><i class="fas fa-redo-alt text-orange-peel"></i>Actualiser</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="doughnut-chart-wrap">
+                    <div class="chartjs-size-monitor" style="position: absolute; inset: 0px; overflow: hidden; pointer-events: none; visibility: hidden; z-index: -1;">
+                        <div class="chartjs-size-monitor-expand" style="position:absolute;left:0;top:0;right:0;bottom:0;overflow:hidden;pointer-events:none;visibility:hidden;z-index:-1;">
+                            <div style="position:absolute;width:1000000px;height:1000000px;left:0;top:0"></div>
+                        </div>
+                        <div class="chartjs-size-monitor-shrink" style="position:absolute;left:0;top:0;right:0;bottom:0;overflow:hidden;pointer-events:none;visibility:hidden;z-index:-1;">
+                            <div style="position:absolute;width:200%;height:200%;left:0; top:0"></div>
+                        </div>
+                    </div>
+                    <canvas chart-values="<?= "$STD_F|$STD_A|$STD_M" ?>"  chart-bgColor="#304ffe|#d8dfe5|#ffa601"  chart-labels="Etudiantes Féminin|Autres|Etudiants Madculin" chart-label="Totale des Etudiants" id="student-doughnut-chart" width="612" height="300" style="display: block; width: 612px; height: 300px;" class="chartjs-render-monitor"></canvas>
+                </div>
+                <div class="student-report">
+                    <div class="student-count pseudo-bg-blue">
+                        <h4 class="item-title">Féminin</h4>
+                        <div class="item-number"><?= $STD_F ?></div>
+                    </div>
+                    <div class="student-count pseudo-bg-default">
+                        <h4 class="item-title">Autres</h4>
+                        <div class="item-number"><?= $STD_A ?></div>
+                    </div>
+                    <div class="student-count pseudo-bg-yellow">
+                        <h4 class="item-title">Masculin</h4>
+                        <div class="item-number"><?= $STD_M ?></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,124 @@
+<?php class Setting extends Controller
+{
+    public function __construct()
+    {
+        parent::__construct();
+        $this->fees = $this->loadModel('fees');
+    }
+    public function payment()
+    {
+        $app = app();
+        $params = Request::init()->params;
+        if (isset($params[0]) && $params[0] === 'save') {
+            $this->insert();
+        } else if (isset($params[0], $params[1]) && is_numeric($params[0]) && $params[1] === 'delete')
+            $this->deleted($params);
+        else if (isset($params[0], $params[1]) && is_numeric($params[0]) && $params[1] === 'edit')
+            $this->edit($params);
+        else if (isset($params[0], $params[1]) && is_numeric($params[0]) && $params[1] === 'update')
+            $this->update($params);
+        $this->compact('fees', $this->fees->all());
+        $app->ASSETS['_css'] .= '<link rel="stylesheet" href="/assets/vendor/choiceJS/style/choices.min.css">';
+        $app->ASSETS['css'] .= '<link rel="stylesheet" href="/assets/css/blog.min.css"/>';
+        $app->ASSETS['_js'] .= '
+            <script src="/assets/js/plugins/signaturepad.js"defer></script>
+            <script src="/assets/vendor/signature_pad/dist/signature_pad.umd.js" async></script>
+            <script src="/assets/vendor/choiceJS/script/choices.min.js"></script>
+            <script src="/assets/js/plugins/choice.js" defer></script>';
+        $app->ASSETS['js'] .= '<script src="/assets/js/appointment.js"></script>';
+        return $this->render('payment');
+    }
+
+    public function payment_()
+    {
+        $params = Request::init()->params;
+        if (isset($params[0], $params[1]) && is_numeric($params[0]) && $params[1] === 'restore')
+            $this->restored($params);
+        else if (isset($params[0], $params[1]) && is_numeric($params[0]) && $params[1] === 'delete')
+            $this->deleted($params);
+        else if (isset($params[0], $params[1]) && is_numeric($params[0]) && $params[1] === 'erase')
+            $this->erased($params);
+        $app = app();
+        $this->compact('fees', $this->fees->all_());
+        $app->ASSETS['_css'] .= '<link rel="stylesheet" href="/assets/vendor/choiceJS/style/choices.min.css">';
+        $app->ASSETS['css'] .= '<link rel="stylesheet" href="/assets/css/blog.min.css"/>';
+        $app->ASSETS['_js'] .= '
+            <script src="/assets/js/plugins/signaturepad.js"defer></script>
+            <script src="/assets/vendor/signature_pad/dist/signature_pad.umd.js" async></script>
+            <script src="/assets/vendor/choiceJS/script/choices.min.js"></script>
+            <script src="/assets/js/plugins/choice.js" defer></script>';
+        $app->ASSETS['js'] .= '<script src="/assets/js/appointment.js"></script>';
+        return $this->render('payment_');
+    }
+
+    public function deleted($params)
+    {
+        $data = (object) $this->fees->find($params[0]);
+        $response = 0;
+        if (isset($data->enc)) {
+            $response = $this->fees->delete($data->enc) ? 204 : 502;
+        } else {
+            $response = 604;
+        }
+        if (isset($_GET['method']) && $_GET['method'] == 'JSON')
+            json($response);
+        Session::init()->set('MSG::ACTION:DELETE', $response);
+        $app->request->back();
+    }
+    public function restored($params)
+    {
+        $data = (object) $this->fees->find_($params[0]);
+        $response = 0;
+        if (isset($data->enc)) {
+            $response = $this->fees->restore($data->enc) ? 205 : 502;
+        } else {
+            $response = 605;
+        }
+        if (isset($_GET['method']) && $_GET['method'] == 'JSON')
+            json($response);
+        Session::init()->set('MSG::ACTION:RESTORE', $response);
+        $app->request->back();
+    }
+    public function erased($params)
+    {
+        $app->request->back();
+    }
+
+    public function edit($params)
+    {
+        $data = (object) $this->fees->find($params[0]);
+        $this->compact('data_edit', isset($data->enc) ? $data : false);
+        if ($data === [])
+            $this->render('err');
+    }
+
+    public function insert()
+    {
+        $app = app();
+        $data = (object) $_POST['data'];
+        $data->allower = implode('|', $data->allower);
+        $data->enc = $app->generate_enc();
+        if ($this->fees->insert($data))
+            $app->request->back();
+    }
+
+    public function update($params)
+    {
+        $data = (object) $this->fees->find($params[0]);
+        $app = app();
+        $response = 0;
+        if (isset($data->enc)) {
+            $data = (object) $_POST['data'];
+            $data->allower = implode('|', $data->allower);
+            $data->enc = $app->generate_enc();
+            $response = $this->fees->update($data, $_POST['data_id'] ?? 0) ? 205 : 502;
+        } else {
+            $response = 605;
+        }
+        $_POST['data']['allower'] = '';
+        if (isset($_GET['method']) && $_GET['method'] == 'JSON')
+            json($response);
+        Session::init()->set('MSG::ACTION:RESTORE', $response);
+        $app->request->back();
+    }
+}

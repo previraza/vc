@@ -1,0 +1,196 @@
+<?php viewOnlyBy('ADMIN', 'SG', 'DG','SR','AB','SA'); $pageTitle = "Etudiants Actif" ?>
+<div class="card height-auto">
+    <div class="card-body">
+        <div class="heading-layout1">
+            <div class="item-title">
+                <h3>Liste des étudiants</h3>
+            </div>
+            <div class="dropdown">
+                <a class="dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-expanded="false">...</a>
+
+                <div class="dropdown-menu dropdown-menu-right">
+                    <a class="dropdown-item" href="#" data-action="print"><i class="fas fa-print"></i>print</a>
+
+                    <a class="dropdown-item" href="#" data-action="reload"><i class="fas fa-redo-alt text-orange-peel"></i>Actualiser</a>
+                </div>
+            </div>
+        </div>
+        <form class="mg-b-20" method="POST">
+            <div class="row gutters-8">
+                <div class="col-xl-3 col-lg-6 col-12 form-group">
+                    <input type="hidden" name="CON_47" value="true">
+                    <label><?=$mci?></label>
+                    <select class="select2" name="section" id="s_sec">
+                        <?php $rqt = mysqli_query($db, "SELECT id, name FROM sections WHERE active = 1") or die(debug(mysqli_error($db)));
+                            while ($ROW = mysqli_fetch_array($rqt)){ $row = (object) $ROW; $_fs = isset($_fs) ? $_fs : $row->id?>
+                                <option value="<?= $row->id ?>" <?php if(isset($_POST['section']) && $row->id == $_POST['section']) {echo 'selected'; $_fs = $row->id;} ?>><?= $row->name ?></option>
+                        <?php } ?>
+                        <option <?php if(isset($_POST['section']) && '*' == $_POST['section']) {echo 'selected'; $_fs = '*';} ?> value="*">Toutes les <?=$mci?>s</option>
+                    </select>
+                </div>
+                <div class="col-xl-3 col-lg-6 col-12 form-group">
+                    <label>Option</label>
+                    <select class="select2" name="option" id="s_opt">
+                        <?php $rqt = mysqli_query($db, "SELECT id, name FROM options WHERE active = 1 AND ".($_fs=='*'?'1':'section = '.$_fs)) or die(debug(mysqli_error($db)));
+                            while ($ROW = mysqli_fetch_array($rqt)){ $row = (object) $ROW; $_fo = isset($_fo) ? $_fo : $row->id?>
+                                <option value="<?= $row->id ?>" <?php if(isset($_POST['option']) && $row->id == $_POST['option']) {echo 'selected'; $_fo = $row->id;} ?>><?= $row->name ?></option>
+                            <?php } ?>
+                            <option <?php if(isset($_POST['option']) && '*' == $_POST['option']) {echo 'selected'; $_fo = '*';} ?> value="*">Toutes les options</option>
+                    </select>
+                </div>
+                <div class="col-xl-3 col-lg-6 col-12 form-group">
+                    <label>Niveau</label>
+                    <select class="select2" name="level">
+                        <option selected value="*">Tous les niveaux</option>
+                        <?php $rqt = mysqli_query($db, "SELECT * FROM level WHERE active = 1") or die(debug(mysqli_error($db)));
+                            while ($ROW = mysqli_fetch_array($rqt)){ $row = (object) $ROW; ?>
+                                <option value="<?= $row->id ?>"><?= $row->name ?></option>
+                        <?php } ?>
+                        <input type="hidden" name="CON_47" value="true">
+                    </select>
+                </div>
+                <div class="col-xl-3 col-lg-6 col-12 form-group">
+                    <label>Promotion *</label>
+                    <select class="select2" name="promotion">
+                        <option selected value="*">Année Académique </option>
+                        <?php $year = 2023;
+                            while ($year > 2021){ ?>
+                                <option value="<?= --$year ?>"><?= $year." - ".($year+1); ?></option>
+                        <?php } ?>
+                        <input type="hidden" name="CON_47" value="true">
+                    </select>
+                </div>
+                <div class="col-12 form-group">
+                    <label></label>
+                    <button type="submit" class="fw-btn-fill btn-gradient-yellow">RECHERCHE</button>
+                </div>
+            </div>
+        </form>
+        <div class="table-responsive">
+            <table class="table display data-table text-nowrap">
+                <thead>
+                    <tr>
+                        <th>
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input checkAll" id="assosLabel">
+                                <label for="assosLabel" class="form-check-label">Id</label>
+                            </div>
+                        </th>
+                        <th>Photo</th>
+                        <th>Nom Complet</th>
+                        <th>Genre</th>
+                        <th>Unité</th>
+                        <th><?=$mci?></th>
+                        <th>Option</th>
+                        <th>Niveau</th>
+                        <th>Promotion</th>
+                        <th>Classe</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php $rqt = mysqli_query($db, 
+                        "SELECT students.*, sections.name AS section_name, options.name AS option_name, level.name AS level_name, promotion, classes.name AS designation 
+                            FROM students 
+                            JOIN classes  ON classes.id  = students.class 
+                            JOIN sections ON sections.id = classes.section 
+                            JOIN options  ON options.id  = classes.option 
+                            JOIN level    ON level.id    = classes.level 
+                            WHERE students.active = 1 AND students.valide = 1 AND students.delete = 0 AND students.user_id != 0"
+                                .((isset($_POST['promotion']) && $_POST['promotion'] != "*") ? " AND classes.promotion = $_POST[promotion]":'')
+                                .($_fs != "*" ? " AND sections.id = $_fs":'')
+                                .($_fo != "*" ? " AND options.id = $_fo":'')
+                                .((isset($_POST['level']) && $_POST['level'] != "*") ? " AND level.id = $_POST[level]":'')." ORDER BY firstname"
+                            );
+                        while($row = mysqli_fetch_array($rqt)){ $res = (object) $row;?>
+                    <tr>
+                        <td id="shodan_res_<?= $res->id ?>">
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input">
+                                <label class="form-check-label">#<?= $res->id ?></label>
+                            </div>
+                        </td>
+                        <td class="text-center"><img src="/layouts/default/img/figure/student2.webp" alt="student"></td>
+                        <td>
+                            <?= "$res->firstname $res->lastname" ?>
+                        </td>
+                        <td>
+                            <?= $res->gender ?>
+                        </td>
+                        <td>
+                            <?= $res->credit ?>
+                        </td>
+                        <td>
+                            <?= $res->section_name ?>
+                        </td>
+                        <td>
+                            <?= $res->option_name ?>
+                        </td>
+                        <td>
+                            <?= $res->level_name ?>
+                        </td>
+                        <td>
+                            <?= "$res->promotion - ".++$res->promotion ?>
+                        </td>
+                        <td>
+                            <?= $res->designation ?>
+                        </td>
+                        <td>
+                            <div class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false" aria-label="Plus d'option">
+                                    <span class="flaticon-more-button-of-three-dots"></span>
+                                </a>
+                                <div class="dropdown-menu dropdown-menu-right">
+                                    <a class="dropdown-item" data-exec="mci_generator_enc(<?= "$res->id, '$res->firstname $res->lastname'" ?>)" data-action="null" href="\?fa69951bc733eb82713e936be33597e1=DATA_CRYPTING_ON:fa69951bc733eb82713e936be33597e1=WABTECHS_CRYPTING_ON: e91497f38407364c8e86ade9098950d978814190&MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3VIRAZA_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3&MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3&WABTECHS_CRYPTING_ON_LAVINGOL&MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3&b557c222c8ddcdf87e033706aad08e4ef7cf90d3=account--enableStudent"><i class="fas fa-play text-green"></i>Générer</a>
+                                    <a class="dropdown-item" href="?fa69951bc733eb82713e936be33597e1=DATA_CRYPTING_ON:fa69951bc733eb82713e936be33597e1=WABTECHS_CRYPTING_ON: e91497f38407364c8e86ade9098950d978814190&MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3VIRAZA_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3&MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3&WABTECHS_CRYPTING_ON_LAVINGOL&MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3&b557c222c8ddcdf87e033706aad08e4ef7cf90d3=student--details--<?= $res->id ?>"><i class="fas fa-redo-alt text-blue"></i>Profile</a>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    <?php } ?>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="modelId" tabindex="-1" role="dialog" aria-labelledby="modelTitleId" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalTitle"></h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            </div>
+            <div class="modal-body">
+                <div class="container-fluid">
+                    <form class="#" method="post" id="submitFormulary" data-id="0">
+                        <div class="row">
+                            <div class="col-2">SSID : </div>
+                            <div class="col-8"><input type="text" class="w-100 mb-3 radius-4 border-0 bg-ash px-3" name="user_name" id="contentSSID"></div>
+                            <div class="col-2">
+                                <div class="btn btn rounded text-white bg-info" aria-label="Copy">Copy</div>
+                            </div>
+                        </div>
+                        <input type="hidden" name="user_id" id="contentID" value="0"/>
+                        <input type="hidden" name="klk" id="contentID" value="kelkin"/>
+                        <input type="hidden" name="CON_47" id="MCISME" value="loveStorage"/>
+                        <input type="submit" id="submitFormularyBtn" class="d-none"/>
+                        <div class="row">
+                            <div class="col-2">KEY : </div>
+                            <div class="col-8"><input type="text" class="w-100 mb-3 radius-4 border-0 bg-ash px-3" name="user_pass" id="contentKEY"></div>
+                            <div class="col-2">
+                                <div class="btn btn rounded text-white bg-info" aria-label="Copy">Copy</div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <div class="modalMessageTextFooter alert alert-warning w-100"></div>
+                <button type="button" type="reset" class="btn btn-secondary mb-3" data-dismiss="modal">Annuler</button>
+                <button type="button" onclick="document.querySelector('#submitFormularyBtn').click();" id="submitPreBtn" class="btn btn-primary mb-3">Sauvegarder</button>
+            </div>
+        </div>
+    </div>
+</div>

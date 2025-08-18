@@ -1,0 +1,30 @@
+$('#inputProfileFile').on('change', (e) => {
+    if ($('#profleImgFile')[0].src = URL.createObjectURL(e.target.files[0])) {
+        $('#inputProfileFileSubmit').fadeIn();
+    }
+})
+$('form').on('submit', (e) => {
+    e.preventDefault();
+    var data = new FormData(e.currentTarget);
+    $('#errorRapport').html('').fadeOut();
+    $.ajax({
+        url: "/app/settings/edit/profile.php?sending_by=mcisme",
+        data: data,
+        type: "POST",
+        contentType: false,
+        cache: false,
+        processData: false,
+        success: function(response) {
+            try {
+                var res = JSON.parse(response);
+                if (res.status == 'succes') {
+                    $('#errorRapport').html('Success').fadeIn();
+                    $('#inputProfileFileSubmit').fadeIn();
+                } else if (res.status == 'error')
+                    $('#errorRapport').html('Erreur').fadeIn();
+            } catch (error) {
+                console.error(response);
+            }
+        }
+    });
+})

@@ -1,0 +1,6 @@
+<?php class PaymentsModel extends PaymentDataBase
+{
+    public static $db;
+    public $table = 'financy_payment';
+    public $name = 'payment';
+}

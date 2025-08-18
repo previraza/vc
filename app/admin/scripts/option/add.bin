@@ -1,0 +1,27 @@
+    $('#addOption').on('submit', (e) => {
+        e.preventDefault();
+        var data = new FormData(e.currentTarget);
+        $.ajax({
+            url: "/app/settings/add/options.php?sending_by=mcisme",
+            data: data,
+            type: "POST",
+            contentType: false,
+            cache: false,
+            processData: false,
+            success: function(response) {          
+                try {
+                    var res = JSON.parse(response);
+                    if (res.status == 'succes') location.reload();
+                    else if (res.status == 'error') {
+                        console.log(res.content);
+                        $('#errorRapport').removeClass('hidden').html(`<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button><strong>Erreur : ` + res.content);
+                    } else if (res.status == 'save') {
+                        $('#errorRapport').removeClass('hidden alert-danger').addClass('alert-succes').removeClass('hidden').html(`<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button><strong>Enregistrement N° : ` + res.content);
+                    }
+                } catch (error) {
+                    console.error(response);
+                    $('#errorRapport').removeClass('hidden alert-danger').addClass('alert-succes').removeClass('hidden').html(`<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button><strong>Une erreur s'est produit pendant le traitement de votre requette.</span> Pour plus d'info, veuillez conctacter votre administrateur.`);
+                }
+            }
+        });
+    })

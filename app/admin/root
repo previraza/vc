@@ -1,0 +1,38 @@
+<?php
+    $_SESSION['URL'] = $_SERVER['REQUEST_URI'];
+    $_SESSION['current_link'] = '\app';
+    if(!isset($user) || empty($user)) {
+        $_SESSION['current_link'] = $_SERVER['REQUEST_URI'];
+        header("location:{$DS}app{$DS}login?codex=".time());
+    }
+    
+    require_once __DIR__."{$DS}setup.php";
+
+    if(!isset($_SESSION['PROFILE'])){
+        $_SESSION['PROFILE'] = mysqli_fetch_array(mysqli_query($db, "SELECT * FROM `{$user->role}s` WHERE user_id = $user->id"));
+    }$profile = $_SESSION['PROFILE'];
+    if (!isset($_SESSION["USER"]['mySection']) && ($_SESSION['PROFILE']['role'] == 'SS' || $_SESSION["PROFILE"]['role'] == 'CS')) $_SESSION["USER"]['mySection'] = $db_poo->query('SELECT sections.id FROM sections JOIN agents ON (sections.titular = agents.id OR sections.titular_2 = agents.id) WHERE agents.user_id = '.$user->id)->fetch_object()->id ?? 0;
+    // Strating Root
+    
+    if($profile) {
+        $user->data = (object) $profile;
+        if (!$profile['active'] || !$profile['valide'] || $profile['delete']) unset($_GET['b557c222c8ddcdf87e033706aad08e4ef7cf90d3']);
+        require_once __DIR__."{$DS}..{$DS}settings{$DS}get{$DS}pages{$DS}.menu";
+    }  
+    
+    if(isset($_GET['dataGetScript'], $_GET['script']) && $_GET['dataGetScript'] == 'OUTER_MCISME_ENTER' ){
+        $links = explode("--", isset($_GET['script']) ? $_GET['script'] : 'admin') ;
+        ($IN_MAINTENANCE === 1) ? $links = ['errors', 'repair'] : $links[1] = (isset($links[1]) && $links[1]) ? $links[1] : "index" ;
+        $FLink = "{$ROOT}scripts{$DS}$links[0]{$DS}$links[1].bin";
+        require_once $FLink = file_exists($FLink) ? $FLink : "{$ROOT}scripts{$DS}errors{$DS}404.bin" ;
+    } else {
+        ob_start();
+        $links = explode("--", isset($_GET['b557c222c8ddcdf87e033706aad08e4ef7cf90d3']) ? $_GET['b557c222c8ddcdf87e033706aad08e4ef7cf90d3'] : 'admin') ;
+        ($IN_MAINTENANCE === 1) ? $links = ['errors', 'repair'] : $links[1] = (isset($links[1]) && $links[1]) ? $links[1] : "index" ;
+        $FLink = "{$ROOT}pages{$DS}$links[0]{$DS}$links[1].bin";
+        require_once $FLink = file_exists($FLink) ? $FLink : "{$ROOT}pages{$DS}errors{$DS}404.bin" ;
+        $content = (object) array('page' => minify_output(ob_get_clean()), 'title' => isset($pageTitle) && $pageTitle ? $pageTitle : "Page Title", 'links' => $links) ;
+        if(isset($_POST['dynamicLink']) && $_POST['dynamicLink'] == 'dynamicLink' || isset($_GET['dynamicLink']) && $_GET['dynamicLink'] == 'dynamicLink') echo json_encode($content);
+        else require_once $_SERVER['DOCUMENT_ROOT']."{$DS}layouts{$DS}".(isset($_GET['theme'])?$_GET['theme']:'default')."{$DS}index.bin";
+    }
+    

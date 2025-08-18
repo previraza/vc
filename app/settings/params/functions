@@ -1,0 +1,324 @@
+<?php
+    function secure_require(){
+        
+    }
+    
+    function subMyString (String $text = 'abcdefghijklmnopqrstuvwxyz', Int $limit = 100, String $separator = "...") {
+        return (strlen($text) > $limit) ? substr($text, 0, $limit).'...' : $text;
+    }
+    
+    function array_trait_string(Array $array = array()) : array {
+        $arrayTrait = [];
+        foreach ($array as $k => $v) {
+            $arrayTrait[$k] = is_string($v) ? trim(htmlspecialchars($v, ENT_QUOTES | ENT_SUBSTITUTE | ENT_HTML401)) : $v; 
+        } return $arrayTrait;
+    } 
+
+    function load_directory(String $directoryLink = '/') : String {
+        $dir = dirname(dirname(dirname(__DIR__)));
+        foreach (explode('/',$directoryLink) as $value) {
+            if(!is_dir($dir.DS.$value)) 
+            mkdir($dir.DS.$value);
+            $dir.=DS.$value;
+        }
+        return $dir;
+    }
+
+    function is_not_in($s,$a):bool{
+        foreach ($a as $v) if($v=$s) return false; return true;
+    }
+    
+    function data_no_null(Array $array = array()) : Bool {
+        foreach ($array as $v) if(!$v) return false; 
+        return true;
+    } 
+
+    function ext_file(String $fileName = null): String {
+        $returner = explode('.',$fileName);
+        return (count($returner) === 1) ? '' : '.'.$returner[count($returner)-1];
+    }
+
+    function prevLink($HTTP_REFERER){
+        $a = explode('--',"http://localhost:84/app/?fa69951bc733eb82713e936be33597e1=DATA_CRYPTING_ON:fa69951bc733eb82713e936be33597e1=WABTECHS_CRYPTING_ON: e91497f38407364c8e86ade9098950d978814190&MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3VIRAZA_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3&MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3&WABTECHS_CRYPTING_ON_LAVINGOL&MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3&b557c222c8ddcdf87e033706aad08e4ef7cf90d3=student--request");
+        return end($a).'.bin';
+    }
+
+    function json_response (int $code, string $title, $content): void {
+        die(json_encode(array(
+            'code' => $code,
+            'title' => $title,
+            'content' => $content
+        )));
+    } ; function print_a (...$vars): void {
+        echo '<pre>';
+        print_r($vars);
+        echo '</pre>';
+    } ; function debug (...$vars): void {
+        echo '<pre>';
+        var_dump($vars);
+        die('</pre>');
+    } ; function get_file_ext (string $file_name): string {
+        $tmp = explode('.', $file_name);
+        return end($tmp);
+    } ; function mysqli_traite_array (mysqli $mysql, array $data_array): array {
+        $tmp = array();
+        foreach ($data_array as $k => $v)
+            $tmp[$k] = is_array($v) ? mysqli_traite_array($mysql, $v) : mysqli_escape_string($mysql, $v);
+        return $tmp;
+    } ;
+
+function minify_output($input) { 
+    if(trim($input) === "") return $input;
+    // Remove extra white-space(s) between HTML attribute(s)
+    $input = preg_replace_callback('#<([^\/\s<>!]+)(?:\s+([^<>]*?)\s*|\s*)(\/?)>#s', function($matches) {
+        return '<' . $matches[1] . preg_replace('#([^\s=]+)(\=([\'"]?)(.*?)\3)?(\s+|$)#s', ' $1$2', $matches[2]) . $matches[3] . '>';
+    }, str_replace("\r", "", $input));
+    // Minify inline CSS declaration(s)
+    if(strpos($input, ' style=') !== false) {
+        $input = preg_replace_callback('#<([^<]+?)\s+style=([\'"])(.*?)\2(?=[\/\s>])#s', function($matches) {
+            return '<' . $matches[1] . ' style=' . $matches[2] . minify_css($matches[3]) . $matches[2];
+        }, $input);
+    }
+    if(strpos($input, '</style>') !== false) {
+        $input = preg_replace_callback('#<style(.*?)>(.*?)</style>#is', function($matches) {
+        return '<style' . $matches[1] .'>'. minify_css($matches[2]) . '</style>';
+        }, $input);
+    }
+    if(strpos($input, '</script>') !== false) {
+        $input = preg_replace_callback('#<script(.*?)>(.*?)</script>#is', function($matches) {
+        return '<script' . $matches[1] .'>'. minify_js($matches[2]) . '</script>';
+        }, $input);
+    }
+
+    $output = preg_replace(
+        array(
+            // t = text
+            // o = tag open
+            // c = tag close
+            // Keep important white-space(s) after self-closing HTML tag(s)
+            '#<(img|input)(>| .*?>)#s',
+            // Remove a line break and two or more white-space(s) between tag(s)
+            '#(<!--.*?-->)|(>)(?:\n*|\s{2,})(<)|^\s*|\s*$#s',
+            '#(<!--.*?-->)|(?<!\>)\s+(<\/.*?>)|(<[^\/]*?>)\s+(?!\<)#s', // t+c || o+t
+            '#(<!--.*?-->)|(<[^\/]*?>)\s+(<[^\/]*?>)|(<\/.*?>)\s+(<\/.*?>)#s', // o+o || c+c
+            '#(<!--.*?-->)|(<\/.*?>)\s+(\s)(?!\<)|(?<!\>)\s+(\s)(<[^\/]*?\/?>)|(<[^\/]*?\/?>)\s+(\s)(?!\<)#s', // c+t || t+o || o+t -- separated by long white-space(s)
+            '#(<!--.*?-->)|(<[^\/]*?>)\s+(<\/.*?>)#s', // empty tag
+            '#<(img|input)(>| .*?>)<\/\1>#s', // reset previous fix
+            '#(&nbsp;)&nbsp;(?![<\s])#', // clean up ...
+            '#(?<=\>)(&nbsp;)(?=\<)#', // --ibid
+            // Remove HTML comment(s) except IE comment(s)
+            '#\s*<!--(?!\[if\s).*?-->\s*|(?<!\>)\n+(?=\<[^!])#s'
+        ),
+        array(
+            '<$1$2</$1>',
+            '$1$2$3',
+            '$1$2$3',
+            '$1$2$3$4$5',
+            '$1$2$3$4$5$6$7',
+            '$1$2$3',
+            '<$1$2',
+            '$1 ',
+            '$1',
+            ""
+        ),
+    $input);
+    return $output ? $output : $input ;
+}
+
+// CSS Minifier => http://ideone.com/Q5USEF + improvement(s)
+function minify_css($input) {
+    if(trim($input) === "") return $input;
+    return preg_replace(
+        array(
+            // Remove comment(s)
+            '#("(?:[^"\\\]++|\\\.)*+"|\'(?:[^\'\\\\]++|\\\.)*+\')|\/\*(?!\!)(?>.*?\*\/)|^\s*|\s*$#s',
+            // Remove unused white-space(s)
+            '#("(?:[^"\\\]++|\\\.)*+"|\'(?:[^\'\\\\]++|\\\.)*+\'|\/\*(?>.*?\*\/))|\s*+;\s*+(})\s*+|\s*+([*$~^|]?+=|[{};,>~]|\s(?![0-9\.])|!important\b)\s*+|([[(:])\s++|\s++([])])|\s++(:)\s*+(?!(?>[^{}"\']++|"(?:[^"\\\]++|\\\.)*+"|\'(?:[^\'\\\\]++|\\\.)*+\')*+{)|^\s++|\s++\z|(\s)\s+#si',
+            // Replace `0(cm|em|ex|in|mm|pc|pt|px|vh|vw|%)` with `0`
+            '#(?<=[\s:])(0)(cm|em|ex|in|mm|pc|pt|px|vh|vw|%)#si',
+            // Replace `:0 0 0 0` with `:0`
+            '#:(0\s+0|0\s+0\s+0\s+0)(?=[;\}]|\!important)#i',
+            // Replace `background-position:0` with `background-position:0 0`
+            '#(background-position):0(?=[;\}])#si',
+            // Replace `0.6` with `.6`, but only when preceded by `:`, `,`, `-` or a white-space
+            '#(?<=[\s:,\-])0+\.(\d+)#s',
+            // Minify string value
+            '#(\/\*(?>.*?\*\/))|(?<!content\:)([\'"])([a-z_][a-z0-9\-_]*?)\2(?=[\s\{\}\];,])#si',
+            '#(\/\*(?>.*?\*\/))|(\burl\()([\'"])([^\s]+?)\3(\))#si',
+            // Minify HEX color code
+            '#(?<=[\s:,\-]\#)([a-f0-6]+)\1([a-f0-6]+)\2([a-f0-6]+)\3#i',
+            // Replace `(border|outline):none` with `(border|outline):0`
+            '#(?<=[\{;])(border|outline):none(?=[;\}\!])#',
+            // Remove empty selector(s)
+            '#(\/\*(?>.*?\*\/))|(^|[\{\}])(?:[^\s\{\}]+)\{\}#s'
+        ),
+        array(
+            '$1',
+            '$1$2$3$4$5$6$7',
+            '$1',
+            ':0',
+            '$1:0 0',
+            '.$1',
+            '$1$3',
+            '$1$2$4$5',
+            '$1$2$3',
+            '$1:0',
+            '$1$2'
+        ),
+    $input);
+}
+
+// JavaScript Minifier
+function minify_js($input) {
+    if(trim($input) === "") return $input;
+    return preg_replace(
+        array(
+            // Remove comment(s)
+            '#\s*("(?:[^"\\\]++|\\\.)*+"|\'(?:[^\'\\\\]++|\\\.)*+\')\s*|\s*\/\*(?!\!|@cc_on)(?>[\s\S]*?\*\/)\s*|\s*(?<![\:\=])\/\/.*(?=[\n\r]|$)|^\s*|\s*$#',
+            // Remove white-space(s) outside the string and regex
+            '#("(?:[^"\\\]++|\\\.)*+"|\'(?:[^\'\\\\]++|\\\.)*+\'|\/\*(?>.*?\*\/)|\/(?!\/)[^\n\r]*?\/(?=[\s.,;]|[gimuy]|$))|\s*([!%&*\(\)\-=+\[\]\{\}|;:,.<>?\/])\s*#s',
+            // Remove the last semicolon
+            '#;+\}#',
+            // Minify object attribute(s) except JSON attribute(s). From `{'foo':'bar'}` to `{foo:'bar'}`
+            '#([\{,])([\'])(\d+|[a-z_][a-z0-9_]*)\2(?=\:)#i',
+            // --ibid. From `foo['bar']` to `foo.bar`
+            '#([a-z0-9_\)\]])\[([\'"])([a-z_][a-z0-9_]*)\2\]#i'
+        ),
+        array(
+            '$1',
+            '$1$2',
+            '}',
+            '$1$3',
+            '$1.$3'
+        ),
+    $input);
+}
+
+function get_host(String $SERVER_NAME) : String{
+    return filter_var($SERVER_NAME, FILTER_VALIDATE_IP) ? 'default' : $SERVER_NAME ;
+};
+
+class APP {
+    public static function get_mention(Float $value = 0, String $system = 'LMD', String $default_result = '') : String {
+        if($system == 'LMD' && $value > 0 && $value <= 20){
+            $default_result = ($value >= 18) ? 'A' : (($value >= 16) ? 'B' : (($value >= 14) ? 'C' : (($value >= 12) ? 'D' : (($value >= 10) ? 'E' : (($value >= 8) ? 'F' : 'G')))));
+        }elseif($system = 'LG' && 0 < $value && $value <= 100){
+            $default_result = ($value >= 90) ? 'TG-DIS' : (($value >= 85) ? 'G-DIS' : (($value >= 70) ? 'DIS' : (($value >= 50) ? 'SAT' : (($value >= 45) ? 'A' : 'AA'))));
+        } 
+        return $default_result;
+    }
+
+}
+
+function get_teacher_grade(string $title) : string {
+    return array(
+        'P' => 'Professeur',
+        'CT' => 'Chef de Travaux',
+        'PE' => 'Professeur Emérite',
+        'PA' => 'Professeur Associé',
+        'PO' => 'Professeur Ordinaire',
+        'ASS1' => 'Assistant Premier Mandat',
+        'ASS2' => 'Assistant Deuxième Mandat',
+    )[$title];
+}
+function get_teacher_role(string $title) : string {
+    return array(
+        'EN' => 'Enseignant',
+        'DG' => 'Directeur Général ',
+        'SG' => 'Secrétaire Général Académique',
+        'SGR' => 'Secrétaire Général Académique Chargé de la Récherche',
+        'SGA' => 'Secrétaire Général Administratif',
+        'AB' => 'Administrateur de Budget',
+        'CS' => 'Chef de Section',
+        'CSA' => 'Chef de Section Adjoint',
+        'SJ' => 'Secrétaire Jury',
+        'DCD' => 'Décédé',
+        'ADMIN' => 'Administrateur Principal',
+    )[$title];
+}
+
+function viewOnlyBy(...$granted){
+    extract($GLOBALS);
+    if(!in_array($profile['role'],$granted)) {
+        ob_start();
+        require_once $ROOT."pages{$DS}errors{$DS}403.bin";
+        $content = (object) array('page' => minify_output(ob_get_clean()), 'title' => isset($pageTitle) && $pageTitle ? $pageTitle : "403 : Accès Restreinte", 'links' => ['Forbidden',$profile['role']]) ;
+        exit(require_once $_SERVER['DOCUMENT_ROOT']."{$DS}layouts{$DS}".(isset($_GET['theme'])?$_GET['theme']:'default')."{$DS}index.bin");
+    }
+}
+
+function get_Mention_of($res, $cmpl, $sys){
+    return [
+        'AA',
+        'LMD' => $res >= 18 ? 'A' : (($res >= 16) ? 'B' : (($res >= 14) ? 'C' : (($res >= 12) ? 'D' : (($res >= 10) ? 'E' : (($res >= 8) ? 'F' : 'G'))))),
+        'LG' => $res >= 85 ? 'G-D' : (($res >= 70) ? 'DIS' : (($res >= 50) ? 'SAT' : 'A'))
+    ][!$cmpl&&$sys=='LG'?0:$sys];
+}
+
+function json(array $value = null){
+    die(json_encode($value));
+}
+
+function TrsConfigTable($options){
+    $data = (object) $options;
+    return "<tr><td>$data->count</td><td>-</td><td>Database => Table</td><td>Creation et migration de la table $data->table dans la base de donnee de l'archive suffixee _$data->year</td><td>".HTML::formSelect(
+        ['name'=>"config_migration_table", 'id'=>"config_migration_table_$data->table", 'dataSet'=>"data-table='$data->table'", 'selected'=>$data->action, 'label'=>false, 'data'=>[['name'=>'copy'], ['name'=>'move']]]
+    )."</td><td>wait</td></tr>";
+}
+
+class HTML {
+    public static function formSelect(array $options){
+        $select = (object) $options;
+        $select->dataSet = $select->dataSet??'';
+        $select->response = ($select->label??null !== false) ? "<label>".($select->label??ucfirst($select->name))."</label>" : '';
+        $select->response.= "<select class=select2 name=\"$select->name\" id=\"".($select->id??$select->name)."\"$select->dataSet>";
+        $select->response.= is_string($select->all??null) ? "<option value=*>Selectionner 1 $select->label</option>" : '';
+        $props = "";
+        foreach($select->props??[] AS $key => $value){
+            $props.= " $key=\"$value\"";
+        }
+        foreach($select->data AS $data){
+            $option = (object) $data;
+            $option->id = $option->id??$option->name;
+            $select->response.= "<option $props value=\"".($option->id??0)."\"".(($select->selected??'') == $option->id ? 'selected' : '').">".($option->name??'')."</option>";
+        } $select->response.= "</select>";
+        return $select->response;
+    }
+
+    public static function formInput(array $options){
+
+    }
+}
+
+
+function error403($profile = false) {
+    extract($GLOBALS);
+    isset($ROOT, $DS) ? ob_start() : header('location:/app');
+    require_once $ROOT."pages{$DS}errors{$DS}403.bin";
+    $content = (object) array('page' => minify_output(ob_get_clean()), 'title' => isset($pageTitle) && $pageTitle ? $pageTitle : "403 : Accès Restreinte", 'links' => ['Forbidden', $profile?$profile['role']:'GUESR']) ;
+    exit(require_once $_SERVER['DOCUMENT_ROOT']."{$DS}layouts{$DS}".(isset($_GET['theme'])?$_GET['theme']:'default')."{$DS}index.bin");
+}
+
+function isGuest(){
+    if(false) error403($profile??false);
+}
+
+
+function postCaches ($key, $default = null) {
+    return $_SESSION['DATA_CACHE'][$key] = $_POST[$key] = isset($_POST[$key])
+    ? $_POST[$key]
+    : (isset($_SESSION['DATA_CACHE'][$key])
+        ? $_SESSION['DATA_CACHE'][$key]
+        : ($_SESSION['DATA_CACHE'][$key] = $default));
+}
+
+function getYearFromDatabaseName($text) {
+    if (preg_match('/_(\d{4})$/', $text, $matches)) {
+        return $matches[1]; // Retourne l'année trouvée
+    }
+    return null; // Si aucune année n'est trouvée
+}
+
+function formSelectedOption($value, $key, $selected = null){
+    return ((isset($_POST[$key]) && $_POST[$key] === $value) | (!is_null($selected) && $value == $selected)) ? 'selected' : ''; 
+}

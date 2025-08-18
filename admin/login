@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Système de numérisation de l'enseignement | Institut supérieur de techniques appliquées</title>
+    <meta name="description" content="ISTA-Kinshasa - Institut Supérieur de Techniques Appliquées">
+    <meta name="keywords" content="institut, technique, application, université, kinshasa, industrie, informatique, aviation, mecanique, telecommunication, electronique, electricite, maintenance materiaux medicales, preparatoire, apprentissage, technologie, universtic">
+    <meta name="author" content="VIRAZA">
+    <link rel="shortcut icon" href="/layouts/default/icon/favicon.webp" type="image/x-icon">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="/public/assets/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/public/assets/css/fontawesome-all.css">
+    <link rel="stylesheet" href="/public/assets/css/flaticon.css">
+    <link rel="stylesheet" href="/public/assets/css/jquery-ui.css">
+    <link rel="stylesheet" href="/public/assets/css/animate.css">
+    <link rel="stylesheet" href="/public/assets/css/nice-select.css">
+    <link rel="stylesheet" href="/public/assets/css/video.min.css">
+    <link rel="stylesheet" href="/public/assets/css/jquery.mCustomScrollbar.min.css">
+    <link rel="stylesheet" href="/public/assets/css/slick.css">
+    <link rel="stylesheet" href="/public/assets/css/rs6.css">
+    <link rel="stylesheet" href="/public/assets/css/slick-theme.css">
+    <link rel="stylesheet" href="/public/assets/css/style.css">
+    <link rel="stylesheet" href="/public/assets/css/mcisme.css">
+</head>
+
+<body>
+    <div id="preloader"></div>
+    <section id="ft-thx-banner" class="ft-thx-banner-section position-relative d-flex align-items-center p-0" data-background="/layouts/default/images/portfolio/12.webp">
+        <div class="background_overlay"></div>
+        <div class="container">
+            <div class="ft-thx-banner-content position-relative">
+                <div class="row">
+                    <div class="col-lg-6">
+                        <div class="ft-thx-banner-text headline pera-content">
+                            <div class="banner-slug text-uppercase">système de numérisation de l'éducation</div>
+                            <h1><a href="/">ISTA - Kinshasa</a></h1>
+                            <p>Bienvenue dans le système de numérisation de l'éducation conçu par <a class="link-warning" href="http://www.viraza.net" target="_blank" rel="noopener noreferrer">viraza</a>dans le but de contribuer à l'amélioration de l'éducation
+                                nationale </p>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="ft-thx-banner-courier-form forms-content">
+                            <div class="forms-wrapper d-flex align-items-center overflow-hidden flex-column">
+                                <form action="?" id="login" class="w-100">
+                                    <h5 class="text-white-50">Espace Administrateur </h5>
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="wc-input">
+                                                <h3 class="text-warning border p-3 rounded-1">Se connecter </h3>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-12">
+                                            <div class="wc-input"><span>Nom d'utilisateur :</span>
+                                                <div class="wc-text-input position-relative"><input type="text" name="login[username]" id="login_username" value="" required="required" minlength="3" title="3 caractères minimum"></div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-12">
+                                            <div class="wc-input"><span>Mot de passe :</span>
+                                                <div class="wc-text-input position-relative"><input type="password" name="login[password]" id="login_password" value="" required="required" minlength="8" title="8 caractères minimum"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div id="loginErrorBox"></div><button class="text-uppercase" type="submit">Connexion</button></form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <script src="/public/assets/js/jquery.min.js"></script>
+    <script src="/public/assets/js/bootstrap.min.js"></script>
+    <script src="/public/assets/js/popper.min.js"></script>
+    <script src="/public/assets/js/jquery-ui.min.js"></script>
+    <script src="/public/assets/js/jquery.ui.touch-punch.min.js"></script>
+    <script src="/public/assets/js/jquery.magnific-popup.min.js"></script>
+    <script src="/public/assets/js/appear.js"></script>
+    <script src="/public/assets/js/slick.js"></script>
+    <script src="/public/assets/js/jquery.counterup.min.js"></script>
+    <script src="/public/assets/js/waypoints.min.js"></script>
+    <script src="/public/assets/js/imagesloaded.pkgd.min.js"></script>
+    <script src="/public/assets/js/jquery.filterizr.js"></script>
+    <script src="/public/assets/js/jquery.mCustomScrollbar.concat.min.js"></script>
+    <script src="/public/assets/js/wow.min.js"></script>
+    <script src="/public/assets/js/jquery.cssslider.min.js"></script>
+    <script src="/public/assets/js/rbtools.min.js"></script>
+    <script src="/public/assets/js/rs6.min.js"></script>
+    <script src="/public/assets/js/script.js"></script>
+    <script src="/public/assets/js/mcisme.js"></script>
+    <script defer>
+        $(function() {
+            $("#login").on('submit', (e) => {
+                e.preventDefault();
+                $('#login-loader').fadeIn();
+                $('#loginErrorBox').html();
+                $.post("/app/settings/get/connected.php", {
+                    un: $('#login_username').val(),
+                    by: 'adminer_norefer',
+                    pw: $('#login_password').val()
+                }, function(data, textStatus, jqXHR) {
+                    try {
+                        var res = JSON.parse(data);
+                        if (res.status == "succes") location.href = './';
+                        else {
+                            console.log(res.header, res.content);
+                            $('#loginErrorBox').html(` <div class="alert alert-danger alert-dismissible mt-3" role="alert" id="alertConnect"><small>${res.content}</small></div>`);
+                            $('#login-loader').fadeOut(300);
+                        }
+                    } catch (error) {
+                        $('#loginErrorBox').html(` <div class="alert alert-danger alert-dismissible mt-3" role="alert" id="alertConnect"><small>Une erreur s'est produit pendant le traitement de votre requette.</small></div>`);
+                        $('#login-loader').fadeOut(300);
+                        return console.log(data);
+                    }
+                });
+            })
+            document.title = 'Se connecter sur le SNEN de l\'Institut Supérieur de Techniques Appliquées';
+        });
+    </script>
+</body>
+
+</html>

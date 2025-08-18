@@ -1,0 +1,25 @@
+    $('#addLevel').on('submit', (e) => {
+        e.preventDefault();
+        var data = new FormData(e.currentTarget);
+        $.ajax({
+            url: "/app/settings/edit/levels.php?sending_by=mcisme",
+            data: data,
+            type: "POST",
+            contentType: false,
+            cache: false,
+            processData: false,
+            success: function(response) {
+                try {
+                    var res = JSON.parse(response);
+                    if (res.status == 'succes') {
+                        location.href = '/app/?fa69951bc733eb82713e936be33597e1=DATA_CRYPTING_ON:fa69951bc733eb82713e936be33597e1=WABTECHS_CRYPTING_ON: e91497f38407364c8e86ade9098950d978814190&MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3VIRAZA_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3&MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3&WABTECHS_CRYPTING_ON_LAVINGOL&MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3&b557c222c8ddcdf87e033706aad08e4ef7cf90d3=level';
+                    } else if (res.status == 'error') {
+                        console.log(res.content);
+                        $('#errorRapport').removeClass('hidden');
+                    }
+                } catch (error) {
+                    console.error(response);
+                }
+            }
+        });
+    })

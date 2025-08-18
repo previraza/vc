@@ -1,0 +1,16 @@
+<?php class Report extends Controller 
+{
+    public function __construct()
+    {
+        parent::__construct();
+        $this->compact('User', $this->loadModel('users'));
+        $this->compact('Payment', $this->loadModel('payments'));
+        $this->compact('Slip', $this->loadModel('slips'));
+        $app = app();
+        $app->ASSETS['_css'] .= '<link rel="stylesheet" href="/assets/vendor/swiperSlider/swiper-bundle.min.css">';
+        $app->ASSETS['_js'] .= '<script src="/assets/vendor/swiperSlider/swiper-bundle.min.js"></script>';
+        $app->ASSETS['css'] .= '<style>li.card.card-slide.swiper-slide {height: fit-content;}</style>';
+        $app->ASSETS['_css'] .= '<link rel="stylesheet" href="/assets/css/hope-ui.min.css?v=2.2.0" />';
+        $app->ASSETS['_css'] .= '<link rel="stylesheet" href="/assets/css/pro.min.css?v=2.2.0" />';
+    }
+}

@@ -1,0 +1,93 @@
+<?php class Fee extends Controller
+{
+    public function __construct()
+    {
+        parent::__construct();
+        $this->fees = $this->loadModel('users');
+        $this->fees = $this->loadModel('fees');
+        $this->app->ASSETS['_css'] .= '<link rel="stylesheet" href="/assets/vendor/choiceJS/style/choices.min.css">';
+        $this->app->ASSETS['css'] .= '<link rel="stylesheet" href="/assets/css/blog.min.css"/>';
+        $this->app->ASSETS['_js'] .= '
+            <script src="/assets/js/plugins/signaturepad.js"defer></script>
+            <script src="/assets/vendor/signature_pad/dist/signature_pad.umd.js" async></script>
+            <script src="/assets/vendor/choiceJS/script/choices.min.js"></script>
+            <script src="/assets/js/plugins/choice.js" defer></script>';
+        $this->app->ASSETS['js'] .= '<script src="/assets/js/appointment.js"></script>';
+    }
+    public function index()
+    {
+        $this->compact('fees', $this->fees->all());
+        return $this->render();
+    }
+    public function trash()
+    {
+        $this->compact('fees', $this->fees->all_());
+        return $this->render('trash');
+    }
+    public function delete()
+    {
+        $fee = (object) $this->fees->find($this->params[0]);
+        $response = 0;
+        if (isset($fee->enc)) {
+            $response = $this->fees->delete($fee->enc) ? 204 : 502;
+        } else {
+            $response = 604;
+        }
+        if (isset($_GET['method']) && $_GET['method'] == 'JSON')
+            json($response);
+        Session::init()->set('MSG::ACTION:DELETE', $response);
+        $this->app->request->back();
+    }
+    
+    public function erase()
+    {
+        $this->app->request->back();
+    }
+    public function edit()
+    {
+        $data = (object) $this->fees->find($this->params[0]);
+        $this->compact('data_edit', isset($data->enc) ? $data : false);
+        return $this->render($data === [] ? 'err' : 'index');
+    }
+    public function add()
+    {
+        $data = (object) ($_POST['data'] ?? []);
+        $fee = (object) ($this->fees->findWhere([
+            'name' => $data->name ?? '',
+            'code' => $data->code ?? ''
+        ])[0] ?? []);
+        $response = 0;
+        if (isset($fee->enc)) {
+            $response = 403;
+        } else {
+            $data->allower = implode('|', $data->allower);
+            $data->level = $data->level === '*' ? 'NULL' : $data->level;
+            $data->enc = $this->app->generate_enc();
+            $response = $this->fees->insert($data) ? 201 : 502;
+        }
+        $_POST['data']['allower'] = '';
+        if (isset($_GET['method']) && $_GET['method'] == 'JSON')
+            json($response);
+        Session::init()->set('MSG::ACTION:RESTORE', $response);
+        $this->app->request->back();
+    }
+    public function update()
+    {
+        $fee = (object) $this->fees->find($this->params[0] ?? -1);
+        $response = 0;
+        if (isset($fee->enc)) {
+            $data = (object) ($_POST['data'] ?? []);
+            $data->allower = implode('|', $data->allower);
+            $data->level = $data->level === '*' ? NULL : $data->level;
+            $data->enc = $this->app->generate_enc();
+            $response = $this->fees->update($data, $this->params[0]) ? 205 : 502;
+        } else {
+            $response = 400;
+        }
+        $_POST['data']['allower'] = '';
+        if (isset($_GET['method']) && $_GET['method'] == 'JSON')
+            json($response);
+        Session::init()->set('MSG::ACTION:RESTORE', $response);
+        $this->app->request->back();
+    }
+}

@@ -1,0 +1,340 @@
+<?php $pageTitle = "Mon compte" ;
+
+if($user->role === 'student'){
+    $rqtCotes = mysqli_query($db, "SELECT courses.name, courses.credit, cotes.*, classes.id AS class
+                                        FROM courses 
+                                            JOIN classes ON classes.id = courses.class
+                                            JOIN students ON students.user_id = $user->id
+                                            LEFT JOIN cotes ON (cotes.course = courses.id AND cotes.student = students.id AND cotes.active = 1)
+                                        WHERE courses.active = 1 AND classes.active = 1 AND students.class = classes.id"
+        ); $CREDIT_VALIDE = $TOTAL_COTES = $TOTAL_CREDIT = 0; $NBR_COURS = mysqli_num_rows($rqtCotes); $COURSES = [];
+        while ($row = mysqli_fetch_array($rqtCotes)) {
+            $COURSES[] = $row; extract($row);
+            $TOTAL_COTES += (($COTE = $JURY?$JURY:((($RES = ((($TP1+$TP2+$TP3+$INT1+$INT2)/5) + $EXAM)/2) < 10 || !$RATR) ? $RES : $RATR)) * $credit) ;
+            $CREDIT_VALIDE += ($COTE < 10) ? 0 : $credit;
+            $TOTAL_CREDIT += $credit;
+    } ; $COTES_FINALE = ($TOTAL_COTES * 5) / ($TOTAL_CREDIT ? $TOTAL_CREDIT : 1) ;
+
+    $std = (object) mysqli_fetch_array(mysqli_query($db, 
+        "SELECT students.*, sections.name AS section_name, options.name AS option_name, level.name AS level_name, promotion 
+            FROM students 
+            JOIN classes  ON classes.id  = students.class 
+            JOIN sections ON sections.id = classes.section 
+            JOIN options  ON options.id  = classes.option 
+            JOIN level    ON level.id    = classes.level 
+        WHERE students.active = 1 AND students.valide = 1 AND students.user_id = $user->id ORDER BY firstname"));
+
+    $frais_scholar = $frais_scholar_ = 0;
+    $rqtFinancy = mysqli_query($connection, "SELECT * FROM frais JOIN classes ON (classes.id = $std->class AND classes.level = frais.level AND classes.promotion = frais.year) WHERE frais.active = 1");
+    $rqtFinancy_ = mysqli_query($connection, "SELECT * FROM payments WHERE student = $user->id");
+    while($row = mysqli_fetch_array($rqtFinancy)) $frais_scholar+= ($row['type'] == 'FRST1' || $row['type'] == 'FRST2' || $row['type'] == 'FRST3') ? $row['solde'] : 0;
+    while($row = mysqli_fetch_array($rqtFinancy_)) $frais_scholar_+= ($row['type'] == 'FRST1' || $row['type'] == 'FRST2' || $row['type'] == 'FRST3') ? $row['solde'] : 0;
+    $deliberable = ($rqtFinancy > $rqtFinancy_) ? true : false ;
+}else if($user->role === 'teacher'){
+    $std = (object) mysqli_fetch_array(mysqli_query($db, "SELECT * FROM teachers WHERE active = 1 AND valide = 1 AND user_id = $user->id ORDER BY title DESC, firstname"));
+}else if($user->role === 'agent'){
+    $std = (object) mysqli_fetch_array(mysqli_query($db, "SELECT * FROM agents WHERE active = 1 AND valide = 1 AND user_id = $user->id"));
+}
+?>
+<div id="main-wrapper">
+    <!-- Content body start -->
+    <div class="content-body">
+        <div class="container-fluid">
+            <!-- row -->
+            <div class="row mb-5">
+                <div class="col-lg-12">
+                    <div class="profile card card-body px-3 pt-3 pb-0">
+                        <div class="profile-head">
+                            <div class="profile-info row" style="height:100px">
+                                <div class="profile-photo col-auto">
+                                    <img src="<?= $user->profile ?>" id="profleImgFile" class="img-fluid rounded-circle" alt="" height="90px" width="90px">
+                                </div>
+                                <div class="col">
+                                    <div class="px-3 pt-2">
+                                        <h4 class="text-primary mb-0">
+                                            <?= $user->username ?>
+                                        </h4>
+                                        <div>
+                                            <?= $profile['gender'] ?>
+                                        </div>
+                                        <small><b><?= $role[$user->role] ?></b> : <?= $user->departement_name ?></small>
+                                    </div>
+                                </div>
+                                <div class="col-auto d-flex flex-column">
+                                    <form action="#" method="post" enctype="multipart/form-data">
+                                        <label class="btn btn-primary" href="#" role="button" for="inputProfileFile">Chnager profile</label>
+                                        <input type="file" name="file" class="d-none" id="inputProfileFile" accept="image/*">
+                                        <input type="hidden" name="CON_47" id="inputCON_47" class="form-control" value="mcisme">
+                                        <input class="btn btn-success" style="display:none;" id="inputProfileFileSubmit" href="#" role="button" value="Sauvegarder" type="submit">
+                                    </form>
+                                    <div class="alert alert-warning" id="errorRapport" style="display:none"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <?php if($user->role === 'student') { ?>
+                <div class="col-xl-4">
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="dashboard-summery-one">
+                                <div class="row">
+                                    <div class="col-6">
+                                        <div class="item-icon bg-light-red">
+                                            <i class="flaticon-money text-red"></i>
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="item-content">
+                                            <div class="item-title">Frait Payé</div>
+                                            <div class="item-number"><span class="counter" data-num="<?= $frais_scholar_ ?>"><?= $frais_scholar_ ?></span> <span>Fc</span></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="dashboard-summery-one">
+                                <div class="row">
+                                    <div class="col-6">
+                                        <div class="item-icon bg-light-blue">
+                                            <i class="flaticon-money text-blue"></i>
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="item-content">
+                                            <div class="item-title">Faits Total</div>
+                                            <div class="item-number"><span class="counter" data-num="<?= $frais_scholar ?>"><?= $frais_scholar ?></span> <span>Fc</span></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="dashboard-summery-one">
+                                <div class="row">
+                                    <div class="col-6">
+                                        <div class="item-icon bg-light-yellow">
+                                            <i class="flaticon-percentage-discount text-orange"></i>
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="item-content">
+                                            <div class="item-title">Taux de réussite</div>
+                                            <div class="item-number"><span class="counter" data-num="<?= number_format($COTES_FINALE, 2) ?>"><?= number_format($COTES_FINALE, 2) ?></span><span> %</span></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="dashboard-summery-one">
+                                <div class="row">
+                                    <div class="col-6">
+                                        <div class="item-icon bg-light-magenta">
+                                            <i class="flaticon-shopping-list text-magenta"></i>
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="item-content">
+                                            <div class="item-title">Total Crédits</div>
+                                            <div class="item-number"><span class="counter" data-num="<?= $CREDIT_VALIDE ?>"><?= $CREDIT_VALIDE ?></span>/<span class="counter" data-num="<?= $TOTAL_CREDIT ?>"><?= $TOTAL_CREDIT ?></span></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="dashboard-summery-one">
+                                <div class="row">
+                                    <div class="col-6">
+                                        <div class="item-icon bg-light-blue">
+                                            <i class="flaticon-calendar text-blue"></i>
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="item-content">
+                                            <div class="item-title">Total Cours</div>
+                                            <div class="item-number"><span class="counter" data-num="<?= $NBR_COURS ?>"><?= $NBR_COURS ?></span></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-8">
+                    <?php } else { ?>
+                        <div class="col-xl-12">
+                    <?php } ?>
+                    <div class="card" id='contentBlock'>
+                        <div class="card-body">
+                            <div class="profile-tab">
+                                <div class="custom-tab-1">
+                                    <ul class="nav nav-tabs">
+                                        <li class="nav-item"><a href="#about-me" data-toggle="tab" class="nav-link active show">A propos de moi</a>
+                                        </li>
+                                        <li class="nav-item"><a href="#profile-settings" data-toggle="tab" class="nav-link">Paramètres</a>
+                                        </li>
+                                    </ul>
+                                    <div class="tab-content">
+                                        <div id="about-me" class="tab-pane fade active show">
+                                            <div class="pt-3">
+                                                <div class="heading-layout1">
+                                                    <div class="item-title">
+                                                        <h3>A propos de moi</h3>
+                                                    </div>
+                                                    <div class="dropdown" download-hide="hide">
+                                                        <a class="dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-expanded="false">...</a>
+                                                        <div class="dropdown-menu dropdown-menu-right">
+                                                            <a class="dropdown-item" href="#" data-action="print"><i class="fas fa-print"></i>print</a>
+                                                            <a class="dropdown-item" href="#" data-action="reload"><i class="fas fa-redo-alt text-orange-peel"></i>Actualiser</a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="single-info-details">
+                                                    <div class="item-img">
+                                                        <img src="<?= $user->profile ?>" alt="student">
+                                                    </div>
+                                                    <div class="item-content">
+                                                        <div class="header-inline item-header" download-hide="hide">
+                                                            <h3 class="text-dark-medium font-medium"><?= $std->firstname ?></h3>
+                                                            <div class="header-elements">
+                                                                <ul>
+                                                                    <li><a href="#" data-action="print" onclick="printer()"><i class="fas fa-print"></i></a></li>
+                                                                    <li><a href="#" data-action="null" download-block="contentBlock" download-btn="btn"><i class="fas fa-download"></i></a></li>
+                                                                </ul>
+                                                            </div>
+                                                        </div>
+                                                        <p></p>
+                                                        <div class="info-table table-responsive">
+                                                            <table class="table text-nowrap">
+                                                                <tbody>
+                                                                    <tr>
+                                                                        <td>Nom complet :</td>
+                                                                        <td class="font-medium text-dark-medium"><?= "$std->firstname $std->lastname" ?></td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td>Matricul :</td>
+                                                                        <td class="font-medium text-dark-medium"><?= $std->matricul ?></td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td>Genre :</td>
+                                                                        <td class="font-medium text-dark-medium"><?= $std->gender ?></td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td>Nom du père :</td>
+                                                                        <td class="font-medium text-dark-medium"><?= $std->father ?></td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td>Nom de la mère :</td>
+                                                                        <td class="font-medium text-dark-medium"><?= $std->mother ?></td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td>Date de naissage :</td>
+                                                                        <td class="font-medium text-dark-medium"><?= $std->birthday ?></td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td>Religion :</td>
+                                                                        <td class="font-medium text-dark-medium"><?= $std->religion ?></td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td>Occupation :</td>
+                                                                        <td class="font-medium text-dark-medium"><?= isset($std->work) ? $std->work : '' ?></td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td>E-mail :</td>
+                                                                        <td class="font-medium text-dark-medium"><a href="mailto:<?= $std->email ?>"><?= $std->email ?></a></td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td>Téléphone :</td>
+                                                                        <td class="font-medium text-dark-medium"><a href="tel:<?= $std->firstname ?>"><?= $std->firstname ?></a></td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td>Addresse :</td>
+                                                                        <td class="font-medium text-dark-medium"><?= $std->address ?></td>
+                                                                    </tr>
+                                                                    <?php if ($std->role == 'student') { ?>
+                                                                        <tr>
+                                                                            <td>Section:</td>
+                                                                            <td class="font-medium text-dark-medium"><?= $std->section ?></td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <td>Option:</td>
+                                                                            <td class="font-medium text-dark-medium"><?= $std->option ?></td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <td>Level:</td>
+                                                                            <td class="font-medium text-dark-medium"><?= $std->level ?></td>
+                                                                        </tr>
+                                                                    <?php } ?>
+                                                                </tbody>
+                                                            </table>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div id="profile-settings" class="tab-pane fade">
+                                            <div class="pt-3">
+                                                <div class="heading-layout1">
+                                                    <div class="item-title">
+                                                        <h3>Paramètre de compte </h3>
+                                                    </div>
+                                                    <div class="dropdown">
+                                                        <a class="dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-expanded="false">...</a>
+                                                        <div class="dropdown-menu dropdown-menu-right">
+                                                            <a class="dropdown-item" href="#" data-action="reload"><i class="fas fa-redo-alt text-orange-peel"></i>Actualiser</a>
+                                                            <a class="dropdown-item" href="#" data-action="changePass"><i class="fas fa-key"></i>Mot de passe</a>
+                                                            <a class="dropdown-item" href="#" data-action="print"><i class="fas fa-print"></i>print</a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="settings-form">
+                                                    <div class="new-added-form">
+                                                        <div class="row">
+                                                            <div class="col-lg-6 col-12 form-group">
+                                                                <label>Nom Complet</label>
+                                                                <input type="text" placeholder="" disabled class="form-control" value="<?= "$std->firstname $std->lastname" ?>">
+                                                            </div>
+                                                            <div class="col-lg-6 col-12 form-group">
+                                                                <label>Numéro Matricule</label>
+                                                                <input type="text" placeholder="" disabled class="form-control" value="<?= $std->matricul ?>">
+                                                            </div>
+                                                            <div class="col-lg-6 col-12 form-group">
+                                                                <label>Status</label>
+                                                                <input type="text" placeholder="" disabled class="form-control" value="<?= $std->activity ?>">
+                                                            </div>
+                                                            <div class="col-lg-6 col-12 form-group">
+                                                                <label>Sexe</label>
+                                                                <input type="text" placeholder="" disabled value="<?= $std->gender ?>" class="form-control air-datepicker" data-position="bottom right">
+                                                            </div>
+                                                            <div class="col-lg-6 col-12 form-group">
+                                                                <label>Date</label>
+                                                                <input type="text" placeholder="dd/mm/yy" disabled value="<?= $std->birthday ?>" class="form-control air-datepicker" data-position="bottom right">
+                                                            </div>
+                                                            <div class="col-lg-6 col-12 form-group">
+                                                                <label>Phone</label>
+                                                                <input type="text" placeholder="" disabled class="form-control" value="<?= $std->phone ?>">
+                                                            </div>
+                                                            <div class="col-lg-6 col-12 form-group">
+                                                                <label>E-Mail Address</label>
+                                                                <input type="text" placeholder="" disabled class="form-control" value="<?= $std->email ?>">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

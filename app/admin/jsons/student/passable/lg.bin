@@ -1,0 +1,59 @@
+<?php $COTES = array('credit' => array(),'courses' => array(),'students' => array());
+    $total_success = $total_echec = $moyenne_classe = 0;
+    $sizsOfGrille = isset($_POST['G_size'])&&$_POST['G_size']!='full'?($_POST['G_size']=='gprs'?" AND (part = 1 OR part = 3 OR part = 5)":($_POST['G_size']=='gdus'?" AND (part = 2 OR part = 4 OR part = 6)":null)):null;
+    $rqt = mysqli_query($db, "SELECT * FROM snem$prefix.courses WHERE active = 1 AND `delete` = 0 AND class = $class->id $sizsOfGrille ORDER BY part, id");
+    $class_course = mysqli_num_rows(mysqli_query($db, "SELECT * FROM snem$prefix.courses WHERE active = 1 AND `name` != 'Stage' AND `name` != 'Mémoire' AND `delete` = 0 AND class = $class->id $sizsOfGrille ORDER BY part, id"));
+?>
+<?php while ($course = mysqli_fetch_object($rqt)){ 
+    $rqt_cote = mysqli_query($db, 
+        "SELECT `student`, `course`, ROUND(CASE WHEN `RMC` != 0 AND 1 THEN `RMC` ELSE ((`TP1`+`TP2`+`TP3`)/12+(`INT1`+`INT2`)/8+`EXAM`/2) END,2) AS TOTAL, CASE WHEN `RRC` != 0 THEN `RRC` ELSE `RATR` END AS `RATR`, `JURY` FROM snem$prefix.cotes WHERE active = 1 AND course = $course->id"
+    ) or die(mysqli_error($db));
+    while($row_cote = mysqli_fetch_array($rqt_cote)) {
+        $COTES['students'][$row_cote['student']][$row_cote['course']] = $row_cote;
+    } if($course->name === 'Stage') $stage = $course->id;
+    elseif($course->name === 'Mémoire') $memoire = $course->id;
+    else $COTES['credit'][$course->id] = $course->credit;
+} $class_res_tot = ($credits = array_sum($COTES['credit'])) * 20;
+    $rqt_std = $db_poo->query("SELECT snem$prefix.students.*, snem$prefix.palmares.completed, snem$prefix.palmares.resultat, 
+            (SELECT DISTINCT snem$prefix.cotes.student FROM snem$prefix.cotes WHERE snem$prefix.cotes.RMC AND snem$prefix.cotes.student = snem$prefix.students.id) AS RPS,
+            (SELECT DISTINCT snem$prefix.cotes.student FROM snem$prefix.cotes WHERE snem$prefix.cotes.RRC AND snem$prefix.cotes.student = snem$prefix.students.id) AS RDS
+        FROM snem$prefix.students LEFT JOIN snem$prefix.palmares ON snem$prefix.palmares.student = snem$prefix.students.id WHERE snem$prefix.students.active = 1 AND snem$prefix.students.delete = 0 AND snem$prefix.students.class = $class->id ORDER BY firstname, lastname");
+        $count = 0;
+
+        while($row_std = $rqt_std->fetch_array()) {
+            $std = (object) $row_std;
+            $success = $np = $credits = $cote_credit = 0 ; $cote = array();
+            $echecs = ['l'=>0,'g'=>0];
+            
+                foreach($COTES['credit'] AS $course => $credit) {
+                    $jury=$cote=$codeIsset=$stage_codeIsset=$memoire_codeIsset=0;
+                    if(isset($COTES['students'][$std->id][$course])){
+                        $codeIsset = 1;
+                        $pre_cote = $COTES['students'][$std->id][$course]['TOTAL']+0;
+                        $cote = ($COTES['students'][$std->id][$course]['RATR']??0) > $pre_cote ? $COTES['students'][$std->id][$course]['RATR'] : $pre_cote ;
+                        $jury = $COTES['students'][$std->id][$course]['JURY']??0;
+                    } else $np++; if($cote < 10 && $jury < 10) $echecs[($cote>=8||$jury>=8)?'l':'g']++ ; else {$success++; $credits+=$credit;}
+                    $cote_credit += ($final = ($jury&&$jury!=$cote?$jury:$cote))*$credit;
+                } 
+                if(isset($stage, $COTES['students'][$std->id][$stage])){
+                    $stage_codeIsset=1;
+                    $stage_cote = $COTES['students'][$std->id][$stage]['RATR'] > ($stage_pre_cote = $COTES['students'][$std->id][$stage]['TOTAL']+0) ? $COTES['students'][$std->id][$stage]['RATR'] : $stage_pre_cote ;
+                    $stage_jury = $stage_jury = $COTES['students'][$std->id][$stage]['JURY']; $stage_final = ($stage_jury&&$stage_jury!=$stage_cote?$stage_jury:$stage_cote);
+                } else $stage_cote = $stage_jury = $stage_final = $stage_jury = 0;
+                
+                if (isset($memoire, $COTES['students'][$std->id][$memoire])) {
+                    // print_a($COTES['students'][$std->id][$memoire]);
+                    $memoire_codeIsset=1;
+                    $memoire_cote = $COTES['students'][$std->id][$memoire]['RATR'] > ($memoire_pre_cote = $COTES['students'][$std->id][$memoire]['TOTAL']+0) ? $COTES['students'][$std->id][$memoire]['RATR'] : $memoire_pre_cote ;
+                    $memoire_jury = $memoire_jury = $COTES['students'][$std->id][$memoire]['JURY']; $memoire_final = ($memoire_jury&&$memoire_jury!=$memoire_cote?$memoire_jury:$memoire_cote);
+                } else $memoire_cote = $memoire_jury = $memoire_final = $memoire_jury = 0;
+            ($res = ($cote_credit*100)/($class_res_tot??1))<40&&!$np?'-':number_format($res/($class->terminal?2:1),1);
+            if ($class->terminal) { 
+                $final_code = ($cote_credit+(($stage_final+$memoire_final)*($class_res_tot??1)/50));
+                ($res = number_format(($final_code*100)/(($class_res_tot??1)*2), 1))<40&&!$np?'-':$res;
+            } $mention = $res<40&&!$np?'-':($np == 0 && $res < 50 ? 'AA' : (($echecs['g'] || $echecs['l'] > 3 || ($echecs['l'] == 3 && $res < 60) || ($echecs['l'] == 2 && $res < 55) || ($echecs['l'] == 1 && $res < 50)) ? 'A' : (($res >= 85) ? 'G-D' : (($res >= 70) ? 'DIS' : (($res >= 50) ? 'SAT' : 'AA')))));
+            $class->data[] = array(
+                'id' => $std->id,
+                'pass' => !in_array($mention, ['A', 'AA'])
+            );
+} json_response(200, 'students passed results collection', $class) ?>

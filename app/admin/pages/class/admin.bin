@@ -1,0 +1,286 @@
+<style>th.text-center[data-simbing]::before {content: 'J';position: absolute;margin: -10px 20px;color: black;font-size: 12.5px;}th.text-center.writable {background-color: #00808050;}</style>
+<?php $pageTitle = "Grille de côtes";
+$std_trancon = isset($_POST['trancon'])&&is_numeric($_POST['trancon'])?$_POST['trancon']:0; 
+hasCrrentAcad();
+?>
+<div class="row">
+    <div class="col-12 d-none">
+        <div class="card">
+            <div class="card-body">
+                <div class="heading-layout1">
+                    <div class="item-title">
+                        <h3>Récherche Rapide</h3>
+                    </div>
+                    <div class="dropdown">
+                        <a class="dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-expanded="false">...</a>
+                        <div class="dropdown-menu dropdown-menu-right">
+                            <a class="dropdown-item" href="#" data-action="print"><i class="fas fa-print"></i>print</a>
+                            <a class="dropdown-item" href="#" data-action="reload"><i class="fas fa-redo-alt text-orange-peel"></i>Actualiser</a>
+                        </div>
+                    </div>
+                </div>
+                <form class="mg-b-20" method="POST">
+                    <div class="row gutters-8">
+                        <div class="col-xl-3 col-lg-6 col-12 form-group">
+                            <label><?=$mci?></label>
+                            <select class="select2">
+                                <option selected value="*"><?=$mci?></option>
+                                <?php $rqt = $db_poo->query("SELECT * FROM sections WHERE active = 1") or die(debug(mysqli_error($db)));
+                                    while ($row = $rqt->fetch_object()){ ?>
+                                        <option value="<?= $row->id ?>"><?= $row->name ?></option>
+                                <?php } ?>
+                            </select>
+                        </div>
+                        <div class="col-xl-3 col-lg-6 col-12 form-group">
+                            <label>Option</label>
+                            <select class="select2">
+                                <option selected value="*">Option</option>
+                                <?php $rqt = $db_poo->query("SELECT * FROM options WHERE active = 1") or die(debug(mysqli_error($db)));
+                                    while ($row = $rqt->fetch_object()){ ?>
+                                        <option value="<?= $row->id ?>"><?= $row->name ?></option>
+                                <?php } ?>
+                            </select>
+                        </div>
+                        <div class="col-xl-3 col-lg-6 col-12 form-group">
+                            <label>Niveau</label>
+                            <select class="select2">
+                                <option selected value="*">Tous les niveaux</option>
+                                <?php $rqt = $db_poo->query("SELECT * FROM level WHERE active = 1") or die(debug(mysqli_error($db)));
+                                    while ($row = $rqt->fetch_object()){ ?>
+                                        <option value="<?= $row->id ?>"><?= $row->name ?></option>
+                                <?php } ?>
+                            </select>
+                        </div>
+                        <div class="col-xl-2 col-lg-6 col-12 form-group">
+                            <label>Promotion *</label>
+                            <select class="select2" name="grille">
+                                <option selected value="*">Année Académique </option>
+                                <?php $year = 2023;
+                                    while ($year > 2021){ ?>
+                                        <option value="<?= --$year ?>"><?= $year." - ".($year+1); ?></option>
+                                <?php } ?>
+                            </select>
+                        </div>
+                        <div class="col-1-xxxl col-xl-2 col-lg-3 col-12 form-group">
+                            <label></label>
+                            <button type="submit" class="fw-btn-fill btn-gradient-yellow">RECHERCHE</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+            <?php 
+            if (isset($links[2]) && is_numeric($links[2])){
+                $rqt = $db_poo->query(
+                    "SELECT classes.*, level.system AS `system`, level.terminal AS `terminal`, CONCAT(teachers.firstname, ' ', teachers.lastname) AS titulary, sections.name AS section_name, options.name AS option_name, level.name AS level_name 
+                    FROM classes 
+                    LEFT JOIN teachers ON teachers.id = classes.titular 
+                    LEFT JOIN sections ON sections.id = classes.section 
+                    LEFT JOIN options  ON options.id  = classes.option 
+                    LEFT JOIN level    ON level.id    = classes.level 
+                    WHERE classes.active = 1 AND (teachers.user_id = $user->id OR 1 = $user->id) AND classes.id = ".$links[2] 
+                ) ;
+                if ($rqt->num_rows) $class = $rqt->fetch_object();
+                } if ($class->id??false){
+                   $grille_periode = ($class->system == 'LG') ? [
+                    'full' => 'PRINCIPALE',
+                    'gpsn' => 'PREMIÈRE SESSION',
+                    'gpsr' => 'PREMIÈRE SESSION (RECOURS)',
+                    'gdsn' => 'DEUXIÈME SESSION',
+                    'gdsr' => 'DEUXIÈME SESSION (RECOURS)'
+                ] : [
+                    'full' => 'PRINCIPALE',
+                    'gpsn' => 'SESSION PRINCIPALE',
+                    'gpsr' => 'SESSION PRINCIPALE (RECOURS)',
+                    'gdsn' => 'SESSION RATTRAPAGE',
+                    'gdsr' => 'SESSION RATTRAPAGE (RECOURS)'
+                ];
+                ?>
+                <div class="heading-layout1 del-print">
+                    <div class="item-title">
+                        <h3>Section : <?= "$class->section_name [$class->promotion ".($class->promotion+1)."] " ?></h3>
+                    </div>
+                    <div class="dropdown">
+                        <a class="dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-expanded="false">...</a>
+                        <div class="dropdown-menu dropdown-menu-right">
+                            <a class="dropdown-item grDelibereBtn" href="#" id="grDelibereBtn" data-action="null"><i class="fas fa-play text-dark-pastel-green"></i>Déliberer</a>
+                            <a class="dropdown-item" href="#" data-action="print"><i class="fas fa-print"></i>print</a>
+                            <a class="dropdown-item" href="#" data-action="reload"><i class="fas fa-redo-alt text-orange-peel"></i>Actualiser</a>
+                            <a class="dropdown-item" data-action="null" href="#" onclick="window.open('/app/admin/pages/actions/student-all-resultat/?class=<?= $class->id ?>')"><i class="fas fa-external-link-alt text-green"></i>Tous les bulletins</a>
+                        </div>  
+                    </div>
+                </div>
+                <form method="post" class="row d-flex align-items-center">
+                    <div class="col-xl-4 col-lg-6 col-12 form-group"> 
+                        <label>Type de Grille : </label>
+                        <select class="select2" name="periode">
+                            <option <?=(isset($_POST['periode'])&&$_POST['periode']=='full')?'selected':null?> selected value="full">Grille Final </option>
+                            <option <?=(isset($_POST['periode'])&&$_POST['periode']=='gpsn')?'selected':null?> value="gpsn">Grille Première Session</option>
+                            <option <?=(isset($_POST['periode'])&&$_POST['periode']=='gpsr')?'selected':null?> value="gpsr">Grille Première Session (Recours)</option>
+                            <option <?=(isset($_POST['periode'])&&$_POST['periode']=='gdsn')?'selected':null?> value="gdsn">Grille Deuxième Session</option>
+                            <option <?=(isset($_POST['periode'])&&$_POST['periode']=='gdsr')?'selected':null?> value="gdsr">Grille Deuxième Session (Recours)</option>
+                        </select>
+                    </div>
+                    <div class="col-xl-4 col-lg-6 col-12 form-group"> 
+                        <label>Taille de la Grille : </label> 
+                        <select class="select2" name="G_size">
+                            <option <?=(isset($_POST['G_size'])&&$_POST['G_size']=='full')?'selected':null?> selected value="full">Grille Complete </option>
+                            <option <?=(isset($_POST['G_size'])&&$_POST['G_size']=='gprs')?'selected':null?> value="gprs">Grille Premier Semestre </option>
+                            <option <?=(isset($_POST['G_size'])&&$_POST['G_size']=='gdus')?'selected':null?> value="gdus">Grille Deuxieme Semestre </option>
+                        </select>
+                    </div>
+                    <div class="col-xl-4 col-lg-6 col-12 form-group">
+                        <label>Grille Par Traçons  : </label>
+                        <select class="select2" name="trancon">
+                            <?php $i = 0; $I = $db_poo->query('SELECT id FROM students WHERE active = 1 AND `delete` = 0 AND class = ' . $class->id)->num_rows; while ($I > 100) {?>
+                                <option <?=(isset($std_trancon)&&$std_trancon==++$i)?'SELECTED':null?> value="<?=$i?>">Traçons <?=$i?> (<?=($i).' - '.($i+=99)?>) </option>
+                            <?php $I -= 100; } ?>
+                                <option <?=(isset($std_trancon)&&$std_trancon==++$i)?'SELECTED':null?> value="<?=$i?>">Traçons <?=$i?> (<?=($i).' - '.($i+=$I)?>) </option>
+                                <option <?=(isset($std_trancon)&&$std_trancon==0)?'SELECTED':null?> value="0">Toutes les traçons</option>
+                        </select>
+                    </div>
+                    <div class="col-xl-12 col-lg-6 col-12 form-group">
+                        <button type="submit" class="fw-btn-fill btn-gradient-yellow">CONFIRMER</button>
+                    </div>
+                </form>
+                <div class="table-responsive dataTables_specimen" style="overflow-y:hidden;">
+                    <table class="data-table<?=$class->delib&&!$class->finished&&$class->modify?'-exp':null?> table bs-table table-striped table-bordered text-nowrap">
+                        <?php require_once file_exists($file = str_replace('.bin', DS, __FILE__).strtolower($class->system).".bin") ? $file : str_replace('.bin', DS, __FILE__)."404.bin" ?>
+                    </table>
+                </div>
+                <div class="card-data d-none">
+                    <style type="text/css" media="print">
+                        @page {
+                            size: landscape;
+                            margin: 1.5mm;
+                        } body{writing-mode:tb-lr;} thead td td, tfoot td td {height:25px!important;} tfoot td td{text-align:center!important;}
+                    </style>
+                    <template id="templatePrintHeader">
+                        <h2 class="text-uppercase mb-0 border-bottom w-100">
+                            Institut Superieur de Techniques Appliquées
+                            <br /> <small>ISTA / NDOLO</small>
+                        </h2>
+                        <table class="w-100">
+                            <tbody>
+                                <tr class="text-uppercase">
+                                    <td>
+                                        <small>
+                                            SECTION : <?= $class->section_name?>
+                                        </small> <br /> <small>
+                                            MENTION : <?= "$class->level_name > $class->option_name".($class->name ? " > $class->name" : null) ?>
+                                        </small> 
+                                    </td>
+                                    <td class="text-center">GRILLE DE LA DELIBERATION <br/> SESSION <?= isset($_POST['periode']) ? ' > '.($grille_periode[$_POST['periode']]?? 'INDEFINI' ): 'PRINCIPALE' ?></td>
+                                    <td class="text-center">ANNEE ACADEMIQUE <br/> <?= $class->promotion.' - '.($class->promotion+1) ?></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </template>
+                    <template id="templatePrintFooter">
+                        <table class="w-100">
+                            <tbody>
+                                <tr>
+                                    <td>Secrétaire du Jury</td>
+                                    <td>Fait a Kinshasa, le <?= date('d/m/Y H:i:s', time())?></td>
+                                </tr>
+                                <tr>
+                                    <td></td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td><?=$class->titulary?></td>
+                                    <td>Membres</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </template>
+                </div>
+            <?php }else{ ?>
+                <div class="heading-layout1 mg-b-15">
+                    <div class="item-title p-5 text-center w-100">
+                        <h1 class="text-danger bg-blue-dark py-xl-5">Classe Introuvable : <?= isset($links[2]) && $links[2] ? $links[2] : NULL ?></h1>
+                        <h3>La classe dont vous essayer de voire est introuvable</h3>
+                    </div>
+                </div>
+            <?php } ?>
+            </div>
+        </div>
+    </div>
+</div>
+<?php if (isset($class) && $class) { ?>
+<!-- Modal -->
+<div class="modal fade" id="formSet" tabindex="-1" role="dialog" aria-labelledby="modelTitleId" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalTitle">Moteur de deliberation</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            </div>
+            <div class="modal-body">
+                <div class="container-fluid">
+                    <form class="mg-b-20" method="POST" onsubmit="return false;">
+                        <div class="row gutters-8">
+                            <div class="col-12 form-group ext-dot ext-cc">
+                                <label>Designation du cours</label>
+                                <select class="select2 ext-dot-nc">
+                                    <?php $rqt_s = mysqli_query($db, "SELECT * FROM courses WHERE active = 1 AND `delete` = 0 AND class = " . $class->id);
+                                    while ($course = mysqli_fetch_object($rqt_s)) {
+                                        echo '<option value="' . $course->id . '">' . $course->name . '</option>';
+                                    } ?>
+                                </select>   
+                            </div>
+                            <div class="col-12 form-group ext-dot ext-rv">
+                                <label>Nombre vide</label>
+                                <input type="number" placeholder="" class="form-control ext-dot-nv" name="lastname">
+                            </div>
+                            <div class="col-12 form-group ext-dot ext-cc ext-rv">
+                                <label>Cote de remplissage</label>
+                                <input pattern type=number step=0.1 max=20 min=0  placeholder="" class="form-control ext-dot-cr" name="code">
+                            </div>
+                            <div class="col-12 form-group ext-dot ext-pr">
+                                <label>Element Constitutif 1</label>
+                                <select class="select2 ext-dot-sl1">
+                                    <option value="*" selected>Tous les cours</option>
+                                    <?php $rqt_s = mysqli_query($db, "SELECT * FROM courses WHERE active = 1 AND `delete` = 0 AND class = " . $class->id);
+                                        while ($course = mysqli_fetch_object($rqt_s)) {
+                                            echo '<option value="' . $course->id . '">' . $course->name . '</option>';
+                                    } ?>
+                                </select>
+                            </div>
+                            <div class="col-12 form-group ext-dot ext-pr">
+                                <label>Element Constitutif 2</label>
+                                <select class="select2 ext-dot-sl2">
+                                    <option value="NULL" selected>Selectionner un cours</option>
+                                    <?php $rqt_s = mysqli_query($db, "SELECT * FROM courses WHERE active = 1 AND `delete` = 0 AND class = " . $class->id);
+                                    while ($course = mysqli_fetch_object($rqt_s)) {
+                                        echo '<option value="' . $course->id . '">' . $course->name . '</option>';
+                                    } ?>
+                                </select>
+                            </div>
+                            <div class="col-12 form-group ext-dot ext-pr">
+                                <label>Element Constitutif 3</label>
+                                <select class="select2 ext-dot-sl3">
+                                    <option value="NULL" selected>Selectionner un cours</option>
+                                    <?php $rqt_s = mysqli_query($db, "SELECT * FROM courses WHERE active = 1 AND `delete` = 0 AND class = " . $class->id);
+                                    while ($course = mysqli_fetch_object($rqt_s)) {
+                                        echo '<option value="' . $course->id . '">' . $course->name . '</option>';
+                                    } ?>
+                                </select>
+                            </div>
+                            <div class="modalMessageTextFooter alert alert-warning w-100"></div>
+                            <div class="col-12 form-group">
+                                <label></label>
+                                <button type="submit" class="fw-btn-fill btn-gradient-yellow">Valider</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<?php } ?>

@@ -1,0 +1,10 @@
+document.querySelectorAll('tr.getDataAjaxIsNode').forEach(e => {
+    fetch(`https://www.ista.ac.cd/app/admin/jsons/statistic/class-${e.dataset.system.toLowerCase()}.php?class=${e.dataset.class}`).then(response => {
+        response.json().then(data => {
+            e.querySelector('td[data-type=t]').innerText = data.r+data.e;
+            e.querySelector('td[data-type=r]').innerText = data.r;
+            e.querySelector('td[data-type=e]').innerText = data.e;
+            e.className+= 'bg-warning'
+        })
+    })
+});

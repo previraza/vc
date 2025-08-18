@@ -1,0 +1,332 @@
+<?php $pageTitle = "Bibliothèque" ?>
+<?php 
+    if (isset($_POST['action'], $_POST['id']) && is_numeric($_POST['id'])){
+        extract(array_trait_string($_POST));
+        if (mysqli_query($db, "UPDATE `libraries` SET `active` = ".($action == 'active' ? 1 : 0 )." WHERE id = $id")){ ?>
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                    <span class="sr-only">Close</span>
+                </button>
+                <strong>Succes : </strong>Le Profile a été <?= $action == 'active' ? 'activer' : 'desactiver' ?> avec succès. 
+            </div>
+        <?php }else{ ?>
+            <div class="alert alert-danger alert-dismissible fade show" role="alert"> 
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                    <span class="sr-only">Close</span>
+                </button>
+                <strong>Echec : </strong>Le Profile choisit est introuvable. 
+            </div>
+        <?php }
+    }
+?>
+<div class="card height-auto">
+    <div class="card-body">
+        <?php if(isset($links[2])){
+            $pre_rqt = mysqli_query($db, "SELECT * FROM libraries WHERE id = $links[2] AND user_id = $user->id");
+            if(mysqli_num_rows($pre_rqt) && $res = (object) mysqli_fetch_array($pre_rqt)){ ?>
+                <div class="heading-layout1">
+                    <div class="item-title">
+                        <h3>Modifier l'Ouvrage</h3>
+                    </div>
+                    <div class="dropdown">
+                        <a class="dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-expanded="false">...</a>
+
+                        <div class="dropdown-menu dropdown-menu-right">
+                    <a class="dropdown-item" href="#" data-action="print"><i class="fas fa-print"></i>print</a>
+                    
+                    <a class="dropdown-item" href="#" data-action="reload"><i class="fas fa-redo-alt text-orange-peel"></i>Actualiser</a>
+                        </div>
+                    </div>
+                </div>
+                <form class="new-added-form" method="POST" id="editLibrary">
+                    <div class="row">
+                        <div class="col-lg-6 col-12 form-group">
+                            <label>Designation *</label>
+                            <input type="text" placeholder="" class="form-control" required name="name" value="<?= $res->name ?>">
+                        </div>
+                        <div class="col-xl-3 col-lg-6 col-12 form-group">
+                            <label>Type</label>
+                            <select class="select2" required name="type" value="<?= $res->type ?>">
+                                <option <?= ($res->type == "REC") ? "selected" : null ?> value="REC">Recueille</option>
+                                <option <?= ($res->type == "SYL") ? "selected" : null ?> value="SYL">Syllabus</option>
+                                <option <?= ($res->type == "TFC") ? "selected" : null ?> value="TFC">Travail de Fin d'Etude</option>
+                                <option <?= ($res->type == "MEM") ? "selected" : null ?> value="MEM">Mémoire de Fin d'Etude</option>
+                                <option <?= ($res->type == "LIV") ? "selected" : null ?> value="LIV">Livres</option>
+                                <option <?= ($res->type == "DOC") ? "selected" : null ?> value="DOC">Document Officiel</option>
+                            </select>
+                        </div>
+                        <div class="col-xl-3 col-lg-6 col-12 form-group">
+                            <label>Auteur *</label>
+                            <input type="text" placeholder="" class="form-control" required name="author" value="<?= $res->author ?>">
+                        </div>
+                        <div class="col-xl-3 col-lg-6 col-12 form-group">
+                            <label>Sujet *</label>
+                            <input type="text" placeholder="" class="form-control" required name="subject" value="<?= $res->subject ?>">
+                        </div>
+                        <div class="col-xl-3 col-lg-6 col-12 form-group">
+                            <label>Niveau</label>
+                            <select class="select2" name="level" value="<?= $res->level ?>">
+                                <option value="0">Tout les niveaux</option>
+                                <?php $rqt = mysqli_query($db,"SELECT * FROM level WHERE active = 1") or die(debug(mysqli_error($db)));
+                                    while ($ROW = mysqli_fetch_array($rqt)){ $row = (object) $ROW; ?>
+                                        <option <?= ($res->level == $row->id) ? "selected" : null ?> value="<?= $row->id ?>"><?= $row->name ?></option>
+                                <?php } ?>
+                            </select>
+                        </div>
+                        <div class="col-xl-3 col-lg-6 col-12 form-group">
+                            <label>Maison d'Edition</label>
+                            <input type="text" placeholder="NULL" class="form-control" name="house" value="<?= $res->house ?>">
+                        </div>
+                        <div class="col-xl-3 col-lg-6 col-12 form-group">
+                            <label>Date d'Edition</label>
+                            <input type="text" placeholder="yyyy/mm/dd" class="form-control air-datepicker" data-position="bottom right" name="date" value="<?= $res->date ?>">
+                        </div>
+                        <div class="col-xl-3 col-lg-6 col-12 form-group">
+                            <label>Numéro de serie</label>
+                            <input type="text" placeholder="" class="form-control" name="serial" value="<?= $res->serial ?>">
+                        </div>
+                        <div class="col-xl-3 col-lg-6 col-12 form-group">
+                            <label>Mode d'utilisation</label>
+                            <select class="select2" name="mode" value="<?= $res->mode ?>">
+                                <option <?= ($res->mode == "ABN1") ? "selected" : null ?> value="ABN1">Abonnement 1</option>
+                                <option <?= ($res->mode == "ABN2") ? "selected" : null ?> value="ABN2">Abonnement 2</option>
+                                <option <?= ($res->mode == "ABNS") ? "selected" : null ?> value="ABNS">Abonnement Spécial</option>
+                                <option <?= ($res->mode == "FREE") ? "selected" : null ?> value="FREE">Gratuit</option>
+                                <option <?= ($res->mode == "PREM") ? "selected" : null ?> value="PREM">Premium</option>
+                                <option <?= ($res->mode == "PROF") ? "selected" : null ?> value="PROF">Professionnel</option>
+                            </select>
+                        </div>
+                        <div class="col-lg-6 col-12 form-group">
+                            <textarea name="resume" id="input" class="form-control h-100" placeholder="Résumé du livre"><?= $res->resume ?></textarea>
+                        </div>
+                        <div class="col-12 form-group">
+                            <label for="">Votre Fichier *</label>
+                            <input type="file" class="form-control" name="file" id="gettingDoc" value="<?= $res->file ?>">
+                            <div class="progress mcisme">
+                                <div class="progress-bar" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+                        </div>
+                        <div class="mx-4 alert hidden alert-danger alert-dismissible fade show" role="alert" id="errorRapport">
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                                <span class="sr-only">Close</span>
+                            </button>
+                            <input type="hidden" name="CON_47" value="mcisme">
+                            <input type="hidden" name="this_id" value="<?= $res->id ?>">
+                            <strong>Erreur : <span id="errorContent"></span></strong>
+                            <br> Une erreur s'est produit pendant l'ajout.<br>Si celà persiste veuillez contacter votre administrateur système.
+                        </div>
+                        <div class="col-12 form-group mg-t-8">
+                            <button type="submit" class="btn-fill-lg btn-gradient-yellow btn-hover-bluedark">Save</button>
+                            <button type="reset" class="btn-fill-lg bg-blue-dark btn-hover-yellow">Reset</button>
+                        </div>
+                    </div>
+                </form>
+        <?php } else { ?>
+                <div class="card height-auto">
+                    <div class="card-body">
+                        <div class="heading-layout1 mg-b-15">
+                            <div class="item-title p-5 text-center w-100">
+                                <h1 class="text-danger bg-blue-dark py-xl-5">Ouvrage Indisponible : <?= isset($links[2]) && $links[2] ? $links[2] : NULL ?></h1>
+                                <h3>L'ouvrage dont vous essayer de modifier est indisponible.</h3>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+        <?php } } else { ?>
+            <div class="heading-layout1">
+                <div class="item-title">
+                    <h3>Ajouter un Ouvrage</h3>
+                </div>
+                <div class="dropdown">
+                    <a class="dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-expanded="false">...</a>
+            
+                    <div class="dropdown-menu dropdown-menu-right">
+                    <a class="dropdown-item" href="#" data-action="print"><i class="fas fa-print"></i>print</a>
+                    
+                    <a class="dropdown-item" href="#" data-action="reload"><i class="fas fa-redo-alt text-orange-peel"></i>Actualiser</a>
+                    </div>
+                </div>
+            </div>
+            <form class="new-added-form" method="POST" id="addLibrary">
+                <div class="row">
+                    <div class="col-lg-6 col-12 form-group">
+                        <label>Designation *</label>
+                        <input type="text" placeholder="" class="form-control" required name="name">
+                    </div>
+                    <div class="col-xl-3 col-lg-6 col-12 form-group">
+                        <label>Type</label>
+                        <select class="select2" required name="type">
+                            <option value="REC">Recueille</option> 
+                            <option value="SYL">Syllabus</option>
+                            <option value="TFC">Travail de Fin d'Etude</option>
+                            <option value="MEM">Mémoire de Fin d'Etude</option>
+                            <option selected value="LIV">Livres</option>
+                            <option value="DOC">Document Officiel</option>
+                        </select>
+                    </div>
+                    <div class="col-xl-3 col-lg-6 col-12 form-group">
+                        <label>Auteur *</label>
+                        <input type="text" placeholder="" class="form-control" required name="author">
+                    </div>
+                    <div class="col-xl-3 col-lg-6 col-12 form-group">
+                        <label>Sujet *</label>
+                        <input type="text" placeholder="" class="form-control" required name="subject">
+                    </div>
+                    <div class="col-xl-3 col-lg-6 col-12 form-group">
+                        <label>Niveau</label>
+                        <select class="select2" name="level">
+                            <option selected value="0">Tout les niveaux</option>
+                            <?php $rqt = mysqli_query($db,"SELECT * FROM level WHERE active = 1") or die(debug(mysqli_error($db)));
+                                while ($ROW = mysqli_fetch_array($rqt)){ $row = (object) $ROW; ?>
+                                    <option value="<?= $row->id ?>"><?= $row->name ?></option>
+                            <?php } ?>
+                        </select>
+                    </div>
+                    <div class="col-xl-3 col-lg-6 col-12 form-group">
+                        <label>Maison d'Edition</label>
+                        <input type="text" placeholder="NULL" class="form-control" name="house">
+                    </div>
+                    <div class="col-xl-3 col-lg-6 col-12 form-group">
+                        <label>Date d'Edition</label>
+                        <input type="text" placeholder="yyyy/mm/dd" class="form-control air-datepicker" data-position="bottom right" name="date">
+                    </div>
+                    <div class="col-xl-3 col-lg-6 col-12 form-group">
+                        <label>Numéro de serie</label>
+                        <input type="text" placeholder="" class="form-control" name="serial">
+                    </div>
+                    <div class="col-xl-3 col-lg-6 col-12 form-group">
+                        <label>Mode d'utilisation</label>
+                        <select class="select2" name="mode">
+                            <option value="ABN1">Abonnement 1</option>
+                            <option value="ABN2">Abonnement 2</option>
+                            <option value="ABNS">Abonnement Spécial</option>
+                            <option selected value="FREE">Gratuit</option>
+                            <option value="PREM">Premium</option>
+                            <option value="PROF">Professionnel</option>
+                        </select>
+                    </div>
+                    <div class="col-lg-6 col-12 form-group">
+                        <textarea name="resume" id="input" class="form-control h-100" placeholder="Résumé du livre"></textarea>
+                    </div>
+                    <div class="col-12 form-group">
+                        <label for="">Votre Fichier *</label>
+                        <input type="file" class="form-control" name="file" id="gettingDoc">
+                        <div class="progress mcisme">
+                            <div class="progress-bar" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+                    </div>
+                    <div class="mx-4 alert hidden alert-danger alert-dismissible fade show" role="alert" id="errorRapport">
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                            <span class="sr-only">Close</span>
+                        </button>
+                        <input type="hidden" name="CON_47" value="mcisme">
+                        <strong>Erreur : <span id="errorContent"></span></strong>
+                        <br> Une erreur s'est produit pendant l'ajout.<br>Si celà persiste veuillez contacter votre administrateur système.
+                    </div>
+                    <div class="col-12 form-group mg-t-8">
+                        <button type="submit" class="btn-fill-lg btn-gradient-yellow btn-hover-bluedark">Save</button>
+                        <button type="reset" class="btn-fill-lg bg-blue-dark btn-hover-yellow">Reset</button>
+                    </div>
+                </div>
+            </form>
+        <?php } ?>
+    </div>
+</div>
+
+<div class="card height-auto">
+    <div class="card-body">
+        <div class="heading-layout1">
+            <div class="item-title">
+                <h3>All Books</h3>
+            </div>
+            <div class="dropdown">
+                <a class="dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-expanded="false">...</a>
+
+                <div class="dropdown-menu dropdown-menu-right">
+                    
+                    <a class="dropdown-item" href="#" data-action="print"><i class="fas fa-print"></i>print</a>
+                    
+                    <a class="dropdown-item" href="#" data-action="reload"><i class="fas fa-redo-alt text-orange-peel"></i>Actualiser</a>
+                </div>
+            </div>
+        </div>
+        <form class="mg-b-20">
+            <div class="row gutters-8">
+                <div class="col-3-xxxl col-xl-3 col-lg-3 col-12 form-group">
+                    <input type="text" placeholder="Search by ID ..." class="form-control">
+                </div>
+                <div class="col-4-xxxl col-xl-4 col-lg-3 col-12 form-group">
+                    <input type="text" placeholder="Search by Name ..." class="form-control">
+                </div>
+                <div class="col-4-xxxl col-xl-3 col-lg-3 col-12 form-group">
+                    <input type="text" placeholder="Search by Phone ..." class="form-control">
+                </div>
+                <div class="col-1-xxxl col-xl-2 col-lg-3 col-12 form-group">
+                    <button type="submit" class="fw-btn-fill btn-gradient-yellow">RECHERCHE</button>
+                </div>
+            </div>
+        </form>
+        <div class="table-responsive">
+            <table class="table display data-table text-nowrap">
+                <thead>
+                    <tr>
+                        <th>
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input checkAll" id="assosLabel">
+                                <label for="assosLabel" class="form-check-label">Id</label>
+                            </div>
+                        </th>
+                        <td>Designation</td>
+                        <td>Type</td>
+                        <td>Niveau</td>
+                        <td>Sujet</td>
+                        <td>Auteur</td>
+                        <td>Edition</td>
+                        <td>Mode</td>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody id="tableLibraries">
+                    <?php $rqt = mysqli_query($db, "SELECT * FROM libraries WHERE `delete` = 0 AND user_id = $user->id  ORDER BY saved_date DESC");
+                        while ($row = mysqli_fetch_array($rqt)) { $res = (object) $row ; ?>
+                            <tr id="Element-<?= $res->id ?>" class="<?= $res->active != 1 ? 'bg-warning' : 'Active'?>">
+                                <td>
+                                    <div class="form-check">
+                                        <input type="checkbox" class="form-check-input">
+                                        <label class="form-check-label">#<?=$res->id?></label>
+                                    </div>
+                                </td>
+                                <td><?=$res->name?></td>
+                                <td><?=$res->type?></td>
+                                <td><?=$res->level?></td>
+                                <td><?=$res->subject?></td>
+                                <td><?=$res->author?></td>
+                                <td><?="$res->house / $res->date"?></td>
+                                <td><?=$res->mode?></td>
+                                <td>
+                                    <div class="dropdown">
+                                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false" aria-label="Plus d'option">
+                                            <span class="flaticon-more-button-of-three-dots"></span>
+                                        </a>
+                                        <div class="dropdown-menu dropdown-menu-right">
+                                            <form action="?fa69951bc733eb82713e936be33597e1=DATA_CRYPTING_ON:fa69951bc733eb82713e936be33597e1=WABTECHS_CRYPTING_ON: e91497f38407364c8e86ade9098950d978814190&MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3VIRAZA_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3&MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3&WABTECHS_CRYPTING_ON_LAVINGOL&MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3&b557c222c8ddcdf87e033706aad08e4ef7cf90d3=library--mine" method="POST" class="d-none" id="active_<?= $res->id ?>">
+                                                <input type="hidden" name="id" value="<?= $res->id ?>">
+                                                <input type="hidden" name="action" value="<?= $res->active == 1 ? 'desactive' : 'active'?>">
+                                            </form>
+                                            <a class="dropdown-item" href="?fa69951bc733eb82713e936be33597e1=DATA_CRYPTING_ON:fa69951bc733eb82713e936be33597e1=WABTECHS_CRYPTING_ON: e91497f38407364c8e86ade9098950d978814190&MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3VIRAZA_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3&MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3&WABTECHS_CRYPTING_ON_LAVINGOL&MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3&b557c222c8ddcdf87e033706aad08e4ef7cf90d3=library--mine--<?= $res->id ?>"><i class="fas fa-cogs text-dark-pastel-green"></i>Modifier</a>
+                                            <a class="dropdown-item" href="#" onclick="document.querySelector('#active_<?= $res->id ?>').submit()"><i class="fas fa-redo-alt text-orange-peel"></i><?= $res->active == 1 ? 'Desactive' : 'Active'?></a>
+                                            <a class="dropdown-item" href="?fa69951bc733eb82713e936be33597e1=DATA_CRYPTING_ON:fa69951bc733eb82713e936be33597e1=WABTECHS_CRYPTING_ON: e91497f38407364c8e86ade9098950d978814190&MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3VIRAZA_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3&MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3&WABTECHS_CRYPTING_ON_LAVINGOL&MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3&b557c222c8ddcdf87e033706aad08e4ef7cf90d3=library--delete.$--<?= $res->id ?>"><i class="fas fa-times text-orange-red"></i>Supprimer</a>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>        
+                    <?php } ?>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

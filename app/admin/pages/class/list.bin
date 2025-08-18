@@ -1,0 +1,135 @@
+<?php $pageTitle = "Classes" ?>
+
+<div class="card height-auto">
+    <div class="card-body">
+        <div class="heading-layout1">
+            <div class="item-title">
+                <h3>Liste de Classes</h3>
+            </div>
+            <div class="dropdown">
+                <a class="dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-expanded="false">...</a>
+                <div class="dropdown-menu dropdown-menu-right">
+                    <a class="dropdown-item" href="#" data-action="print"><i class="fas fa-print"></i>print</a>
+                    
+                    <a class="dropdown-item" href="#" data-action="reload"><i class="fas fa-redo-alt text-orange-peel"></i>Actualiser</a>
+                </div>
+            </div>
+        </div>
+        <form class="mg-b-20" method="POST" id="formSearchClassOfSection">
+            <div class="row gutters-8">
+                <div class="col-xl-3 col-lg-6 col-12 form-group">
+                    <label><?=$mci?></label>
+                    <select class="select2" name="section">
+                        <option selected value="*"><?=$mci?></option>
+                        <?php $rqt = mysqli_query($db, "SELECT * FROM sections WHERE active = 1") or die(debug(mysqli_error($db)));
+                            while ($ROW = mysqli_fetch_array($rqt)){ $row = (object) $ROW; ?>
+                                <option value="<?= $row->id ?>"><?= $row->name ?></option>
+                        <?php } ?>
+                    </select>
+                </div>
+                <div class="col-xl-3 col-lg-6 col-12 form-group">
+                    <label>Option</label>
+                    <select class="select2" name="option">
+                        <option selected value="*">Option</option>
+                        <?php $rqt = mysqli_query($db, "SELECT * FROM options WHERE active = 1") or die(debug(mysqli_error($db)));
+                            while ($ROW = mysqli_fetch_array($rqt)){ $row = (object) $ROW; ?>
+                                <option value="<?= $row->id ?>"><?= $row->name ?></option>
+                        <?php } ?>
+                    </select>
+                </div>
+                <div class="col-xl-3 col-lg-6 col-12 form-group">
+                    <label>Niveau</label>
+                    <select class="select2" name="level">
+                        <option selected value="*">Tous les niveaux</option>
+                        <?php $rqt = mysqli_query($db, "SELECT * FROM level WHERE active = 1") or die(debug(mysqli_error($db)));
+                            while ($ROW = mysqli_fetch_array($rqt)){ $row = (object) $ROW; ?>
+                                <option value="<?= $row->id ?>"><?= $row->name ?></option>
+                        <?php } ?>
+                    </select>
+                </div>
+                <div class="col-xl-3 col-lg-6 col-12 form-group">
+                    <label>Promotion *</label>
+                    <select class="select2" name="promotion">
+                        <option selected value="*">Année Académique </option>
+                        <?php $year = 2023;
+                            while ($year > 2021){ ?>
+                                <option value="<?= --$year ?>"><?= $year." - ".($year+1); ?></option>
+                        <?php } ?>
+                    </select>
+                </div>
+            </div>
+        </form>
+        <button type="submit" form="formSearchClassOfSection" class="fw-btn-fill btn-gradient-yellow">RECHERCHE</button>
+        <div class="table-responsive">
+            <table class="table display data-table text-nowrap">
+                <thead>
+                    <tr>
+                        <th>
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input checkAll" id="assosLabel">
+                                <label for="assosLabel" class="form-check-label">Id</label>
+                            </div>
+                        </th>
+                        <th>Designation</th>
+                        <th><?=$mci?></th>
+                        <th>Option</th>
+                        <th>Niveau</th>
+                        <th>Promotion</th>
+                        <th>Code</th>
+                        <th>Titulaire</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php $rqt = mysqli_query($db, 
+                        "SELECT classes.*, CONCAT(teachers.firstname, ' ', teachers.lastname) AS titulary, sections.name AS section_name, options.name AS option_name, level.name AS level_name 
+                            FROM classes 
+                            LEFT JOIN teachers ON (teachers.id = classes.titular AND teachers.active = 1 AND teachers.delete = 0)
+                            LEFT JOIN sections ON sections.id = classes.section 
+                            LEFT JOIN options  ON options.id  = classes.option 
+                            LEFT JOIN level    ON level.id    = classes.level 
+                            WHERE classes.active = 1 AND classes.delete = 0" 
+                                .((isset($_POST['promotion']) && $_POST['promotion'] != "*") ? " AND classes.promotion = $_POST[promotion]":'')
+                                .((isset($_POST['section']) && $_POST['section'] != "*") ? " AND classes.section = $_POST[section]":'')
+                                .((isset($_POST['option']) && $_POST['option'] != "*") ? " AND classes.option = $_POST[option]":'')
+                                .((isset($_POST['level']) && $_POST['level'] != "*") ? " AND classes.level = $_POST[level]":'')
+                        );
+                        while ($ROW = mysqli_fetch_array($rqt)){ $row = (object) $ROW; ?>
+                            <tr id="Element-<?= $row->id ?>">
+                                <td>
+                                    <div class="form-check">
+                                        <input type="checkbox" class="form-check-input">
+                                        <label class="form-check-label">#<?= $row->id ?></label>
+                                    </div>
+                                </td>
+                                <td><?= $row->name ?></td>
+                                <td><?= $row->section_name ?></td>
+                                <td><?= $row->option_name ?></td>
+                                <td><?= $row->level_name ?></td>
+                                <td><?= $row->promotion.' - '.++$row->promotion ?></td>
+                                <td><?= $row->code ?></td>
+                                <td><?= $row->titulary ?></td>
+                                <td>
+                                    <div class="dropdown">
+                                        <a href="#" class="dropdown-toggle" data-toggle="dropdown"
+                                            aria-expanded="false">
+                                            <span class="flaticon-more-button-of-three-dots"></span>
+                                        </a>
+                                        <div class="dropdown-menu dropdown-menu-right">
+                                            <form action="?fa69951bc733eb82713e936be33597e1=DATA_CRYPTING_ON:fa69951bc733eb82713e936be33597e1=WABTECHS_CRYPTING_ON: e91497f38407364c8e86ade9098950d978814190&MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3VIRAZA_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3&MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3&WABTECHS_CRYPTING_ON_LAVINGOL&MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3&b557c222c8ddcdf87e033706aad08e4ef7cf90d3=class--explore--<?= $row->id ?>" method="POST" class="d-none" id="explore_<?= $row->id ?>">
+                                                <input type="hidden" name="promotion" value="<?= --$row->promotion ?>">
+                                                <input type="hidden" name="section" value="<?= $row->section ?>">
+                                                <input type="hidden" name="option" value="<?= $row->option ?>">
+                                                <input type="hidden" name="level" value="<?= $row->level ?>">
+                                            </form>
+                                            <a class="dropdown-item" href="#" onclick="document.querySelector('#explore_<?= $row->id ?>').submit()"><i class="fas fa-redo-alt text-orange-peel"></i>Explorer</a>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                    <?php } ?>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

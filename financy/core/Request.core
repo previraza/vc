@@ -1,0 +1,35 @@
+<?php class Request{
+    public static $instance;
+    public $url;
+    public $space;
+    public $action;
+    public $params;
+
+    public function __construct() {
+        global $root_url;
+        $this->url = str_replace($root_url, '', $_SERVER['PATH_INFO']??$_SERVER['REQUEST_URI'])??'';
+    }
+
+    public function redirect($redirect_url) {
+        global $root_url;
+        header("location:\\$root_url\\$redirect_url");
+    }
+
+    public static function init() {
+        if (is_null(self::$instance)) self::$instance = new SELF();
+        return self::$instance;
+    }
+
+    public function parse() {
+        global $phtml_home;
+        $params = explode('/',trim($this->url,'/'));
+        $this->space      = $params[0]!=''?$params[0]:$phtml_home;
+        $this->action     = $params[1]??'index';
+        $this->params     = array_slice($params, 2);
+    }
+
+    public function back(){
+        $this->redirect($phtml_home);
+    }
+}
+

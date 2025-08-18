@@ -1,0 +1,168 @@
+<?php viewOnlyBy('AB','A-AB','SFC'); $pageTitle = "Payements" ;
+    if (isset($_POST['action'], $_POST['payement'], $_POST['register']) && is_numeric($_POST['payement']) && is_numeric($_POST['register'])){
+        $post = (object) $_POST;
+        if (mysqli_query($db, "UPDATE `payments` SET `student` = $post->register WHERE id = $post->payement")){ ?>
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                    <span class="sr-only">Close</span>
+                </button>
+                <strong>Succès : </strong>Traitement effectué avec succès. 
+            </div>
+        <?php }else{ ?>
+            <div class="alert alert-danger alert-dismissible fade show" role="alert"> 
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                    <span class="sr-only">Close</span>
+                </button>
+                <strong>Echec : </strong>Problème de traitement des éléments sélectionnés. 
+            </div>
+        <?php }
+    }
+?>
+<div class="card height-auto">
+    <div class="card-body">
+        <div class="heading-layout1">
+            <div class="item-title">
+                <h3>Liaison de payement</h3>
+            </div>
+            <div class="dropdown">
+                <a class="dropdown-toggle" href="#" role="button" 
+                data-toggle="dropdown" aria-expanded="false">...</a>
+
+                <div class="dropdown-menu dropdown-menu-right">
+                <a class="dropdown-item" href="#" data-action="print"><i class="fas fa-print"></i>print</a>
+                    
+                    <a class="dropdown-item" href="#" data-action="reload"><i class="fas fa-redo-alt text-orange-peel"></i>Actualiser</a>
+                </div>
+            </div>
+        </div>
+        <form class="new-added-form" id="addPayment" method="POST">
+            <div class="row">
+                <div class="col-xl-6 col-lg-8 col-12 form-group">
+                    <label>N° Bordereau *</label>
+                    <select class="select2" name="payement" id="classes" required>
+                        <?php $rqt = mysqli_query($db, "SELECT id, date, number, sum, student_name, devise FROM payments WHERE payments.`delete` = 0 AND payments.student IS NULL ORDER BY date DESC");
+                            while ($row = mysqli_fetch_object($rqt)){ ?>
+                                <option value="<?= $row->id ?>"><?= "$row->date / $row->number ($row->sum $row->devise) - $row->student_name" ?></option>
+                        <?php } ?>
+                    </select>
+                    <input type="hidden" name="action" value="true">
+                </div>
+                <div class="col-xl-6 col-lg-6 col-12 form-group">
+                    <label>Etudiants *</label>
+                    <select class="select2" name="register" id="students" required>
+                        <?php $rqt = mysqli_query($db, "SELECT register.id, CONCAT(register.nom, ' ', register.postnom) AS name FROM register LEFT JOIN payments ON (payments.student = register.id) WHERE register.active = 1 AND register.delete = 0 AND register.traite = 0 AND (payments.id IS NULL OR payments.valide = 0)") or die(debug(mysqli_error($db)));
+                            while ($ROW = mysqli_fetch_array($rqt)){ $row = (object) $ROW; ?>
+                                <option value="<?= $row->id ?>"><?= "$row->name" ?></option>
+                        <?php } ?>
+                    </select>
+                </div>
+                <div class="col-lg-4 col-12 form-group mg-t-8" style="margin:auto 0 15px;">
+                    <button type="submit" class="btn-fill-lg btn-gradient-yellow btn-hover-bluedark">Save</button>
+                    <button type="reset" class="btn-fill-lg bg-blue-dark btn-hover-yellow">Reset</button>
+                </div>
+                <div id="responseMessage" class="col-12 form-group"></div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="card height-auto">
+    <div class="card-body">
+        <div class="heading-layout1">
+            <div class="item-title">
+                <h3>Bordereaux non reliés</h3>
+            </div>
+            <div class="dropdown">
+                <a class="dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-expanded="false">...</a>
+
+                <div class="dropdown-menu dropdown-menu-right">
+                    
+                    <a class="dropdown-item" href="#" data-action="print"><i class="fas fa-print"></i>print</a>
+                    
+                    <a class="dropdown-item" href="#" data-action="reload"><i class="fas fa-redo-alt text-orange-peel"></i>Actualiser</a>
+                </div>
+            </div>
+        </div>
+        <form class="mg-b-20">
+            <div class="row gutters-8">
+                <div class="col-3-xxxl col-xl-3 col-lg-3 col-12 form-group">
+                    <input type="text" placeholder="Search by ID ..." class="form-control">
+                </div>
+                <div class="col-4-xxxl col-xl-4 col-lg-3 col-12 form-group">
+                    <input type="text" placeholder="Search by Name ..." class="form-control">
+                </div>
+                <div class="col-4-xxxl col-xl-3 col-lg-3 col-12 form-group">
+                    <input type="text" placeholder="Search by Phone ..." class="form-control">
+                </div>
+                <div class="col-1-xxxl col-xl-2 col-lg-3 col-12 form-group">
+                    <button type="submit" class="fw-btn-fill btn-gradient-yellow">RECHERCHE</button>
+                </div>
+            </div>
+        </form>
+        <div class="table-responsive">
+            <table class="table display data-table text-nowrap">
+                <thead>
+                    <tr>
+                        <th>
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input checkAll" id="assosLabel">
+                                <label for="assosLabel" class="form-check-label">Id</label>
+                            </div>
+                        </th>
+                        <td>Nom et postnom</td>
+                        <td>Matricul</td>
+                        <td>Motif</td>
+                        <td>Montant</td>
+                        <td>Devise</td>
+                        <td>Classe</td>
+                        <td>Date</td>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody id="paymentLibraries">
+                    <?php $rqt = mysqli_query($db, "SELECT * FROM payments WHERE payments.`delete` = 0 AND payments.student IS NULL ORDER BY date DESC");
+                        while ($res = mysqli_fetch_object($rqt)) { ?>
+                            <tr id="Element-<?= $res->id ?>">
+                                <td class="<?= $res->valide == 1 ? 'bg-success' : ($res->valide == 0 ? 'bg-danger' : NULL)?>">
+                                    <div class="form-check">
+                                        <input type="checkbox" class="form-check-input">
+                                        <label class="form-check-label">#<?=$res->id?></label>
+                                    </div>
+                                </td>
+                                <td><?=$res->student_name?$res->student_name:$res->std_name?></td>
+                                <td><?=$res->student_matricul?$res->student_matricul:'N-E'?></td>
+                                <td><?=$res->type?></td>
+                                <td><?=$res->sum?></td>
+                                <td><?=$res->devise?></td>
+                                <td><?=$res->class?></td>
+                                <td><?=$res->date?></td>
+                                <td>
+                                    <div class="dropdown">
+                                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false" aria-label="Plus d'option">
+                                            <span class="flaticon-more-button-of-three-dots"></span>
+                                        </a>
+                                        <div class="dropdown-menu dropdown-menu-right">
+                                            <form action="?fa69951bc733eb82713e936be33597e1=DATA_CRYPTING_ON:fa69951bc733eb82713e936be33597e1=WABTECHS_CRYPTING_ON: e91497f38407364c8e86ade9098950d978814190&MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3VIRAZA_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3&MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3&WABTECHS_CRYPTING_ON_LAVINGOL&MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3&b557c222c8ddcdf87e033706aad08e4ef7cf90d3=financy--payment" method="POST" class="d-none" id="valide_<?= $res->id ?>">
+                                                <input type="hidden" name="id" value="<?= $res->id ?>">
+                                                <input type="hidden" name="action" value="valide">
+                                            </form>
+                                            <form action="?fa69951bc733eb82713e936be33597e1=DATA_CRYPTING_ON:fa69951bc733eb82713e936be33597e1=WABTECHS_CRYPTING_ON: e91497f38407364c8e86ade9098950d978814190&MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3VIRAZA_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3&MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3&WABTECHS_CRYPTING_ON_LAVINGOL&MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3&b557c222c8ddcdf87e033706aad08e4ef7cf90d3=financy--payment" method="POST" class="d-none" id="suspend_<?= $res->id ?>">
+                                                <input type="hidden" name="id" value="<?= $res->id ?>">
+                                                <input type="hidden" name="action" value="suspend">
+                                            </form>
+                                            <a class="dropdown-item<?= $res->valide == 0 ? " hidden d-none" : NULL ?>" data-link="external" href="/app/admin/pages/actions/print-facture.php?id=<?= $res->id ?>" target="_blank"><i class="fas fa-print"></i>Imprimer</a>
+                                            <a class="dropdown-item<?= $res->valide == 1 ? " hidden d-none" : NULL ?>" href="#" onclick="document.querySelector('#valide_<?= $res->id ?>').submit()"><i class="fas fa-redo-alt text-dark-pastel-green"></i>Valider</a>
+                                            <a class="dropdown-item<?= $res->valide == 0 ? " hidden d-none" : NULL ?>" href="#" onclick="document.querySelector('#suspend_<?= $res->id ?>').submit()"><i class="fas fa-redo-alt text-orange-peel"></i>Suspendre</a>
+                                            <a class="dropdown-item" onclick="if (confirm('vous effectuez une suppression de la ligne sélectionnée')) location.href='?fa69951bc733eb82713e936be33597e1=DATA_CRYPTING_ON:fa69951bc733eb82713e936be33597e1=WABTECHS_CRYPTING_ON: e91497f38407364c8e86ade9098950d978814190&MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3VIRAZA_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3&MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3&WABTECHS_CRYPTING_ON_LAVINGOL&MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3&b557c222c8ddcdf87e033706aad08e4ef7cf90d3=financy--delete.$--<?= $res->id ?>&returnOn=register'"><i class="fas fa-times text-orange-red"></i>Supprimer</a>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>        
+                    <?php } ?>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,190 @@
+let formEditor = (t=false) => {
+    let FEN = {
+        cc: () => {
+            $('#formSet form').on('submit', e=>{
+                e.preventDefault();
+                $that = $('#DataTables_Table_0 > tbody > tr > th[data-course="'+$('.ext-dot-nc').val()+'"]').addClass('writable').each((i,e) => {
+                    e.dataset.modify = true;
+                    if(e.innerText != $('.ext-dot-cr').val() && e.innerText < $('.ext-dot-cr').val()) {
+                        e.dataset.simbing = true
+                        e.innerText = $('.ext-dot-cr').val();
+                    } 
+                }); document.body.click();
+            }); 
+        }, rv: () => {
+            $('#formSet form').on('submit', e=>{
+                e.preventDefault();
+                $('#DataTables_Table_0 > tbody').children().each((i,e)=>{
+                    let _ = {vide : 0,element:[]}
+                    $('th.text-center.text-danger', $(e)).each((y,v)=>{
+                        if(v.dataset.cote == 0){
+                            _.vide++;
+                            _.element.push(v);
+                        }
+                    })
+                    if (_.vide <= $('.ext-dot-nv').val()) _.element.forEach(e => $(e).addClass('writable').on('keydown', e => e.currentTarget.dataset.modify = e.currentTarget.dataset.simbing = true).text($('.ext-dot-cr').val()))
+                })
+                document.body.click();
+            }); 
+        }, pr: () => {
+            $('#formSet form').on('submit', e=>{
+                e.preventDefault();
+                $('#DataTables_Table_0 > tbody').children().each((i,e)=>{
+                    let _ = {cote:0, element:[]}
+                    $('th.text-center', $(e)).each((y,v)=>{
+                        if((v.dataset.course == $('.ext-dot-sl1').val() || v.dataset.course == $('.ext-dot-sl2').val() || v.dataset.course == $('.ext-dot-sl3').val()) || $('.ext-dot-sl1').val() == '*'){
+                            _.cote+=parseFloat(v.innerText)?parseFloat(v.innerText):0;
+                            _.element.push(v);
+                            v.innerText = 0;
+                        }
+                    })
+                    i=0; while (_.cote>0 && i <= 500) {
+                        _.element.forEach(e=>{
+                            let cote = (_.cote > 10 && e.innerText == '0' ? 10 : (e.innerText == '0' || _.cote < 1 ? _.cote : 1));
+                            $(e).addClass('writable').on('keydown', e => e.currentTarget.dataset.modify = e.currentTarget.dataset.simbing = true).text(parseFloat(e.innerText)+cote);
+                            _.cote -= cote;
+                        })
+                    }
+                })
+                document.body.click();
+            }); 
+        }
+    }
+    $('#formSet form').off('submit')
+    $('#formSet .ext-dot').fadeOut(0);
+    $('#formSet .ext-dot.ext-'+t).fadeIn()
+    $('#formSet').modal();
+    FEN[t]();
+    document.body.click();
+};
+
+$('#grDelibereBtn').on('click', () => $('.delibereBtn').each((idx, e) => {
+    updateStudent(e);
+}));
+_updateStudent = e => {
+    let r=e.querySelector('.lastTd').dataset;
+    $.ajax({
+        url: "/app/settings/edit/_generatePalmares.php?sending_by=mcisme",
+        data: {
+            completed: r.completed,
+            resultat: r.resultat,
+            student: r.student,
+            mention: r.mention,
+            credit: r.credit,
+            CON_47: 'MCISME'
+        }, type: "POST",
+        success: function(response) {
+            try {
+                let res = JSON.parse(response);
+                e.className += (res.status == 'succes') ? ' bg-warning' : ' bg-dark text-white';
+                if (res.status == 'error') console.log('Erreur ' + res.code + ' : ' + res.content);
+            } catch (error) {
+                console.error(response);
+            }
+        }
+    })
+}
+
+updateStudent = e => {
+    let r=e.querySelector('.lastTd').dataset;
+    if(r.ended == '1' && r.periode != 'full'){
+        $.ajax({
+            url: "/app/settings/edit/generatePalmares.php?sending_by=mcisme",
+            data: {
+                student: r.student,
+                periode: r.periode,
+                CON_47: 'MCISME'
+            }, type: "POST",
+            success: function(response) {
+                try {let res = JSON.parse(response);
+                    e.className += (res.status == 'succes') ? ' bg-warning' : ' bg-dark text-white';
+                    if (res.status == 'error') console.log('Erreur ' + res.code + ' : ' + res.content);
+                } catch (error) {
+                    console.error(response);
+                }
+            }
+        })
+    }
+}
+
+if ($.fn.DataTable !== undefined) {
+    $('table.data-table-exp').DataTable({
+        paging: !1,
+        retrieve: true,
+        stateSave: true,
+        info: false,
+        lengthChange: false,
+        lengthMenu: [20, 50, 75, 100],
+        columnDefs: [{
+            targets: [0, -1], // column or columns numbers
+            orderable: true // set orderable for selected columns
+        }],
+        dom: 'Bfrtip',
+        buttons: [{
+            text: 'Annuler',
+            action: e => $('table > tbody > tr > th').removeClass('writable')
+        }, {
+            extend: 'collection',
+            text: 'Deliberation',
+            buttons: [
+                {
+                    text: 'Modification de Cotes',
+                    action: e => {
+                        $('table > tbody > tr > th').addClass('writable').on('keydown', e => e.currentTarget.dataset.modify = e.currentTarget.dataset.simbing = true)
+                        document.body.click();
+                    }
+                }, {
+                    text: 'Cotation sur Cours',
+                    action: () => formEditor('cc')
+                }, {
+                    text: 'Remplissage de vide',
+                    action: () => formEditor('rv')
+                }, {
+                    text: 'Perequation I/E Ue',
+                    action: () => formEditor('pr')
+                },
+            ]
+        }, {
+            text: 'Sauvegarder',
+            action: e => $('#DataTables_Table_0 > tbody > tr > th[data-modify="true"]').each((i, e) => {
+                if (isFinite(e.innerText)&&(e.innerText<=20||a.dataset.limit && e.innerText<=a.dataset.limit)) {
+                    e.dataset.JURY = e.innerText;
+                    $.ajax({
+                        url: "/app/settings/set/jury-cotes.php?sending_by=mcisme",
+                        data: Object.assign({
+                            MINE_ACAD_YEAR: "<?=$year;?>".split("_")[1]
+                        }, e.dataset),
+                        type: "POST",
+                        success: function(response) {
+                            $(e).addClass('bg-warning text-dark');
+                        }
+                    });
+                } else {
+                    $(e).addClass('bg-danger text-dark');   
+                }
+            })
+        }, {
+            extend: 'collection',
+            text: 'Exporter',
+            buttons: ['copy', 'csv', 'excel', 'pdf', 'print']
+        }]
+    });
+}; $('tr.delibereBtn[data-<?= isset($_POST['periode'])?$_POST['periode']:'undefined' ?>]').each((idx, e) =>{
+    if(e.dataset.<?= isset($_POST['periode'])?$_POST['periode']:'undefined' ?>) e.style.backgroundColor = 'wheat';
+    else e.dataset.excepted = true;
+}); $('#delExcepted').on('click', e=>{
+    if(e.currentTarget.checked) $('tr.delibereBtn[data-excepted]').fadeOut(); else $('tr.delibereBtn[data-excepted]').fadeIn()
+});
+
+window.backStudent = function (id, state = false){
+    fetch("https://www.ista.ac.cd/app/admin/jsons/student/backToGrille/?std="+id+(state?'&state='+state:'')).then(
+        (Response) => {
+            if(Response.status==201) $('#std_'+id).addClass('bg-success');
+            else if(Response.status==204) $('#std_'+id).addClass('bg-primary');
+            else if(Response.status==500) $('#std_'+id).addClass('bg-danger');
+            else console.log(Response.status);
+        }
+    )
+}
+
+console.log("MCISME");

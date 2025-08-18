@@ -1,0 +1,128 @@
+<?php
+class Application
+{
+    public static $instance;
+    public $request;
+    public $session;
+    public $noSession = ['authentification', 'documentation', 'register'];
+    public $ctrl;
+    public $page;
+    public $vars;
+    public $ASSETS = ['_css' => '', 'css' => '', '_js' => '', 'js' => ''];
+    public $name = 'VIRAZA FINANCE';
+    public $ref_url = 'https://www.viraza.net';
+    public $promotion = 2022;
+
+    public function __construct()
+    {
+        $this->request = Request::init();
+        $this->request->parse();
+        $this->page = (object) ['content' => '', 'special' => '', 'footer' => true];
+        $this->ASSETS['js'] = 
+            '<script src="' . root('scripts/index.js?v=' . time()) . '" defer></script>'.
+            '<script src="/layouts/default/js/jquery.dataTables.min.js"></script>'.
+            '<script src="/layouts/default/js/dataTables.buttons.min.js"></script>'.
+            '<script src="/layouts/default/js/jszip.min.js"></script>'.
+            '<script src="/layouts/default/js/pdfmake.min.js"></script>'.
+            '<script src="/layouts/default/js/vfs_fonts.js"></script>'.
+            '<script src="/layouts/default/js/buttons.html5.min.js"></script>'.
+            '<script src="/layouts/default/js/buttons.print.min.js"></script>';
+        $this->ASSETS['css'] =
+            '<link rel="stylesheet" href="/layouts/default/css/buttons.dataTables.min.css">';
+        $this->db = new mysqli('localhost', 'root', '$%Tudent2022', 'snem');
+        $this->dbo = new PDO("mysql:host=localhost;dbname=snem", 'root', '$%Tudent2022');
+    }
+
+    public static function init()
+    {
+        if (is_null(self::$instance))
+            self::$instance = new self();
+        return self::$instance;
+    }
+
+    public function start()
+    {
+        $ctrl_name = ctrlFilter($this->request->space);
+        $ctrl = toClassName($ctrl_name);
+        if (file_exists(ROOT . DS . 'controllers' . DS . $ctrl . '.ctrl')) {
+            if (!$this->isLogin() && !in_array($ctrl_name, $this->noSession))
+                $this->request->redirect('authentification');
+            $this->setTo($ctrl);
+        } else
+            debug(ROOT . DS . 'controllers' . DS . $ctrl . '.ctrl');
+        $this->error('404');
+    }
+
+    public function setTo(string $ctrl = null, $space = null, $action = null, $params = null)
+    {
+        require_once ROOT . DS . 'controllers' . DS . $ctrl . '.ctrl';
+        $this->ctrl = new $ctrl();
+        try {
+            $action = $this->request->action;
+            $this->vars['params'] = $this->request->params;
+            $this->render($this->ctrl->$action());
+        } catch (\Throwable $th) {
+            debug($th);
+            $this->error(404);
+        }
+    }
+
+    private function isLogin()
+    {
+        return Session::init()->connectMe();
+    }
+
+    public function error(int $code = 500)
+    {
+        switch ($code) {
+            case '500':
+                debug($this->request, 'Error 500 : Internal Error');
+                break;
+            case '504':
+                debug($this->request, 'Error 504 : Internal Resource Not Found');
+                break;
+            case '404':
+                $this->render([ERROR . DS . '404' . '.err', false, false, false]);
+                break;
+            default:
+                debug($this->request, 'Error 404 : Unknown Error');
+                break;
+        }
+    }
+
+    public function getPageContent(string $page): string
+    {
+        ob_start();
+        $app = $this;
+        extract($this->vars ?? []);
+        include file_exists($page) ? $page : ERROR . DS . '404.err';
+        if(file_exists($page)) $this->ASSETS['js'] .= '<script src="' . root(str_replace(DS, '/', str_replace('.v', '.js', str_replace(ROOT . DS . 'views', 'scripts', $page)))) . '?v=' . time() . '" defer></script>';
+        return ob_get_clean();
+    }
+
+    public function render(array $view_params)
+    {
+        $this->page->content = $this->getPageContent($view_params[0]);
+        $this->page->header = $view_params[1] ?? true;
+        $this->page->footer = $view_params[2] ?? true;
+        $this->page->special = $view_params[3] ?? true;
+        $app = $this;
+        require_once LAYOUT . DS . 'default.ml';
+        die();
+    }
+
+    public function messageFlash(array $state)
+    {
+        if (empty($state) || !isset($state[0]))
+            return;
+        $type = $state[1] === 'error' ? 'danger' : $state[1] ?? 'default';
+        $title = $state[2] ?? '';
+        $message = $state[0] ?? '';
+        echo "<div class='alert alert-$type' role=alert title='$title'><div class=iq-alert-icon><i class=ri-information-line></i></div><div class=iq-alert-text>$message</div><button type=button class=close data-dismiss=alert aria-label=Close><i class=ri-close-line></i></button></div>";
+    }
+
+    public function generate_enc(string $dte = ''): string
+    {
+        return sha1($dte . time()) . md5(time()).'-'.bin2hex(random_bytes(10));
+    }
+}

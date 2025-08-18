@@ -1,0 +1,84 @@
+<?php class Account extends Controller
+{
+    public function __construct()
+    {
+        parent::__construct();
+        $this->User = $this->loadModel('users');
+        $this->compact('User', $this->User);
+        $this->app->ASSETS['_js'] .= '<script src="/assets/vendor/quill/quill.min.js"></script><script src="/assets/vendor/cropper/dist/cropper.min.js"></script>';
+        $this->app->ASSETS['_css'] .= '<link rel="stylesheet" href="/assets/vendor/quill/quill.snow.css"><link rel=stylesheet href="/assets/vendor/cropper/dist/cropper.min.css">';
+    }
+
+    public function index() {
+        return $this->render('index');
+    }
+
+    public function delete() {
+        $user = (object) $this->User->find($this->params[0]);
+        $response = 0;
+        if (isset($user->enc)) {
+            $response = $this->User->delete($user->enc) ? 204 : 502;
+        } else {
+            $response = 504;
+        }
+        if (isset($_GET['method']) && $_GET['method'] == 'JSON')
+            json($response);
+        Session::init()->set('MSG::ACTION:DELETE', $response);
+        $this->app->request->back();
+    }
+
+    public function restore() {
+        $user = (object) $this->User->find_($this->params[0]);
+        $response = 0;
+        if (isset($user->enc)) {
+            $response = $this->User->restore($user->enc) ? 205 : 502;
+        } else {
+            $response = 504;
+        }
+        if (isset($_GET['method']) && $_GET['method'] == 'JSON')
+            json($response);
+        Session::init()->set('MSG::ACTION:RESTORE', $response);
+        $this->app->request->back();
+    }
+
+    public function trash() {
+        return $this->render('trash');
+    }
+
+    public function add() {
+        $data = (object) ($_POST['data'] ?? []);
+        $data->enc = $this->app->generate_enc();
+        $data->poster = $this->uploadBase64($data->poster, $data->enc);
+        $data->created_by = auth()->id;
+        if (($data->c_password === $data->password)) {
+            unset($data->c_password, $data->confirmation);
+            $data->password = sha1($data->password);
+            $response = ($this->User->insert($data) ? 201 : 502);
+        } else
+            $response = 303;
+        if (isset($_GET['method']) && $_GET['method'] == 'JSON')
+            json($response);
+        Session::init()->set('MSG::ACTION:INSERT', $response);
+        $this->app->request->back();
+    }
+
+    public function uploadBase64(string $img, string $imgName): string {
+        $imgName .= '.png';
+        $img = str_replace(' ', '+', str_replace('data:image/png;base64,', '', $img));
+        return file_put_contents(PROFILE . DS . $imgName, base64_decode($img)) ? $imgName : '';
+    }
+
+    public function resetPassword() {
+        $data = (object) ($_POST['data'] ?? []);
+        $data->updated_by = auth()->id;
+        if (($data->UPDATE_c_password === $data->UPDATE_password)) {
+            $data->password = sha1($data->UPDATE_password);
+            unset($data->UPDATE_password, $data->UPDATE_c_password, $data->UPDATE_confirmation);
+            $response = ($this->User->update($data, $_POST['data_id'] ?? 0) ? 205 : 502);
+        } else $response = 303;
+        if (isset($_GET['method']) && $_GET['method'] == 'JSON')
+            json($response);
+        Session::init()->set('MSG::ACTION:UPDATE', $response);
+        $this->app->request->back();
+    }
+}

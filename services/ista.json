@@ -1,0 +1,62 @@
+{
+    "name": "Institut Supérieur de Techniques Appliquées",
+    "short_name": "ISTA Kinshasa",
+    "description": "L'Institut supérieur de techniques appliquées (ou ISTA) est une institution publique de la République démocratique du Congo située à Kinshasa dans la commune de Barumbu",
+    "start_url": "/?generator=sw",
+    "id": "?sw_key=mcisme_generator__service_worker",
+    "display": "standalone",
+    "theme_color": "#222222",
+    "background_color": "#f7c243",
+    "orientation": "portrait-primary",
+    "icons": [{
+        "src": "/public/assets/icon/ista - 30x30.webp",
+        "type": "image/png",
+        "sizes": "30x30"
+    }, {
+        "src": "/public/assets/icon/ista - 50x50.webp",
+        "type": "image/png",
+        "sizes": "50x50"
+    }, {
+        "src": "/public/assets/icon/ista - 75x75.webp",
+        "type": "image/png",
+        "sizes": "75x75"
+    }, {
+        "src": "/public/assets/icon/ista - 96x96.webp",
+        "type": "image/png",
+        "sizes": "96x96"
+    }, {
+        "src": "/public/assets/icon/ista - 128x128.webp",
+        "type": "image/png",
+        "sizes": "128x128"
+    }, {
+        "src": "/public/assets/icon/ista - 144x144.webp",
+        "type": "image/png",
+        "sizes": "144x144"
+    }, {
+        "src": "/public/assets/icon/ista - 152x152.webp",
+        "type": "image/png",
+        "sizes": "152x152"
+    }, {
+        "src": "/public/assets/icon/ista - 192x192.webp",
+        "type": "image/png",
+        "sizes": "192x192",
+        "purpose": "maskable"
+    }, {
+        "src": "/public/assets/icon/ista - 196x196.webp",
+        "type": "image/png",
+        "sizes": "196x196"
+    }, {
+        "src": "/public/assets/icon/ista - 360x360.webp",
+        "type": "image/png",
+        "sizes": "360x360"
+    }, {
+        "src": "/public/assets/icon/ista - 512x512.webp",
+        "type": "image/png",
+        "sizes": "512x512"
+    }],
+    "prefer_related_applications": true,
+    "related_application": [{
+        "platform": "ISTA Kinshasa",
+        "id": "com.ista.snen.viraza"
+    }]
+}

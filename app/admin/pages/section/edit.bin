@@ -1,0 +1,102 @@
+<?php viewOnlyBy('ADMIN'); $pageTitle = "Demandes d'admission" ?>
+
+
+<?php 
+    if (isset($links[2]) && is_numeric($links[2])){
+        $rqt = mysqli_query($db, "SELECT * FROM sections WHERE id = $links[2] AND active = 1");
+        if ($rqt) $row = mysqli_fetch_array($rqt);
+    }
+
+    if (isset($row) && $row){$sec = (object) $row; ?>
+        <div class="card height-auto">
+            <div class="card-body">
+                <div class="heading-layout1">
+                    <div class="item-title">
+                        <h3>Nouvelle <?=$mci?></h3>
+                    </div>
+                    <div class="dropdown">
+                        <a class="dropdown-toggle" href="#" role="button" 
+                        data-toggle="dropdown" aria-expanded="false">...</a>
+
+                        <div class="dropdown-menu dropdown-menu-right">
+                            <a class="dropdown-item" href="#"><i class="fas fa-times text-orange-red"></i>Close</a>
+                            <a class="dropdown-item" href="#"><i class="fas fa-redo-alt text-orange-peel"></i>Refresh</a>
+                        </div>
+                    </div>
+                </div>
+                <form class="new-added-form" id="addSection">
+                    <div class="row">
+                        <div class="col-xl-8 col-lg-6 col-12 form-group">
+                            <label>Nom complet de la Département *</label>
+                            <input type="text" name="name" placeholder="" class="form-control" value="<?= $sec->name ?>">
+                        </div>
+                        <div class="col-xl-4 col-lg-6 col-12 form-group">
+                            <label>Nom court *</label>
+                            <input type="text" name="short" placeholder="" class="form-control" value="<?= $sec->short ?>">
+                        </div>
+                        <div class="col-xl-8 col-lg-6 col-12 form-group">
+                            <label>Enseignant titulaire *</label>
+                            <select class="select2" name="titular" value="<?= $sec->titular ?>">
+                                <?php $rqt = mysqli_query($db, "SELECT * FROM agents WHERE active = 1 AND role = 'CS' ORDER BY title DESC, firstname") or die(debug(mysqli_error($db)));
+                                    while ($ROW = mysqli_fetch_array($rqt)){ $row = (object) $ROW; ?>
+                                <option <?= ($row->id == $sec->titular) ? "selected" : null ?> value="<?= $row->id ?>"><?= "$row->firstname $row->lastname" ?></option>
+                                <?php } ?>
+                                <input type="hidden" name="mine" value="<?= $sec->id ?>">
+                                <input type="hidden" name="CON_47" value="true">
+                            </select>
+                        </div>
+                        <div class="col-xl-4 col-lg-6 col-12 form-group">
+                            <label>Code Département *</label>
+                            <input type="text" name="code" placeholder="" class="form-control" value="<?= $sec->code ?>">
+                        </div>
+                        <div class="col-3 form-group">
+                            <label class="text-center" for="" data-toggle="tooltip" data-placement="top" title="" data-original-title="Les étudiants passes automatiquement de classes sans l'intervention du département.">
+                                <span>auto-passed</span>
+                                <input type="checkbox" name="auto[passed]" id="autoPassed" value="true">
+                            </label>
+                        </div>
+                        <div class="col-3 form-group">
+                            <label class="text-center" for="" data-toggle="tooltip" data-placement="top" title="" data-original-title="Les recours des étudiant arrive directement chez les professeurs sans l'intervention du département.">
+                                <span>auto-recours</span>
+                                <input type="checkbox" name="auto[recours]" id="autoRecours" value="true">
+                            </label>
+                        </div>
+                        <div class="col-3 form-group">
+                            <label class="text-center" for="" data-toggle="tooltip" data-placement="top" title="" data-original-title="Les étudiants sont automatiquement délibérer en fonctions des régles de l'établissement sans l'intervention du département">
+                                <span>auto-delibération</span>
+                                <input type="checkbox" name="auto[deliberation]" id="autoDeliberation" value="true">
+                            </label>
+                        </div>
+                        <div class="col-3 form-group">
+                            <label class="text-center" for="" data-toggle="tooltip" data-placement="top" title="" data-original-title="Les profiles des étudiants leurs sont disponible independament de la délibération">
+                                <span>auto-profile</span>
+                                <input type="checkbox" name="auto[profile]" id="autoProfile" value="false">
+                            </label>
+                        </div>
+                        <div class="mx-4 alert hidden alert-danger alert-dismissible fade show" role="alert" id="errorRapport">
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                                <span class="sr-only">Close</span>
+                            </button>
+                            <strong>Erreur : </strong>Une erreur s'est produit pendant l'ajout.<br>Si celà persiste veuillez contacter votre administrateur système.
+                        </div>
+                        <div class="col-12 form-group mg-t-8">
+                            <button type="submit" class="btn-fill-lg btn-gradient-yellow btn-hover-bluedark">Save</button>
+                            <button type="reset" class="btn-fill-lg bg-blue-dark btn-hover-yellow">Reset</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    <?php }else{ ?>
+        <div class="card height-auto">
+            <div class="card-body">
+                <div class="heading-layout1 mg-b-15">
+                    <div class="item-title p-5 text-center w-100">
+                        <h1 class="text-danger bg-blue-dark py-xl-5">Section Introuvable : <?= isset($links[2]) && $links[2] ? $links[2] : NULL ?></h1>
+                        <h3>La section dont vous essayer de voire est introuvable</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+    <?php } ?>

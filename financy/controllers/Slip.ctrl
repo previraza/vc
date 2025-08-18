@@ -1,0 +1,120 @@
+<?php class Slip extends Controller
+{
+    public function __construct()
+    {
+        parent::__construct();
+        $this->users = $this->loadModel('users');
+        $this->payments = $this->loadModel('slips');
+        $this->fees = $this->loadModel('fees');
+        $this->compact('fees', $this->fees->all());
+        
+        $this->app->ASSETS['_css'] .= '<link rel="stylesheet" href="/assets/vendor/choiceJS/style/choices.min.css">';
+        $this->app->ASSETS['css'] .= '<link rel="stylesheet" href="/assets/css/blog.min.css"/>';
+        $this->app->ASSETS['_js'] .= '
+            <script src="/assets/js/plugins/signaturepad.js"defer></script>
+            <script src="/assets/vendor/signature_pad/dist/signature_pad.umd.js" async></script>
+            <script src="/assets/vendor/choiceJS/script/choices.min.js"></script>
+            <script src="/assets/js/plugins/choice.js" defer></script>';
+        $this->app->ASSETS['js'] .= '<script src="/assets/js/appointment.js"></script>';
+    }
+    public function delete()
+    {
+        $payment = (object) $this->payments->find($this->params[0]);
+        $response = 0;
+        if (isset($payment->enc)) {
+            $response = $this->payments->delete($payment->enc) ? 204 : 502;
+        } else {
+            $response = 604;
+        }
+        if (isset($_GET['method']) && $_GET['method'] == 'JSON')
+            json($response);
+        Session::init()->set('MSG::ACTION:DELETE', $response);
+        $this->app->request->back();
+    }
+    public function restore()
+    {
+        $payment = (object) $this->payments->find_($this->params[0]);
+        $response = 0;
+        if (isset($payment->enc)) {
+            $response = $this->payments->restore($payment->enc) ? 205 : 502;
+        } else {
+            $response = 605;
+        }
+        if (isset($_GET['method']) && $_GET['method'] == 'JSON')
+            json($response);
+        Session::init()->set('MSG::ACTION:RESTORE', $response);
+        $this->app->request->back();
+    }
+    public function index()
+    {
+        $this->compact('payments', $this->payments->mine('selective'));
+        return $this->render();
+    }
+    public function free()
+    {
+        $db = database::getInstance();
+
+        $query_class = $db->query("SELECT c.id, CONCAT(l.name, ' / ', s.name, ' / ', o.name, ' / ', c.name) AS `name` FROM classes AS c JOIN `level` AS l ON (l.id = c.level AND l.delete = 0 AND l.active = 1) JOIN `sections` AS s ON (s.id = c.section AND s.delete = 0 AND s.active = 1) JOIN `sections` AS o ON (o.id = c.section AND o.delete = 0 AND o.active = 1) WHERE c.active = 1 AND c.delete = 0;");
+        $classes = []; while ($row = $query_class->fetch_object()) $classes[$row->id] = $row->name;
+        $this->compact('classes', $classes);
+        
+        $this->compact('payments', $this->payments->mine('free'));
+        return $this->render();
+    }
+    
+    public function trash()
+    {
+        $this->compact('payments', $this->payments->mine_());
+        return $this->render('trash');
+    }
+    public function edit()
+    {
+        $data = (object) $this->payments->find($this->params[0]);
+        $this->compact('data_edit', isset($data->enc) ? $data : false);
+        return $this->render();
+    }
+    public function add()
+    {
+        $data = (object) ($_POST['data'] ?? []);
+        if(isset($data->section)){
+            unset($data->section, $data->option, $data->level, $data->promotion, $data->class);
+        }
+        if($data->transhis??false){
+            if(count($data->transhis) == 2) $data->transhis = 'full';
+            else $data->transhis = $data->transhis[0];
+        }
+        $data->enc = $this->app->generate_enc();
+        $data->code = 'OPS-'.($data->created_by = auth()->id) . '/' . substr(time(),2);
+        $response = $this->payments->insert($data) ? 201 : 502;
+        if (isset($_GET['method']) && $_GET['method'] == 'JSON')
+            json($response);
+        Session::init()->set('MSG::ACTION:RESTORE', $response);
+        $this->app->request->back();
+    }
+    public function update()
+    {
+        $payment = (object) $this->payments->find($this->params[0] ?? -1);
+        $response = 0;
+        if (isset($payment->enc)) {
+            if($payment->created_by == auth()->id || auth()->role=='A:A:A:AA'){
+                $data = (object) ($_POST['data'] ?? []);
+                $data->enc = $this->app->generate_enc();
+                $data->updated_by = auth()->id;
+                $response = $this->payments->update($data, $this->params[0]) ? 205 : 502;
+            } else $response = 405;
+        } else {
+            $response = 400;
+        }
+        $_POST['data']['allower'] = '';
+        if (isset($_GET['method']) && $_GET['method'] == 'JSON')
+            json($response);
+        Session::init()->set('MSG::ACTION:RESTORE', $response);
+        $this->app->request->back();
+    }
+
+    public function finder()
+    {
+        $this->compact('finding', $this->payments->finder($_POST['data']['search']??''));
+        return $this->render('finder');
+    }
+}

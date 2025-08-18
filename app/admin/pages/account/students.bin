@@ -1,0 +1,92 @@
+<?php viewOnlyBy('ADMIN', 'SG', 'DG','SR','AB','SA'); $pageTitle = "Etudiants Actif";
+    function to_eight($value){
+        while (strlen($value)<8) $value='0'.$value;
+        return $value;
+    }
+?>
+<div class="card height-auto">
+    <div class="card-body">
+        <div class="heading-layout1">
+            <div class="item-title">
+                <h3>Liste des étudiants</h3>
+            </div>
+            <div class="dropdown">
+                <a class="dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-expanded="false">...</a>
+
+                <div class="dropdown-menu dropdown-menu-right">
+                    <a class="dropdown-item" href="#" data-action="print"><i class="fas fa-print"></i>print</a>
+
+                    <a class="dropdown-item" href="#" data-action="reload"><i class="fas fa-redo-alt text-orange-peel"></i>Actualiser</a>
+                </div>
+            </div>
+        </div>
+        <form class="mg-b-20" method="POST">
+            <div class="row gutters-8">
+                <div class="col-xl-3 col-lg-6 col-12 form-group">
+                    <input type="hidden" name="CON_47" value="true">
+                    <label><?=$mci?></label>
+                    <select class="select2" name="section" id="s_sec">
+                        <?php $rqt = mysqli_query($db, "SELECT id, name FROM sections WHERE active = 1") or die(debug(mysqli_error($db)));
+                            while ($ROW = mysqli_fetch_array($rqt)){ $row = (object) $ROW; $_fs = isset($_fs) ? $_fs : $row->id?>
+                                <option value="<?= $row->id ?>" <?php if(isset($_POST['section']) && $row->id == $_POST['section']) {echo 'selected'; $_fs = $row->id;} ?>><?= $row->name ?></option>
+                        <?php } ?>
+                        <option <?php if(isset($_POST['section']) && '*' == $_POST['section']) {echo 'selected'; $_fs = '*';} ?> value="*">Toutes les <?=$mci?>s</option>
+                    </select>
+                </div>
+                <div class="col-xl-3 col-lg-6 col-12 form-group">
+                    <label>Option</label>
+                    <select class="select2" name="option" id="s_opt">
+                        <?php $rqt = mysqli_query($db, "SELECT id, name FROM options WHERE active = 1 AND ".($_fs=='*'?'1':'section = '.$_fs)) or die(debug(mysqli_error($db)));
+                            while ($ROW = mysqli_fetch_array($rqt)){ $row = (object) $ROW; $_fo = isset($_fo) ? $_fo : $row->id?>
+                                <option value="<?= $row->id ?>" <?php if(isset($_POST['option']) && $row->id == $_POST['option']) {echo 'selected'; $_fo = $row->id;} ?>><?= $row->name ?></option>
+                            <?php } ?>
+                            <option <?php if(isset($_POST['option']) && '*' == $_POST['option']) {echo 'selected'; $_fo = '*';} ?> value="*">Toutes les options</option>
+                    </select>
+                </div>
+                <div class="col-xl-3 col-lg-6 col-12 form-group">
+                    <label>Niveau</label>
+                    <select class="select2" name="level">
+                        <option selected value="*">Tous les niveaux</option>
+                        <?php $rqt = mysqli_query($db, "SELECT * FROM level WHERE active = 1") or die(debug(mysqli_error($db)));
+                            while ($ROW = mysqli_fetch_array($rqt)){ $row = (object) $ROW; ?>
+                                <option value="<?= $row->id ?>"><?= $row->name ?></option>
+                        <?php } ?>
+                        <input type="hidden" name="CON_47" value="true">
+                    </select>
+                </div>
+                <div class="col-xl-3 col-lg-6 col-12 form-group">
+                    <label>Promotion *</label>
+                    <select class="select2" name="promotion">
+                        <option selected value="*">Année Académique </option>
+                        <?php $year = 2023;
+                            while ($year > 2021){ ?>
+                                <option value="<?= --$year ?>"><?= $year." - ".($year+1); ?></option>
+                        <?php } ?>
+                        <input type="hidden" name="CON_47" value="true">
+                    </select>
+                </div>
+                <div class="col-12 form-group">
+                    <label></label>
+                    <button type="submit" class="fw-btn-fill btn-gradient-yellow">RECHERCHE</button>
+                </div>
+            </div>
+        </form>
+        <div class="table-responsive">
+            <table class="table display dataTable-dyn-table text-nowrap">
+                <thead>
+                    <tr>
+                        <th>N°</th>
+                        <th>Nom d'utilisateur</th>
+                        <th>Mot de passe</th>
+                        <th><?=$mci?></th>
+                        <th>Option</th>
+                        <th>Niveau</th>
+                        <th>Classe</th>
+                        <th>Promotion</th>
+                    </tr>
+                </thead>
+                <tbody class=dataTable-dyn-body></tbody>
+            </table>
+        </div>
+    </div>
+</div>

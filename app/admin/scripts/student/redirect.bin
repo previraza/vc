@@ -1,0 +1,3 @@
+function orientationForm () {
+    alert("Actuellement l'orientation est automatique en fonction de nos de l'ordre l'aphabetique...");
+}

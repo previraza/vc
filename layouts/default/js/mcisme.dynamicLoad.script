@@ -1,0 +1,147 @@
+// Dynamic Load
+! function(t) {
+    "use strict";
+    t.fn.dynamicLink = function(s) {
+        let e = {
+                0: {
+                    title: "Offline",
+                    pages: `<div class="card height-auto"><div class="card-body"><div class="heading-layout1 mg-b-15"><div class="item-title p-5 text-center w-100"><h1 class="text-danger bg-blue-dark py-xl-5">Vous etes hors connexion!</h1><h3>Une connexion internet est requise pour acceder à plus de resource...</h3></div></div></div></div>`,
+                },
+                403: {
+                    title: "Erreur du serveur",
+                    pages: `<div class="card height-auto"><div class="card-body"><div class="heading-layout1 mg-b-15"><div class="item-title p-5 text-center w-100"><h3>Une erreur s'est produit au niveau de notre serveur, veuillez contacter notre service pour plus d'information...</h3></div></div></div></div>`,
+                },
+                404: {
+                    title: "Page non trouvé",
+                    pages: `<div class="card height-auto"><div class="card-body"><div class="heading-layout1 mg-b-15"><div class="item-title p-5 text-center w-100"><h1 class="text-danger bg-blue-dark py-xl-5">Erreur 404 : Page introuvable</h1><h3>La page dont vous essayer de voire est introuvable pour le moment...</h3></div></div></div></div>`
+                }
+            },
+            z = this,
+            w = window,
+            d = document,
+            l = location,
+            m = {
+                c: s.contenair || "body",
+                e: s.exempt || "head",
+                b: s.before || function(e) {},
+                e: s.error || function(r) {
+                    var a = document.createElement('a');
+                    a.href = `?b557c222c8ddcdf87e033706aad08e4ef7cf90d3=errors--${r.status}&dataType=POSTED_CODE`;
+                    a.className = 'nav-link';
+                },
+                a: s.after || function(e) {},
+                g: function(a, h = true) {
+                    window.mcio = a;
+                    try {
+                        var y = 'menu-active',
+                            state = Date.now(),
+                            h = a.href == location.origin + '/app' ? a.href + '/' : a.href.replace('/app?', '/app/?');
+                        m.b(a);
+                        $('.' + y).removeClass(y);
+                        a.className += (' ' + y);
+                        $.post(
+                            h, { dynamicLink: 'dynamicLink' }
+                        ).done(function(r) {
+                            try {
+                                var x = JSON.parse(r);
+                                $(a.getAttribute('link-content') || m.c).html(x.page);
+                                (!a.getAttribute('link-content') && h) ? w.history.pushState(state, d.title, a.href): false;
+                                $.getScript(l.search.replace('b557c222c8ddcdf87e033706aad08e4ef7cf90d3=', 'script=') + (l.search ? '&dataGetScript=OUTER_MCISME_ENTER' : '?script=admin&dataGetScript=OUTER_MCISME_ENTER'));
+                                d.title = "Viraza | " + x.title;
+                                z.state[state] = a;
+                            } catch (error) {
+                                console.log(error, r);
+                            }
+                        }).fail(function(r) {
+                            d.title = "Viraza | " + e[r.status].title
+                            $(a.getAttribute('link-content') || m.c).html(e[r.status].pages);
+                        }).always(function(r) {
+                            if (typeof(r) !== 'string') {
+                                r = JSON.stringify({
+                                    links: ["errors", r.status],
+                                    ...e[r.status]
+                                })
+                            }
+                            m.a(this, r);
+                            window.lastRequest = r;
+                        });
+                    } catch (error) {
+                        l.reload()
+                    }
+                }
+            };
+        z.state = {};
+        z.state[w.history.state] = function() {
+            var a = document.createElement('a');
+            a.href = l.href.replace(l.origin, '');
+            a.className = 'nav-link';
+            return a;
+        }();
+        m.c = typeof(data) == "string" ? data : m.c;
+
+        w.history.scrollRestoration = "manual";
+        w.addEventListener("popstate", function(e) {
+            e.preventDefault();
+            m.g(z.state[e.state], false);
+        });
+
+        t.dynamicLinkReload = function() {
+            let a = document.createElement('a');
+            a.href = l.href.replace(l.origin, '');
+            m.g(a);
+        };
+
+        $('a', this).on('click', function(e) {
+            if (this.dataset.action !== undefined) {
+                switch (this.dataset.action) {
+                    case 'null':
+                        e.preventDefault();
+                        break;
+                    case 'print':
+                        printer($(this).parents('.card').parent()[0]);
+                        e.preventDefault();
+                        break;
+                    case 'reload':
+                        t.dynamicLinkReload();
+                        break;
+                    case 'changePass':
+                        __changePass();
+                        break;
+                    default:
+                        location.reload
+                        break;
+                }
+            } else if (this.href.indexOf(l.host) && this.attributes.href && this.attributes.href.value !== "#" && this.dataset.link != "external") {
+                e.preventDefault();
+                m.g(this);
+            }
+        });
+        return this;
+    }
+
+    t.fn.dateCounter = function() {
+        setInterval(() => this.text(Intl.DateTimeFormat().format().replaceAll(' / ', ' - ') + " " + Date().slice(16, 24)), 1000)
+        return this;
+    };
+}(jQuery);
+
+let wp = null,
+    printer = (element = window.document.getElementById('content')) => {
+        if (wp === null || wp.closed) {
+            wp = window.open('/app/?fa69951bc733eb82713e936be33597e1=DATA_CRYPTING_ON:fa69951bc733eb82713e936be33597e1=WABTECHS_CRYPTING_ON: e91497f38407364c8e86ade9098950d978814190&MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3VIRAZA_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3&MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3&WABTECHS_CRYPTING_ON_LAVINGOL&MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3&b557c222c8ddcdf87e033706aad08e4ef7cf90d3=actions--printer', "Mcisme", "modal");
+            wp.addEventListener('load', () => {
+                wp.document.title = window.document.title;
+                wp.document.getElementById('printContent').innerHTML = element.innerHTML;
+                wp.moveTo(0,0);
+                wp.resizeTo(screen.width,screen.height);
+                wp.print();
+                wp.addEventListener('afterprint', wp.close)
+            })
+        } else {
+            wp.focus();
+            wp.open();
+        }
+    },
+    __changePass = () => {
+        window.open('/public/__changePass.htm', "changePass", "modal").addEventListener('close', location.reload());
+    }

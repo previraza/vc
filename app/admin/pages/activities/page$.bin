@@ -1,0 +1,87 @@
+<?php
+viewOnlyBy('ADMIN');
+$pageTitle = "Activités par page";
+
+// Récupère la page sélectionnée en POST
+$selectedPage = $_POST['activity_page'] ?? null;
+
+// Si aucune page n'est fournie, on affiche un message
+if (!$selectedPage) {
+    echo '<div class="alert alert-warning">Aucune page spécifiée.</div>';
+    exit;
+}
+?>
+<div class="card height-auto">
+  <div class="card-body">
+    <div class="heading-layout1 d-flex justify-content-between align-items-center mb-4">
+      <div class="item-title">
+        <h3>Activités pour la page : <?= htmlspecialchars($selectedPage) ?></h3>
+      </div>
+      <button class="btn btn-secondary" onclick="history.back()">← Retour</button>
+    </div>
+    <div class="table-responsive">
+      <table id="page-show" class="table data-table-activities-page-show table-striped table-bordered text-nowrap">
+        <thead>
+          <tr>
+            <th><input type="checkbox" class="form-check-input checkAll"></th>
+            <th>Username</th>
+            <th>IP</th>
+            <th>Country</th>
+            <th>Device</th>
+            <th>Action</th>
+            <th>Params (GET/POST)</th>
+            <th>Page</th>
+            <th>Method</th>
+            <th>Review Count</th>
+            <th>Date</th>
+            <th>Voir</th>
+          </tr>
+        </thead>
+      </table>
+    </div>
+  </div>
+</div>
+<script>
+  $(document).ready(function() {
+    $('.data-table-activities-page-show').DataTable({
+      serverSide: true,
+      processing: true,
+      ajax: {
+        url: '/app/admin/jsons/activities.php?route=fetch&page=<?= urlencode($selectedPage) ?>',
+        type: 'GET'
+      },
+      columns: [
+        { data: 'id', render: (data, type, row, meta) => {
+            return `<div class="form-check">
+                      <input type="checkbox" class="form-check-input">
+                      <label class="form-check-label">${meta.row+1}</label>
+                    </div>`;
+          }
+        },
+        { data: 'user_name' },
+        { data: 'ip' },
+        { data: 'country' },
+        { data: 'device' },
+        { data: 'action' },
+        { data: null, render: row => {
+            let g = JSON.parse(row.get_params||'{}');
+            let p = JSON.parse(row.post_params||'{}');
+            return `GET: ${JSON.stringify(g)}<br>POST: ${JSON.stringify(p)}`;
+          }
+        },
+        { data: 'page' },
+        { data: 'method' },
+        { data: 'review' },
+        { data: 'created_at' },
+        { data: null, render: row => {
+            return `<a href="?activities--show--${row.id}" class="btn btn-primary btn-sm">Voir</a>`;
+          }
+        }
+      ],
+      columnDefs: [
+        { orderable: false, targets: [0, 11] }
+      ],
+      order: [[10, 'desc']]
+    });
+  });
+</script>

@@ -1,0 +1,90 @@
+<?php require_once '../../app/settings/params/connect'; require_once "../../public/_header.php";if (isset($_GET['action'], $_GET['teacher']) && ($_GET['action'] == 'active' || $_GET['action'] == 'delete') && is_numeric($_GET['teacher']))mysqli_query($db, "UPDATE `publications` SET `publications`.`$_GET[action]` = '1' WHERE `id` = $_GET[teacher]");?>
+<section id="ft-contact-page" class="ft-contact-page-section page-padding mt-4">
+<div class=container>
+<div class=ft-contact-page-content>
+<div class=row>
+<div class=col-lg-6>
+<?php if (isset($_GET['action'], $_GET['teacher']) && ($_GET['action'] == 'edit') && is_numeric($_GET['teacher']) && $art = mysqli_fetch_array(mysqli_query($db, "SELECT * FROM teachers JOIN publications ON publications.author = teachers.id WHERE teachers.delete = 0 AND id = ".$_GET['teacher']))) { ?>
+<div class="ft-contact-page-form-wrapper headline">
+<h3 class="text-center">Modifier Publication n° <?= $art['id'] ?></h3>
+<form action=/admin/submit/form/teacher.php?form=dynamic method=POST enctype=multipart/form-data dynamic-form>
+<div class=row>
+<div class=col-12><select required class=select2 name=teacher class="form-select form-control" required><option selected disabled value=0>Selectionner un enseignant</option><?php $rqt = mysqli_query($db, "SELECT id, CONCAT(firstname, ' ', lastname) AS name FROM teachers WHERE active = 1 ORDER BY title DESC, firstname");while ($row = mysqli_fetch_object($rqt)){ ?><option value=<?=$row->id?>><?=$row->name?></option><?php }?><input type="hidden" name="CON_47" value="true"></select></div>
+<hr />
+<div class=col-12><div class="d-flex align-items-center"><span class=col><span class=form-label>Document</span><input type=text name=doc_title[]></span><span><div class="btn btn-info pl-3 h-100 ml10">+</div></span></div></div>
+<div class=col-12><textarea class=tynimce name=doc_resume[] placeholder="Résumé du livre" cols=3 required></textarea></div>
+<div class=col-12><div class="d-flex align-items-center"><span class=col><input type=file name=doc[] accept=doc/*></span></div></div>
+<div class="errorRapport"></div>
+<div class=col-12><input type=hidden name=request_corps value=submit_formulary_sotck_admin_add_teacher><input type=hidden name=author value=<?=isset($_SESSION['ADMIN']['id'])?$_SESSION['ADMIN']['id']:null?>><button type=submit>Publier</button></div>
+</div>
+</form>
+</div><?php } else { ?><div class="ft-contact-page-form-wrapper headline">
+<h3 class=text-center>Publier un enseignant</h3>
+<form action=/admin/submit/form/teacher.php?form=dynamic method=POST enctype=multipart/form-data dynamic-form>
+<div class=row>
+<div class=col-12><select required class=select2 name=teacher class="form-select form-control" required><option selected disabled value=0>Selectionner un enseignant</option><?php $rqt = mysqli_query($db, "SELECT id, CONCAT(firstname, ' ', lastname) AS name FROM teachers WHERE active = 1 ORDER BY title DESC, firstname");while ($row = mysqli_fetch_object($rqt)){ ?><option value=<?=$row->id?>><?=$row->name?></option><?php }?><input type="hidden" name="CON_47" value="true"></select></div>
+<div id=addDocBloc>
+<div>
+<hr />
+<div class="col-12"><div class="d-flex align-items-center"><span class=col><span class=form-label>Document</span><input type=text name=doc_title[]></span><span><div id=addDocBtn class="btn btn-info pl-3 h-100 ml10">+</div></span></div></div>
+<div class="col-12 pt-3"><textarea class=tynimce name=doc_resume[] placeholder="Résumé du livre" cols=3 required></textarea></div>
+<div class="col-12 pt-3"><div class="d-flex align-items-center"><span class=col><input type=file name=doc[] accept=doc/*></span></div></div>
+</div>
+</div>
+<div class="errorRapport"></div>
+<div class=col-12><input type=hidden name=request_corps value=submit_formulary_sotck_admin_add_teacher><input type=hidden name=author value=<?=isset($_SESSION['ADMIN']['id'])?$_SESSION['ADMIN']['id']:null?>><button type=submit>Publier</button></div>
+</div>
+</form>
+</div><?php } ?>
+</div>
+<div class=col-lg-6>
+<div class="ft-contact-page-text-wrapper">
+<div class="ft-section-title-2 headline pera-content">
+<hr />
+<h2>Enseignants publiées</h2>
+</div>
+<div class="ft-contact-page-contact-info">
+<div class="ft-contact-cta-items d-flex">
+<div class="table-responsive w-100">
+<table class="table table-hover">
+<thead>
+<tr>
+<th>id</th>
+<th>Nom</th>
+<th>Mise à jour</th>
+<th>Actions</th>
+</tr>
+</thead>
+<tbody>
+<?php $db_name = db['name']; $c=0; $rqt = mysqli_query($db, "SELECT publications.id, publications.active, publications.delete, publications.datetime, CONCAT(teachers.firstname, ' ',teachers.lastname) AS name FROM publications LEFT JOIN teachers ON teachers.id = publications.author WHERE publications.delete = 0 ORDER BY datetime DESC"); while($r = mysqli_fetch_array($rqt)) { ?>
+<tr <?= $r[ 'active'] ? null : 'class="bg-dark text-warning"'; ?>>
+<td><?= ++$c ?></td>
+<td><a href=view.php?profile=<?= $r['id'] ?>><?= $r['name'] ?></a></td>
+<td><?= $r['datetime'] ?></td>
+<td> <div class="flex align-items-center list-user-action"><a class="iq-bg-primary px-3" data-toggle="tooltip"
+data-placement="top" title="" data-original-title="Preview"
+href=?action=active&teacher=<?= $r['id'] ?>><i class="fa fa-send"></i></a><a class="iq-bg-primary px-3" data-toggle="tooltip" data-placement="top" title=""
+data-original-title="Editer"
+href=?action=edit&teacher=<?= $r['id'] ?>><i class="fa fa-edit"></i></a><a class="iq-bg-primary px-3" data-toggle="tooltip" data-placement="top" title=""
+data-original-title="Supprimer"
+href=?action=delete&teacher=<?= $r['id'] ?>><i class="fa fa-trash"></i></a></div>
+</td>
+</tr><?php } ?></tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<script src="/public/assets/js/tinymce/tinymce.min.js"></script>
+<script>
+    window.addEventListener('load', e=>{
+        $('#addDocBtn').on('click',e=>{
+            $('#addDocBloc').append(`<hr/><div class=col-12><div class="d-flex align-items-center"><span class=col><span class=form-label>Document</span><input type=text name=doc_title[]></span></div></div><div class="col-12 pt-3"><textarea class=tynimce name=doc_resume[] placeholder="Résumé du livre" cols=3 required></textarea></div><div class="col-12 pt-3"><div class="d-flex align-items-center"><span class=col><input type=file name=doc[] accept=doc/*></span></div></div></div>`);
+        }); tinymce.init({selector: 'textarea.tynimce', plugins: "preview powerpaste casechange searchreplace autolink autosave save directionality advcode visualblocks visualchars fullscreen image link media mediaembed template codesample table charmap pagebreak nonbreaking anchor tableofcontents insertdatetime advlist lists checklist wordcount tinymcespellchecker a11ychecker editimage help formatpainter permanentpen pageembed charmap quickbars linkchecker emoticons advtable export", menubar: "file edit view insert format tools table tc help", toolbar: "undo redo | bold italic underline strikethrough | fontfamily fontsize blocks | alignleft aligncenter alignright alignjustify | outdent indent | numlist bullist checklist | forecolor backcolor casechange permanentpen formatpainter removeformat | pagebreak | charmap emoticons | fullscreen preview save print | insertfile image media pageembed template link anchor codesample | a11ycheck ltr rtl | export",});
+    })
+</script><?php require_once "../../public/_footer.php";

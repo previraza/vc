@@ -1,0 +1,104 @@
+<?php $pageTitle = "Cours"; ?>
+<div class="card height-auto">
+    <div class="card-body">
+        <div class="heading-layout1">
+            <div class="item-title">
+                <h3>Grille de cote</h3>
+            </div>
+           <div class="dropdown">
+                <a class="dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-expanded="false">...</a>
+                <div class="dropdown-menu dropdown-menu-right">
+                    <a class="dropdown-item" href="#" onclick="submitAll()" data-action="null"><i class="fas fa-save text-blue"></i>Save</a>
+                    <a class="dropdown-item" href="#" id="editing" data-action="null"><i class="fas fa-cogs text-dark-pastel-green"></i>Edit</a>
+                    <a class="dropdown-item" href="#" data-action="print"><i class="fas fa-print"></i>print</a>
+                    <a class="dropdown-item" href="#" data-action="reload"><i class="fas fa-redo-alt text-orange-peel"></i>Actualiser</a>
+                </div>
+            </div>
+        </div>
+        <form class="mg-b-20" method="POST">
+            <div class="row gutters-8">
+                <div class="col-xl-4 col-12 form-group">
+                    <input type="text" placeholder="Non de l'étudiant" class="form-control" name="student_name">
+                </div>
+                <div class="col-xl-8 col-12 form-group">
+                    <select class="select2" name="course">
+                        <?php $rqt_scop12 = mysqli_query($db, "SELECT courses.id, courses.name, sections.name AS section_name, options.name AS option_name, level.name AS level_name, classes.name AS classe_name FROM courses JOIN teachers ON teachers.id = courses.titular JOIN classes ON classes.id = courses.class JOIN sections ON sections.id = classes.section JOIN options ON options.id = classes.option JOIN level ON level.id = classes.level WHERE courses.active = 1 AND courses.delete = 0 AND teachers.user_id = $user->id AND classes.active = 1 AND classes.delete = 0"); while ($row = mysqli_fetch_array($rqt_scop12)){ ?>
+                                <option <?= (isset($_POST['course']) && $_POST['course'] == $row['id']) ? 'selected' : (!isset($_POST['course']) && isset($links[2]) && $links[2] == $row['id'] ? 'selected' : null)?> value="<?= $row['id'] ?>"><?=  "$row[section_name] / $row[option_name] / $row[level_name] / $row[classe_name] / $row[name]" ?></option>
+                        <?php } ?>
+                    </select>
+                </div>
+                <div class="col-12 form-group">
+                    <button type="submit" class="fw-btn-fill btn-gradient-yellow">RECHERCHE</button>
+                </div>
+            </div>
+        </form>
+        <div class="table-responsive">
+            <table class="table display data-table text-nowrap">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Photo</th>
+                        <th>Nom Complet</th>
+                        <th class="text-center">TP</th>
+                        <th class="text-center">INT</th>
+                        <th class="text-center">MOY</th>
+                        <th class="text-center">EXAM</th>
+                        <th class="text-center">RATR</th>
+                        <th class="text-center">TOTAL</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php $count = 0; $rqt = mysqli_query($db, "SELECT DISTINCT students.*, classes.delib, classes.finished, cotes.recours AS recours, cotes.id AS cote_id, courses.id AS course_id, courses.name AS course_name, cotes.TP1, cotes.TP2, cotes.TP3, cotes.INT1, cotes.INT2, cotes.EXAM, cotes.RATR 
+                                        FROM students 
+                                        JOIN classes ON classes.id = students.class 
+                                        JOIN courses ON courses.class = students.class
+                                        JOIN teachers ON teachers.id = courses.titular 
+                                        LEFT JOIN cotes ON (cotes.student = students.id AND cotes.course = courses.id)
+                                    WHERE students.active = 1 AND teachers.user_id = $user->id AND courses.id = ".(isset($_POST['course']) ? $_POST['course'] : (isset($links[2]) ? $links[2] : 0))." ORDER BY firstname"
+                                ) OR die(debug(mysqli_error($db)));
+                        while ($ROW = mysqli_fetch_array($rqt)){ $row = (object) $ROW; $MOY = $TOT = 0; $count++;
+                            $TP2 = ($row->TP2)  ? $row->TP2  : 0 ;
+                            $TP3 = ($row->TP3)  ? $row->TP3  : 0 ;
+                            $INT2 = ($row->INT2) ? $row->INT2 : 0; ?>
+                        <tr id="editing_<?= $count ?>" <?= ($row->recours) ? 'class="bg-warning editable" data-modify=true' : ($row->finished || ($row->delib && !$row->recours) ? null : 'class="editable"')?>>
+                            <td>
+                                <form class="Former_edit_cote" method="post" id="Form_x_cote_<?= $count ?>" name="Form_x_cote_<?= $count ?>" data-id="<?= $count ?>">
+                                    <label class="form-check-label">#<?=$count?></label>
+                                    <input type="hidden" name="cote" value="<?= ($row->cote_id) ? $row->cote_id : 0 ?>">
+                                    <input type="hidden" name="current_element" value="<?= $count ?>">
+                                    <input type="hidden" name="student" value="<?= $row->id ?>">
+                                    <input type="hidden" name="course" value="<?= $row->course_id ?>">
+                                    <input type="hidden" name="CON_47">
+                                </form>
+                            </td>
+                            <td class="text-center"><img src="/layouts/default/img/figure/student2.webp" alt="student"></td>
+                            <td><?= "$row->firstname $row->lastname " ?></td>
+                            <td class="text-center writable activity-oin wrt-op"><input form="Form_x_cote_<?= $count ?>" disabled class="text-center" type="number" name="TP1" max="20" min="0" value="<?= $TP1 = ($row->TP1)  ? $row->TP1  : 0 ?>"></td>
+                            <td class="text-center writable activity-oin wrt-op"><input form="Form_x_cote_<?= $count ?>" disabled class="text-center" type="number" name="INT1" max="20" min="0" value="<?= $INT1 = ($row->INT1) ? $row->INT1 : 0 ?>"></td>
+                            <td class="text-center static account-stable activity-oin wrt-op"><?= $MOY = ($TP1+$INT2)/2  ?></td>
+                            <td class="text-center writable activity-oin wrt-op"><input form="Form_x_cote_<?= $count ?>" disabled class="text-center" type="number" name="EXAM" max="20" min="0" value="<?= $EXAM = ($row->EXAM) ? $row->EXAM : 0 ?>"></td>
+                            <td class="text-center writable activity-oin wrt-op">
+                                <?php   $MG = ($MOY + $EXAM) / 2 ; $RATR = $row->RATR ? $row->RATR : 0 ; $TOT = ($MG < 10 && $RATR) ? $RATR : $MG ;?>
+                                <?= ($MG < 10) ? '<input form="Form_x_cote_'.$count.'" disabled class="text-center" type="number" name="RATR" max="20" min="0" value="'.$RATR.'">' : '<i class="fas fa-check text-success"></i>' ?>
+                                <input type="submit" class="d-none" form="Form_x_cote_<?= $count ?>" disabled  id="Form_x_cote_<?= $count ?>_submit">
+                            </td>
+                            <td class="text-center static account-stable activity-oin wrt-op"><?= $TOT ?></td>
+                            <td>
+                                <div class="dropdown">
+                                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false" aria-label="Plus d'option">
+                                        <span class="flaticon-more-button-of-three-dots"></span>
+                                    </a>
+                                    <div class="dropdown-menu dropdown-menu-right">
+                                        <?=($row->finished || ($row->delib && !$row->recours)) ? null : '<a class="dropdown-item editing_cote" data-action="null" href="#" data-id="editing_'.$count.'"><i class="fas fa-cogs text-dark-pastel-green"></i>Edit</a><a class="dropdown-item" href="#" data-action="null" onclick="document.getElementById(`Form_x_cote_'.$count.'_submit`).click()"><i class="fas fa-save text-blue"></i>Save</a>'?>
+                                        <a class="dropdown-item" data-js data-location="reload" href="#"><i class="fas fa-redo-alt text-orange-peel"></i>Refresh</a>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    <?php } ?>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

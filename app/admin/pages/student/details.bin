@@ -1,0 +1,126 @@
+<?php $pageTitle = "Appropos de l'Etudiant" ?>
+
+<?php 
+    if (isset($links[2]) && is_numeric($links[2])){
+        $rqt = mysqli_query($db, 
+            "SELECT students.*, sections.name AS section_name, options.name AS option_name, level.name AS level_name, promotion 
+                FROM students 
+                JOIN classes  ON classes.id  = students.class 
+                JOIN sections ON sections.id = classes.section 
+                JOIN options  ON options.id  = classes.option 
+                JOIN level    ON level.id    = classes.level 
+            WHERE students.active = 1 AND students.valide = 1 AND students.id = ".$links[2]." ORDER BY firstname");
+        if ($rqt) $row = mysqli_fetch_array($rqt);
+    }
+    if (isset($row) && $row){$std = (object) $row; ?>
+        <div class="card height-auto" id='contentBlock'>
+            <div class="card-body">
+                <div class="heading-layout1">
+                    <div class="item-title">
+                        <h3>À-propos de Moi</h3>
+                    </div>
+                    <div class="dropdown" download-hide="hide">
+                        <a class="dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-expanded="false">...</a>
+                        <div class="dropdown-menu dropdown-menu-right">
+                            <a class="dropdown-item" href="#" data-action="print"><i class="fas fa-print"></i>print</a>
+                            <a class="dropdown-item" href="#" data-action="reload"><i class="fas fa-redo-alt text-orange-peel"></i>Actualiser</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="single-info-details">
+                    <div class="item-img">
+                        <img src="layouts/default/img/figure/student1.webp" alt="student">
+                    </div>
+                    <div class="item-content">
+                        <div class="header-inline item-header" download-hide="hide">
+                            <h3 class="text-dark-medium font-medium"><?=$std->username?></h3>
+                            <div class="header-elements">
+                                <ul>
+                                    <li><a href="#" data-action="print" onclick="printer()"><i class="fas fa-print"></i></a></li>
+                                    <li><a href="#" data-action="null" download-block="contentBlock" download-btn="btn"><i class="fas fa-download"></i></a></li>
+                                </ul>
+                            </div>
+                        </div>
+                        <p><?=$std->biographie?></p>
+                        <div class="info-table table-responsive">
+                            <table class="table text-nowrap">
+                                <tbody>
+                                    <tr>
+                                    <td>Nom et Postnom:</td>
+                                        <td class="font-medium text-dark-medium"><?="$std->firstname $std->lastname"?></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Matricule:</td>
+                                        <td class="font-medium text-dark-medium"><?=($std->matricul)?$std->matricul:'NULL'?></td>
+                                    </tr>
+                                    <tr>
+                                    <td>Genre:</td>
+                                        <td class="font-medium text-dark-medium"><?=$std->gender?></td>
+                                    </tr>
+                                    <tr>
+                                    <td>Nom du père:</td>
+                                        <td class="font-medium text-dark-medium"><?=$std->father?></td>
+                                    </tr>
+                                    <tr>
+                                    <td>Nom de la mère:</td>
+                                        <td class="font-medium text-dark-medium"><?=$std->mother?></td>
+                                    </tr>
+                                    <tr>
+                                    <td>Date de naissance:</td>
+                                        <td class="font-medium text-dark-medium"><?=$std->birthday?></td>
+                                    </tr>
+                                    <tr>
+                                    <td>Religion:</td>
+                                        <td class="font-medium text-dark-medium"><?=$_SNEN_role__[$std->religion]?></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Occupation du père:</td>
+                                        <td class="font-medium text-dark-medium"><?=$std->parent_work?></td>
+                                    </tr>
+                                    <tr>
+                                        <td>E-mail:</td>
+                                        <td class="font-medium text-dark-medium"><a href="https://www.radiustheme.com/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="b4ded1c7c7ddd5c6dbc7d1f4d3d9d5ddd89ad7dbd9">[email&#160;protected]</a></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Date d'admission:</td>
+                                        <td class="font-medium text-dark-medium"><?=$std->joining_date?></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Section:</td>
+                                        <td class="font-medium text-dark-medium"><?=$std->section_name?></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Option:</td>
+                                        <td class="font-medium text-dark-medium"><?=$std->option_name?></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Niveau:</td>
+                                        <td class="font-medium text-dark-medium"><?=$std->level_name?></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Adress:</td>
+                                        <td class="font-medium text-dark-medium"><?=$std->address?></td>
+                                    </tr>
+                                    <tr>
+                                     <td>Téléphoner:</td>
+                                        <td class="font-medium text-dark-medium"><?=$std->phone?></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    <?php }else{ ?>
+        <div class="card height-auto">
+            <div class="card-body">
+                <div class="heading-layout1 mg-b-15">
+                    <div class="item-title p-5 text-center w-100">
+                        <h1 class="text-danger bg-blue-dark py-xl-5">Etudiant Introuvable : <?= isset($links[2]) && $links[2] ? $links[2] : NULL ?></h1>
+                        <h3>L'étudiant dont vous essayer de voire est introuvable</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+    <?php } ?>

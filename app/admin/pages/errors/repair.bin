@@ -1,0 +1,21 @@
+<?php $pageTitle = "Plateforme en Maintenance" ?>
+
+<div class="card height-auto">
+    <div class="card-body">
+        <div class="heading-layout1 mg-b-15">
+            <div class="item-title p-5 text-center w-100">
+                <h1 class="text-danger bg-blue-dark py-xl-5">Plateforme en Maintenance</h1>
+                <h2>Désolé !</h2>
+                <h3>
+                    La plateforme est momentanément indisponible pour des raisons <span class="text-warning">Techniques</span>,
+                    <br>cela n'endommagera pas vos données personnelles mais la durée de désactivation est indéterminée.
+                    <br>Pendant ce temps, vous pouvez profiter de plus de fonctionnalités <a href="http://viraza.net" target="_blank" rel="noopener noreferrer">viraza</a>...
+                </h3>
+                <br>
+                <p>Pour en savoir plus, veuillez contacter directement votre établissement pour plus d'informations.</p>
+                <?=($IN_MAINTENANCE_MESSAGE??false)? "<h4>$IN_MAINTENANCE_MESSAGE</h4>" : ""?>
+            </div>
+        </div>
+    </div>
+</div>
+<?php $hide_menu = true;

@@ -1,0 +1,21 @@
+<?php 
+    if (isset($_POST['id'], $_POST['action']) && is_numeric($_POST['id'])){
+        extract(array_trait_string($_POST));
+        if (mysqli_query($db, "UPDATE `notifications` SET `active` = ".($action == 'active' ? 1 : 0 )." WHERE id = $id")){ ?>
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                    <span class="sr-only">Close</span>
+                </button>
+                <strong>Succes : </strong>Le Profile a été <?= $action == 'active' ? 'activer' : 'desactiver' ?> avec succès. 
+            </div>
+        <?php }else{ ?>
+            <div class="alert alert-danger alert-dismissible fade show" role="alert"> 
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                    <span class="sr-only">Close</span>
+                </button>
+                <strong>Echec : </strong>Le Profile choisit est introuvable. 
+            </div>
+        <?php } 
+    } require_once dirname(__FILE__).DS.'mine.bin';?>

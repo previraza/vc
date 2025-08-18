@@ -1,0 +1,495 @@
+<?php class Menu
+{
+  protected static $items = [
+    'dashboard' => [
+      'title' => 'Tableau de Bord',      
+      'link' => [
+        '',
+        'home',
+        'index',
+      ], 'type' => 'home',
+      'allowed' => '*',
+      'icon' => '<svg width="20" class="icon-20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path opacity="0.4" d="M16.0756 2H19.4616C20.8639 2 22.0001 3.14585 22.0001 4.55996V7.97452C22.0001 9.38864 20.8639 10.5345 19.4616 10.5345H16.0756C14.6734 10.5345 13.5371 9.38864 13.5371 7.97452V4.55996C13.5371 3.14585 14.6734 2 16.0756 2Z" fill="currentColor"></path><path fill-rule="evenodd" clip-rule="evenodd" d="M4.53852 2H7.92449C9.32676 2 10.463 3.14585 10.463 4.55996V7.97452C10.463 9.38864 9.32676 10.5345 7.92449 10.5345H4.53852C3.13626 10.5345 2 9.38864 2 7.97452V4.55996C2 3.14585 3.13626 2 4.53852 2ZM4.53852 13.4655H7.92449C9.32676 13.4655 10.463 14.6114 10.463 16.0255V19.44C10.463 20.8532 9.32676 22 7.92449 22H4.53852C3.13626 22 2 20.8532 2 19.44V16.0255C2 14.6114 3.13626 13.4655 4.53852 13.4655ZM19.4615 13.4655H16.0755C14.6732 13.4655 13.537 14.6114 13.537 16.0255V19.44C13.537 20.8532 14.6732 22 16.0755 22H19.4615C20.8637 22 22 20.8532 22 19.44V16.0255C22 14.6114 20.8637 13.4655 19.4615 13.4655Z" fill="currentColor"></path></svg>',
+    ],
+    'admin-space' => [
+      'title' => 'Espace Administrateur',
+      'link' => [
+        'admin-space',
+      ],
+      'type' => 'attribution',
+      'allowed' => ['A:F:A:ES', 'A:A:A:AA', '*:A:A:AA', '0:F:A:I0'],
+      'icon' => '',
+      'childreen' => [
+        'payment' => [
+          'title' => 'Tous les payments',
+          'link' => [
+            'payment',
+          ],
+          'allowed' => false,
+          'childreen' => false,
+        ],
+        'slip' => [
+          'title' => 'Tous les borderaux',
+          'link' => [
+            'slip',
+          ],
+          'allowed' => false,
+          'childreen' => false,
+        ],
+        'all' => [
+          'title' => 'Toutes les transactions',         
+          'link' => [
+            '',
+            'index'
+          ],
+          'allowed' => false,
+          'childreen' => false,
+        ], 'finder' => [
+          'title' => 'Recherche',
+          'link' => [
+            'finder',
+          ],
+          'allowed' => false,
+          'childreen' => false,
+        ]
+      ],
+    ],
+    'payment' => [
+      'title' => 'paiement',      
+      'link' => [
+        'payment',
+        'pay',
+      ], 'type' => 'attribution',
+      'allowed' => [
+        'A:F:A:ES',
+        '0:F:A:E0',
+        '0:F:S:ES',
+      ],
+      'icon' => '',
+      'childreen' => [
+        'selective' => [
+          'title' => 'Selective',
+          'link' => [
+            '',
+          ],
+          'allowed' => false,
+          'childreen' => false,
+        ], 'inscription' => [
+          'title' => 'Inscription',
+          'link' => [
+            'inscription',
+          ], 'allowed' => false,
+          'childreen' => false,
+        ], 'orientation' => [
+          'title' => 'Orientation',
+          'link' => [
+            'orientation',
+          ],
+          'allowed' => false,
+          'childreen' => false,
+        ], 'free' => [
+          'title' => 'Manuel',
+          'link' => [
+            'free',
+          ],
+          'allowed' => false,
+          'childreen' => false,
+        ], 'finder' => [
+          'title' => 'Recherche',
+          'link' => [
+            'finder',
+          ],
+          'allowed' => false,
+          'childreen' => false,
+        ], 'trash' => [
+          'title' => 'Corbeille',
+          'link' => [
+            'trash',
+          ],
+          'allowed' => false,
+          'childreen' => false,
+        ],
+      ],
+    ],
+    'slip' => [
+      'title' => 'Bordereau',      
+      'link' => [
+        'slip',
+      ], 'type' => 'attribution',
+      'allowed' => [
+        'A:F:A:ES',
+        '0:F:A:E0',
+        '0:F:S:ES',
+      ],
+      'icon' => '',
+      'childreen' => [
+        'selective' => [
+          'title' => 'Selective',
+          'link' => [
+            '',
+          ],
+          'allowed' => false,
+          'childreen' => false,
+        ], 'orientation' => [
+          'title' => 'Orientation',
+          'link' => [
+            'orientation',
+          ],
+          'allowed' => false,
+          'childreen' => false,
+        ], 'free' => [
+          'title' => 'Manuel',
+          'link' => [
+            'free',
+          ],
+          'allowed' => false,
+          'childreen' => false,
+        ], 'finder' => [
+          'title' => 'Recherche',
+          'link' => [
+            'finder',
+          ],
+          'allowed' => false,
+          'childreen' => false,
+        ], 'trash' => [
+          'title' => 'Corbeille',
+          'link' => [
+            'trash',
+          ],
+          'allowed' => false,
+          'childreen' => false,
+        ],
+      ],
+    ],
+    'class' => [
+      'title' => 'Classes',      
+      'link' => ['classroom'], 'type' => 'attribution',
+      'allowed' => ['A:F:A:ES', 'A:A:A:AA', '*:A:A:AA', '0:F:A:I0'],
+    ],
+    'report' => [
+      'title' => 'Rapport',
+      'link' => [
+        'report',
+      ],
+      'type' => 'attribution',
+      'allowed' => [
+        'A:F:A:ES', 'A:A:A:AA', '*:A:A:AA',
+        '0:F:A:E0',
+        '0:F:S:ES'
+      ], 'icon' => '',
+      'childreen' => [
+        'all' => [
+          'title' => 'Tous les rapports',
+          'link' => [
+            '',
+            'index'
+          ],
+          'allowed' => false,
+          'childreen' => false,
+        ],
+        'day' => [
+          'title' => 'Rapport Journaliere',
+          'link' => [
+            'day',
+          ],
+          'allowed' => false,
+          'childreen' => false,
+        ],
+        'month' => [
+          'title' => 'Rapport Mensuel',
+          'link' => [
+            'month',
+          ],
+          'allowed' => false,
+          'childreen' => false,
+        ], 
+        'year' => [
+          'title' => 'Rapport Annuel',
+          'link' => [
+            'year',
+          ],
+          'allowed' => false,
+          'childreen' => false,
+        ]
+      ],
+    ],
+    'inspection' => [
+      'title' => 'Inspection',
+      'link' => [
+        'inspection',
+      ],
+      'type' => 'attribution',
+      'allowed' => [
+        'A:F:A:ES', 'A:A:A:AA', '*:A:A:AA'
+      ], 'icon' => '',
+      'childreen' => [
+        'all' => [
+          'title' => 'Inspection Globale',
+          'link' => [
+            '',
+            'index'
+          ],
+          'allowed' => false,
+          'childreen' => false,
+        ],
+        'day' => [
+          'title' => 'Inspection Journaliere',
+          'link' => [
+            'day',
+          ],
+          'allowed' => false,
+          'childreen' => false,
+        ],
+        'month' => [
+          'title' => 'Inspection Mensuelle',
+          'link' => [
+            'month',
+          ],
+          'allowed' => false,
+          'childreen' => false,
+        ], 
+        'year' => [
+          'title' => 'Inspection Annuelle',
+          'link' => [
+            'year',
+          ],
+          'allowed' => false,
+          'childreen' => false,
+        ],
+        'trash' => [
+          'title' => 'Corbeille',
+          'link' => [
+            'trash',
+          ],
+          'allowed' => false,
+          'childreen' => false,
+        ],
+      ],
+    ],
+    'exchange' => [
+      'title' => 'Transaction',
+      'link' => [
+        'exchange',
+      ],
+      'type' => 'attribution',
+      'allowed' => ['A:F:A:ES', 'A:A:A:AA', '*:A:A:AA', '0:F:A:I0'],
+      'icon' => '',
+      'childreen' => [
+        'all' => [
+          'title' => 'Toutes les transactions',         
+          'link' => [
+            '',
+            'index'
+          ],
+          'allowed' => false,
+          'childreen' => false,
+        ],
+        'payment' => [
+          'title' => 'Tous les payments',
+          'link' => [
+            'payment',
+          ],
+          'allowed' => false,
+          'childreen' => false,
+        ],
+        'slip' => [
+          'title' => 'Tous les borderaux',
+          'link' => [
+            'slip',
+          ],
+          'allowed' => false,
+          'childreen' => false,
+        ], 'finder' => [
+          'title' => 'Recherche',
+          'link' => [
+            'finder',
+          ],
+          'allowed' => false,
+          'childreen' => false,
+        ]
+      ],
+    ],
+    'expense' => [
+      'title' => 'Comptabilité',
+      'link' => [
+        'expense',
+      ],
+      'type' => 'attribution',
+      'allowed' => ['A:F:A:ES'],
+      'icon' => '',
+      'childreen' => [
+        'dashboard' => [
+          'title' => 'Tableau de Bord',         
+          'link' => [
+            '',
+            'index'
+          ],
+          'allowed' => false,
+          'childreen' => false,
+        ],
+        'operation' => [
+          'title' => 'Opération',
+          'link' => [
+            'operation',
+          ],
+          'allowed' => false,
+          'childreen' => false,
+        ],
+        'account' => [
+          'title' => 'Gestion de comptes',
+          'link' => [
+            'history',
+          ],
+          'allowed' => [
+            'A:F:A:ES', 'A:A:A:AA', '*:A:A:AA',
+            '0:F:A:0S',
+            '0:F:S:ES',
+          ],
+          'childreen' => false,
+        ],
+        'history' => [
+          'title' => 'Historique de comptes',
+          'link' => [
+            'history',
+          ],
+          'allowed' => [
+            'A:F:A:ES', 'A:A:A:AA', '*:A:A:AA',
+            '0:F:A:0S',
+            '0:F:S:ES',
+          ],
+          'childreen' => false,
+        ]
+      ],
+    ],
+    'fee_manager' => [
+      'title' => 'Frais',
+      'link' => ['fee'],
+      'type' => 'attribution',
+      'allowed' => [
+        'A:F:A:ES', 'A:A:A:AA', '*:A:A:AA',
+      ],
+      'icon' => '',
+      'childreen' => [
+        'all' => [
+          'title' => 'Tous les frais',
+          'link' => [
+            ''
+          ],
+          'allowed' => false,
+          'childreen' => false,
+        ],
+        'trash' => [
+          'title' => 'Corbeil de Frais',
+          'link' => [
+            'trash',
+          ],
+          'allowed' => false,
+          'childreen' => false,
+        ]
+      ],
+    ],
+    'account_manager' => [
+      'title' => 'Comptes',
+      'link' => ['account'],
+      'type' => 'attribution',
+      'allowed' => [
+        'A:F:A:ES', 'A:A:A:AA', '*:A:A:AA',
+      ],
+      'icon' => '',
+      'childreen' => [
+        'all' => [
+          'title' => 'Tous les comptes',
+          'link' => [
+            ''
+          ],
+          'allowed' => false,
+          'childreen' => false,
+        ],
+        'trash' => [
+          'title' => 'Corbeil de comptes',
+          'link' => [
+            'trash',
+          ],
+          'allowed' => false,
+          'childreen' => false,
+        ]
+      ],
+    ],
+  ];
+  protected static $iconLiften = '<i class="right-icon"><svg xmlns="http://www.w3.org/2000/svg" width="18" class="icon-18" fill="none"viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"d="M9 5l7 7-7 7" /></svg></i>';
+  protected static $iconCircLift = '<i class="icon"><svg class="icon-10" width="10" viewBox="0 0 24 24" fill="currentColor"xmlns="http://www.w3.org/2000/svg"><g><circle cx="12" cy="12" r="8" fill="currentColor"></circle></g></svg></i>';
+  public static function parseItem(string $id, array $item, $childreen = false): string
+  {
+    $link = $item['link'][0];
+    $icon = $item['icon'];
+    $title = $item['title'];
+    $str_childreen = is_array($childreen) ? (self::parseChildreen($id, $item, $childreen)) : false;
+    $r = '<li class="nav-item" id="menu_' . $id . '">
+            <a class="nav-link collapsed" href="' . ($str_childreen ? "#$id" : root($link)) . '" '.($str_childreen?'data-bs-toggle=collapse':null).' role=button aria-expanded=false aria-controls=sidebar-special>
+                <i class="icon" data-bs-toggle="tooltip" data-bs-placement="right" aria-label="' . $title . '" data-bs-original-title="' . $title . '">
+                    ' . $icon . '
+                </i>
+                <span class="item-name">' . $title . '</span>' .
+      ($str_childreen ? self::$iconLiften : null)
+      . '</a>' .
+      ($str_childreen ?? null)
+      . '</li>';
+    return $r;
+  }
+
+  public static function parseChildreen(string $id, array $item, $childreen = false): string
+  {
+    $p_link = $item['link'][0];
+    $r = '<ul class="sub-nav collapse" id="' . $id . '" data-bs-parent="#sidebar-menu">';
+    foreach ($childreen as $k => $v) {
+      $link = $v['link'][0];
+      $title = $v['title'];
+      $r .= '<li class="nav-item">
+                    <a class="nav-link" href="' . root($p_link . DS . $link) . '">'
+        . self::$iconCircLift .
+        '<i class="sidenav-mini-icon" data-bs-toggle="tooltip" title="' . $title . '"
+                            data-bs-placement="right">'
+        . $title[0] .
+        '</i>
+                        <span class="item-name"> ' . $title . ' </span>
+                    </a>
+                </li>';
+    }
+    $r .= '</ul>';
+    return $r;
+  }
+
+  public static function setMenu(string $role, array $items = null): stdClass
+  {
+    $items = $items ?? self::$items;
+    $menu = array(
+      'home' => '',
+      'attribution' => '',
+      'configuration' => ''
+    );
+    foreach ($items as $id => $value) {
+      print_a($id, (($value['childreen'] ?? false) === false && ($value['allowed'] === '*' || (is_array($value['allowed']) && in_array($role, $value['allowed'])))));
+      if (($value['childreen'] ?? false) === false && ($value['allowed'] === '*' || (is_array($value['allowed']) && in_array($role, $value['allowed']))))
+        $menu[$value['type']] .= self::parseItem($id, $value);
+      elseif (is_array($value['childreen'])){
+        $childreen = self::itemsChildreenOf($role, $value['childreen'], $value['allowed']);
+        if($childreen) $menu[$value['type']] .= self::parseItem($id, $value, $childreen);
+      }
+    }
+    return (object) $menu;
+  }
+  public static function itemsChildreenOf(string $role, array $items = null, $parent = null)
+  {
+    $items = $items ?? self::$items;
+    $menu = [];
+    foreach ($items as $id => $value) {
+      if (($value['childreen'] ?? false) === false && ($value['allowed'] === '*' || (is_array($value['allowed']) && in_array($role, $value['allowed'])) || (is_array($parent) && in_array($role, $parent))))
+        $menu[$id] = $value;
+      elseif (is_array($value['childreen'])) {
+        $value['childreen'] = self::itemsChildreenOf($role, $value['childreen'], $value['allowed']);
+        $menu[$id] = $value;
+      }
+    } return $menu;
+  }
+
+}

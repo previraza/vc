@@ -1,0 +1,10 @@
+<div class="card height-auto">
+    <div class="card-body">
+        <div class="heading-layout1 mg-b-15">
+            <div class="item-title p-5 text-center w-100">
+                <h1 class="text-info bg-blue-dark py-xl-5">Undefined : System</h1>
+                <h3>Le Systeme de cette classe est soit non defini ou ne dispose d'aucune grille pour le moment...</h3>
+            </div>
+        </div>
+    </div>
+</div>

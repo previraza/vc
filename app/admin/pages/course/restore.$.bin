@@ -1,0 +1,21 @@
+<?php viewOnlyBy('ADMIN');
+    if (isset($links[1], $links[2]) && $links[1] == "restore.$" && is_numeric($links[2])){
+        if (mysqli_query($db, "UPDATE `courses` SET `delete` = 0 WHERE id = $links[2]")){ ?>
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                    <span class="sr-only">Close</span>
+                </button>
+                <strong>Succes : </strong> La restauration du cours sélectionné a été effectuée avec succès. 
+            </div>
+        <?php }else{ ?>
+            <div class="alert alert-info alert-dismissible fade show" role="alert">
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                    <span class="sr-only">Close</span>
+                </button>
+                <strong>Echec : </strong> Le cours sélectionné est introuvable dans la corbeille. 
+            </div>
+        <?php } 
+    } 
+    require_once dirname(__FILE__).DS.'index.bin';?>

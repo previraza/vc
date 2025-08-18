@@ -1,0 +1,43 @@
+<?php class Exchange extends Controller
+{
+    public function __construct()
+    {
+        parent::__construct();
+        $this->Fee = $this->loadModel('fees');
+        $this->User = $this->loadModel('users');
+        $this->Slip = $this->loadModel('slips');
+        $this->Payment = $this->loadModel('payments');
+
+        $this->app->ASSETS['_css'] .= '<link rel="stylesheet" href="/assets/vendor/choiceJS/style/choices.min.css">';
+        $this->app->ASSETS['css'] .= '<link rel="stylesheet" href="/assets/css/blog.min.css"/>';
+        $this->app->ASSETS['_js'] .= '
+            <script src="/assets/js/plugins/signaturepad.js"defer></script>
+            <script src="/assets/vendor/signature_pad/dist/signature_pad.umd.js" async></script>
+            <script src="/assets/vendor/choiceJS/script/choices.min.js"></script>
+            <script src="/assets/js/plugins/choice.js" defer></script>';
+        $this->app->ASSETS['js'] .= '<script src="/assets/js/appointment.js"></script>';
+    }
+    public function index()
+    {
+        $this->compact('payments', array_merge($this->Payment->all(), $this->Slip->all()));
+        return $this->render();
+    }
+    
+    public function slip()
+    {
+        $this->compact('payments', $this->Slip->all());
+        return $this->render();
+    }
+    
+    public function payment()
+    {
+        $this->compact('payments', $this->Payment->all());
+        return $this->render();
+    }
+
+    public function finder()
+    {
+        $this->compact('finding', array_merge($this->Payment->finder($_POST['data']['search'] ?? ''), $this->Slip->finder($_POST['data']['search'] ?? '')));
+        return $this->render('finder');
+    }
+}

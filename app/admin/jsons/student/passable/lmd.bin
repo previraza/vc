@@ -1,0 +1,85 @@
+<?php $COTES = array('credit' => array(), 'courses' => array(), 'students' => array(),);
+    $sizsOfGrille = isset($_POST['G_size'])&&$_POST['G_size']!='full'?($_POST['G_size']=='gprs'?" AND (part = 1 OR part = 3 OR part = 5)":($_POST['G_size']=='gdus'?" AND (part = 2 OR part = 4 OR part = 6)":null)):null;
+    $rqt = mysqli_query($db, "SELECT snem$prefix.courses.*, snem$prefix.ue.ue AS ue_credit, snem$prefix.ue.code AS ue_code, snem$prefix.ue.name AS ue_name FROM snem$prefix.courses LEFT JOIN snem$prefix.ue ON snem$prefix.ue.id = snem$prefix.courses.ue WHERE snem$prefix.courses.active = 1 AND snem$prefix.courses.delete = 0 AND class = $class->id $sizsOfGrille ORDER BY part, id");
+    $class_course = mysqli_num_rows($rqt); $all_courses=""; $cou_part=$ue=$_trs_ec=[];
+
+    while ($course = mysqli_fetch_object($rqt)){
+        $rqt_cote = mysqli_query($db, 
+            "SELECT `student`, `course`, 
+                ROUND(CASE WHEN `RMC` != 0 AND 1 THEN `RMC` ELSE ((`TP1`+`TP2`+`TP3`)/12+(`INT1`+`INT2`)/8+`EXAM`/2) END,2) AS TOTAL, CASE WHEN `RRC` != 0 THEN `RRC` ELSE `RATR` END AS `RATR`, `JURY` FROM snem$prefix.cotes WHERE active = 1 AND course = ".$course->id
+        ) or die(mysqli_error($db));
+        while($row_cote = mysqli_fetch_array($rqt_cote)) $COTES['students'][$row_cote['course']][$row_cote['student']] = $row_cote;
+        isset($cou_part[$course->part])?$cou_part[$course->part]++:$cou_part[$course->part]=1;
+        if(!isset($_ue[$course->part][$course->ue])) $_ue[$course->part][$course->ue] = (object)[
+            'part'  => $course->part,
+            'name'  => $course->ue_name,
+            'code'  => $course->ue_code,
+            'credit'  => 0,
+            'ec'    => [],
+            'td'    => '',
+        ];  $_ue[$course->part][$course->ue]->ec[]=(object)[ 'id' => $course->id, 'credit'=>$course->credit,'name'=>$course->name];
+            $_ue[$course->part][$course->ue]->credit+=$course->credit;
+            $_ue[$course->part][$course->ue]->td.='';
+    } $class_res_tot = 60*20;
+    $total_success = $total_echec = $moyenne_classe = 0;
+    $trs_ue = $trs_ec_code = $trs_ec_credit = $trs_ue_code = $trs_ue_credit = ""; 
+    $_trs_ue = $_trs_ec_code = $_trs_ec_credit = $_trs_ue_code = $_trs_ue_credit = $echec=$success=$success_res=$tr_code=$all_ue_credit=[];
+    foreach ($cou_part as $k => $l) {
+        $all_cou_ue = "";
+        foreach ($_ue[$k] as $ue) {
+            $_trs_ue[$ue->part] = (isset($_trs_ue[$ue->part])?$_trs_ue[$ue->part]:null).'';
+            $_trs_ue_code[$ue->part] = (isset($_trs_ue_code[$ue->part])?$_trs_ue_code[$ue->part]:null).'';
+            $all_ue_credit[$k] = isset($all_ue_credit[$k])?$all_ue_credit[$k]+$ue->credit:$ue->credit;
+            if(count($ue->ec)>1){
+                $_trs_ue_credit[$ue->part] = (isset($_trs_ue_credit[$ue->part])?$_trs_ue_credit[$ue->part]:null).'';
+                foreach ($ue->ec as $i => $ec_){
+                    $_trs_ec_code[$ue->part] = (isset($_trs_ec_code[$ue->part])?$_trs_ec_code[$ue->part]:'').'';
+                    $_trs_ec_credit[$ue->part] = (isset($_trs_ec_credit[$ue->part])?$_trs_ec_credit[$ue->part]:'').'';
+                    $_trs_ec[$ec_->id] = (object)[
+                        'std' => $COTES['students'][$ec_->id] ?? [],
+                        'credit' => $ec_->credit,
+                        'part' => $ue->part,
+                    ];
+                }
+            } else {
+                $_trs_ue_credit[$ue->part] = (isset($_trs_ue_credit[$ue->part])?$_trs_ue_credit[$ue->part]:null).'';
+                $_trs_ec[$ue->ec[0]->id] = (object)[
+                    'std' => $COTES['students'][$ue->ec[0]->id] ?? [],
+                    'credit' => $ue->ec[0]->credit,
+                    'part' => $ue->part,
+                ];
+            } $all_cou_ue.= $ue->td; 
+        } $trs_ue .= $_trs_ue[$k]; 
+        $trs_ec_code .= isset($_trs_ec_code[$k])?$_trs_ec_code[$k]:null; 
+        $trs_ec_credit .= isset($_trs_ec_credit[$k])?$_trs_ec_credit[$k]:null; 
+        $echec[$k]=$success_res[$k]=$success[$k]=0;
+    } $rqt_std = mysqli_query($db, "SELECT snem$prefix.students.*, snem$prefix.palmares.completed, snem$prefix.palmares.resultat,
+            (SELECT DISTINCT snem$prefix.cotes.student FROM snem$prefix.cotes WHERE snem$prefix.cotes.RMC AND snem$prefix.cotes.student = snem$prefix.students.id) AS gpsr,
+            (SELECT DISTINCT snem$prefix.cotes.student FROM snem$prefix.cotes WHERE snem$prefix.cotes.RRC AND snem$prefix.cotes.student = snem$prefix.students.id) AS pdsr
+        FROM snem$prefix.students LEFT JOIN snem$prefix.palmares ON snem$prefix.palmares.student = snem$prefix.students.id WHERE active = 1 AND snem$prefix.students.delete = 0 AND snem$prefix.students.class = ".$class->id." ORDER BY snem$prefix.students.firstname, snem$prefix.students.lastname");
+    $count = 0;
+    $all_count_std = mysqli_num_rows($rqt_std);
+    while($std = mysqli_fetch_object($rqt_std)) {
+        $cote_credit=$res_success=$res_echec=$credits=0; $cote = array();
+        foreach($_trs_ec AS $idx => $course) {
+            $jury=$cote=$dataIsset=0;
+            if(isset($course->std[$std->id])){
+                $dataIsset = 1;
+                $pre_cote = $course->std[$std->id]['TOTAL']+0;
+                $cote = (($course->std[$std->id]['RATR']??0)>$pre_cote ? $course->std[$std->id]['RATR'] : $pre_cote) ;
+                $jury = $course->std[$std->id]['JURY'];
+            } $cote_credit+=($final = ($jury&&($jury>$cote||$jury>=10)?$jury:$cote))*$course->credit;
+            $success_res[$course->part]+=($final = ($jury&&($jury>$cote||$jury>=10)?$jury:$cote))*$course->credit;
+            if($final < 10) $echec[$course->part]+=$course->credit; 
+            else $success[$course->part]+=$course->credit; $credits+=$course->credit;
+        } foreach ($cou_part as $k => $l) {
+            $success_res[$k]=0;
+            $res_success+= $success[$k]; $res_echec+= $echec[$k];
+            $success[$k]=$echec[$k]=0;
+        } $cote_credit ? number_format($res=$cote_credit/60,2):$res=0;
+        $mention = (($res >= 18) ? 'A' : (($res >= 16) ? 'B' : (($res >= 14) ? 'C' : (($res >= 12) ? 'D' : (($res >= 10) ? 'E' : (($res >= 8) ? 'F' : 'G'))))));
+    $class->data[] = array(
+        'id' => $std->id,
+        'pass' => $res>=10&&$res_success>=45
+    );
+} json_response(200, 'students passed results collection', $class) ?>

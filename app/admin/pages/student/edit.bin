@@ -1,0 +1,212 @@
+<?php viewOnlyBy('ADMIN', 'AE'); $pageTitle = "Modification profile étudiant" ?>
+
+<?php if (isset($links[2]) && is_numeric($this_id = $links[2]) && $r = $db_poo->query("SELECT students.*, sections.id AS `section`, options.id AS `option`, level.id AS `level` FROM students LEFT JOIN classes ON classes.id = students.class LEFT JOIN options ON options.id = classes.option LEFT JOIN sections ON sections.id = classes.section LEFT JOIN `level` ON level.id = classes.level WHERE students.id = $this_id")->fetch_object()) { ?>
+<div class="card height-auto">
+    <div class="card-body">
+        <div class="heading-layout1">
+            <div class="item-title">
+                <h3>Formulaire d'inscription étudiant N° <?=$r->id?></h3>
+            </div>
+           <div class="dropdown">
+                <a class="dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-expanded="false">...</a>
+                <div class="dropdown-menu dropdown-menu-right">
+                    <a class="dropdown-item" href="#" data-action="print"><i class="fas fa-print"></i>print</a>
+                    <a class="dropdown-item" href="#" data-action="reload"><i class="fas fa-redo-alt text-orange-peel"></i>Actualiser</a>
+                </div>
+            </div>
+        </div>
+        <form class="new-added-form" id="editStudent">
+            <div class="row">
+                <input type="hidden" name="CON_47" value="<?=$r->user_id?>">
+                <input type="hidden" name="this_id" value="<?=$r->id?>">
+                <div class="col-xl-3 col-lg-6 col-12 form-group">
+                    <label>Nom *</label>
+                    <input type="text" placeholder="" name="firstname" value="<?=$r->firstname?>" class="form-control">
+                </div>
+                <div class="col-xl-3 col-lg-6 col-12 form-group">
+                    <label>Postnom *</label>
+                    <input type="text" placeholder="" name="lastname" value="<?=$r->lastname?>" class="form-control">
+                </div>
+                <div class="col-xl-3 col-lg-6 col-12 form-group">
+                    <label>Sexe *</label>
+                    <select class="select2" name="gender">
+                        <option <?=($r->gender == 'M')?'SELECTED':NULL?> value="M">Male</option>
+                        <option <?=($r->gender == 'F')?'SELECTED':NULL?> value="F">Female</option>
+                        <option <?=($r->gender == 'A')?'SELECTED':NULL?> value="A">Others</option>
+                    </select>
+                </div>
+                <div class="col-xl-3 col-lg-6 col-12 form-group">
+                    <label>Date de naissance *</label>
+                    <input type="text" placeholder="yyyy/mm/dd" value="<?=$r->birthday?>" class="form-control air-datepicker" name="birthday">
+                    <i class="far fa-calendar-alt"></i>
+                </div>
+                <div class="col-xl-3 col-lg-6 col-12 form-group">
+                    <label>Père</label>
+                    <input type="text" placeholder="" value="<?=$r->father?>" class="form-control" name="father">
+                </div>
+                <div class="col-xl-3 col-lg-6 col-12 form-group">
+                    <label>Mère</label>
+                    <input type="text" placeholder="" value="<?=$r->mother?>" class="form-control" name="mother">
+                </div>
+                <div class="col-xl-3 col-lg-6 col-12 form-group">
+                    <label>Tuthor Work</label>
+                    <input type="text" placeholder="" value="<?=$r->parent_work?>" name="parent_work" class="form-control">
+                </div>
+                <div class="col-xl-3 col-lg-6 col-12 form-group">
+                    <label>Attribution *</label>
+                    <select class="select2" name="role">
+                        <option value="">Please Select Gender *</option>
+                        <option <?=($r->role == 'CP')?'SELECTED':NULL?> value="CP">Chef de Promotion</option>
+                        <option <?=($r->role == 'CPA')?'SELECTED':NULL?> value="CPA">Chef de Promotion Adjoint</option>
+                        <option <?=($r->role == 'SEC')?'SELECTED':NULL?> value="SEC">Secretaire Generale de la Promotion</option>
+                    </select>
+                </div>
+                <div class="col-xl-3 col-lg-6 col-12 form-group">
+                    <label>Titre *</label>
+                    <select class="select2" name="title">
+                        <option value="">Please Select Group *</option>
+                        <option <?=($r->role == 'DIP')?'SELECTED':NULL?> value="DIP">Diplome d'Etat</option>
+                        <option <?=($r->role == 'G')?'SELECTED':NULL?> value="G">Titre de Graduat</option>
+                        <option <?=($r->role == 'L')?'SELECTED':NULL?> value="L">Titre de Licence</option>
+                        <option <?=($r->role == 'M')?'SELECTED':NULL?> value="M">Titre de Master</option>
+                        <option <?=($r->role == 'D')?'SELECTED':NULL?> value="D">Titre de Doctorat</option>
+                    </select>
+                </div>
+                <div class="col-xl-3 col-lg-6 col-12 form-group">
+                    <label>Branche *</label>
+                    <select class="select2" name="speciality">
+                        <option value="">Please Select Class *</option>
+                        <option <?=($r->role == 'AVIA')?'SELECTED':NULL?> value="AVIA">Aviation Civile</option>
+                        <option <?=($r->role == 'ELEC')?'SELECTED':NULL?> value="ELEC">Electricité</option>
+                        <option <?=($r->role == 'ETRO')?'SELECTED':NULL?> value="ETRO">Electronique</option>
+                        <option <?=($r->role == 'MATH')?'SELECTED':NULL?> value="MATH">Math-Physique</option>
+                        <option <?=($r->role == 'LANG')?'SELECTED':NULL?> value="LANG">Latin-Philo</option>
+                        <option <?=($r->role == 'INFO')?'SELECTED':NULL?> value="INFO">Informatique</option>
+                        <option <?=($r->role == 'PHYS')?'SELECTED':NULL?> value="PHYS">Commercial</option>
+                        <option <?=($r->role == 'MAIN')?'SELECTED':NULL?> value="MAIN">Pédagogie Générale</option>
+                        <option <?=($r->role == 'MANI')?'SELECTED':NULL?> value="MANI">Bio-Chimie</option>
+                        <option <?=($r->role == 'MECA')?'SELECTED':NULL?> value="MECA">Mécanique</option>
+                        <option <?=($r->role == 'TELE')?'SELECTED':NULL?> value="TELE">Télécommunication</option>
+                    </select>
+                </div>
+                <div class="col-xl-2 col-lg-6 col-12 form-group">
+                    <label>Pourcentage</label>
+                    <input type="number" value="<?=$r->pourcentage?>" placeholder="" min="50" max="99" value="50" class="form-control" name="pourcentage">
+                </div>
+                <div class="col-xl-4 col-lg-6 col-12 form-group">
+                    <label>Numéro du document</label>
+                    <input type="number" value="<?=$r->titleCode?>" placeholder="" class="form-control" name="titleCode">
+                </div>
+                <div class="col-xl-3 col-lg-6 col-12 form-group">
+                    <label>Religion *</label>
+                    <select class="select2" name="religion">
+                        <option value="">Please Select Religion *</option>
+                        <option <?=($r->role == '1')?'SELECTED':NULL?> value="1">Islamiste</option>
+                        <option <?=($r->role == '2')?'SELECTED':NULL?> value="2">Hindu</option>
+                        <option <?=($r->role == '3')?'SELECTED':NULL?> value="3">Chrétien</option>
+                        <option <?=($r->role == '3')?'SELECTED':NULL?> value="3">Buddiste</option>
+                        <option <?=($r->role == 'Others')?'SELECTED':NULL?> value="Others">Others</option>
+                    </select>
+                </div>
+                <div class="col-xl-3 col-lg-6 col-12 form-group">
+                    <label>E-Mail</label>
+                    <input value="<?=$r->email?>" type="email" placeholder="" class="form-control" name="email">
+                </div>
+                <div class="col-xl-3 col-lg-6 col-12 form-group">
+                    <label>Address</label>
+                    <input value="<?=$r->address?>" type="text" placeholder="" class="form-control" name="address">
+                </div>
+                <div class="col-xl-3 col-lg-6 col-12 form-group">
+                    <label>Phone</label>
+                    <input value="<?=$r->phone?>" type="tel" placeholder="" class="form-control" name="phone">
+                </div>
+                <div class="col-xl-3 col-lg-6 col-12 form-group">
+                    <label><?=$mci?></label>
+                    <select class="select2" name="section" id="s_sec">
+                        <?php $rqt = mysqli_query($db, "SELECT id, `name` FROM sections WHERE active = 1") or die(debug(mysqli_error($db)));
+                            while ($ROW = mysqli_fetch_array($rqt)){ $row = (object) $ROW; $_fs = isset($_fs) ? $_fs : $ROW['id']?>
+                                <option <?=($row->id == $r->section ? 'selected': '')?> value="<?= $row->id ?>"><?= $row->name ?></option>
+                        <?php } ?>
+                        <option value="*">Toutes les <?=$mci?>s</option>
+                    </select>
+                </div>
+                <div class="col-xl-3 col-lg-6 col-12 form-group">
+                    <label>Option *</label>
+                    <select class="select2" name="option" id="s_opt">
+                        <?php $rqt = mysqli_query($db, "SELECT id, `name` FROM options WHERE active = 1 AND ".(!!$r->option ? "ORDER BY (id = $r->option) DESC, id ASC" : $_fs=='*'?'1':'section = '.$_fs)) or die(debug(mysqli_error($db))); 
+                            while ($ROW = mysqli_fetch_array($rqt)){ $row = (object) $ROW; ?>
+                                <option <?=($row->id == $r->option ? 'selected': '')?> value="<?= $row->id ?>"><?= $row->name ?></option>
+                            <?php } ?>
+                            <option value="*">Toutes les options</option>
+                    </select>
+                </div>
+                <div class="col-xl-3 col-lg-6 col-12 form-group">
+                    <label>Niveau *</label>
+                    <select class="select2" name="level" id="s_level">
+                        <?php $rqt = mysqli_query($db, "SELECT id, CONCAT(level.name, ' ', level.system) AS `name` FROM level WHERE active = 1 AND `delete` = 0") or die(debug(mysqli_error($db)));
+                            while ($ROW = mysqli_fetch_array($rqt)){ $row = (object) $ROW; ?>
+                                <option <?=($row->id == $r->level ? 'selected': '')?> value="<?= $row->id ?>"><?= $row->name ?></option>
+                        <?php } ?>
+                    </select>
+                </div>
+                <div class="col-xl-3 col-lg-6 col-12 form-group">
+                    <label>Promotion *</label>
+                    <select class="select2" name="promotion" id="s_promo">
+                        <?php $year = date("Y");
+                            while ($year > 2021){ ?>
+                                <option value="<?= $year ?>"><?= --$year." - ".($year+1); ?></option>
+                        <?php } ?>
+                        <input type="hidden" name="CON_47" value="true">
+                    </select>
+                </div>
+                <div class="col-xl-6 col-lg-6 col-12 row">
+                    <div class="col-xl-12 col-lg-12 col-12 form-group">
+                        <label>Classe *</label>
+                        <select class="select2" name="class" id="s_cla">
+                            <?php $rqt = mysqli_query($db, "SELECT id, `name` FROM classes WHERE active = 1 AND `delete` = 0 AND id = $r->class") or die(debug(mysqli_error($db)));
+                                while ($ROW = mysqli_fetch_array($rqt)){ $row = (object) $ROW; ?>
+                                    <option value="<?= $row->id ?>"><?= $row->name ?></option>
+                            <?php } ?>
+                        </select>
+                    </div>
+                    <div class="col-lg-12 col-12 form-group mg-t-30">
+                        <label class="text-dark-medium">Télécharger la photo de l'élève (150px X 150px)</label>
+                        <input type="file" class="form-control-file" name="profile">
+                        <input type="hidden" name="CON_47">
+                        <input type="hidden" name="mine" value="<?= isset($in_admin) ? $user->id : 0; ?>">
+                    </div>
+                </div>
+                <div class="col-lg-6 col-12 form-group">
+                    <label>Courte biographie</label>
+                    <textarea class="textarea form-control" name="biographie" id="form-message" cols="10" rows="5"></textarea>
+                </div>
+                <div class="mx-4 alert hidden alert-danger alert-dismissible fade show" role="alert" id="errorRapport">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                        <span class="sr-only">Close</span>
+                    </button>
+                    <strong>Erreur : </strong>Une erreur s'est produit pendant l'ajout.<br>Si celà persiste veuillez contacter votre administrateur système.
+                </div>
+                <div class="col-12 form-group mg-t-8">
+                    <button type="submit" class="btn-fill-lg btn-gradient-yellow btn-hover-bluedark">Sauvegarder</button>
+                    <button type="reset" class="btn-fill-lg bg-blue-dark btn-hover-yellow">Réinitialiser</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div><?php }else{?>
+    <div class="card height-auto">
+    <div class="card-body">
+        <div class="heading-layout1">
+            <div class="item-title">
+                <h3>l'Etudiant indisponible</h3>
+            </div>
+        </div>
+        <div class="body-layout1">
+            <div class="item-title">
+                <p>L'édutiant dont vous essayer de modifier le profile est indisponible pour l'instant...</p>
+            </div>
+        </div>
+    </div>
+</div>
+<?php } ?>

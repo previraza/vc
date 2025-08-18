@@ -1,0 +1,59 @@
+<?php $pageTitle = "Liste des Enseignant" ?>
+
+<div class="card height-auto">
+    <div class="card-body">
+        <div class="heading-layout1">
+            <div class="item-title">
+                <h3>Tous les Enseignant</h3>
+            </div>
+           <div class="dropdown">
+                <a class="dropdown-toggle" href="#" role="button" 
+                data-toggle="dropdown" aria-expanded="false">...</a>
+
+                <div class="dropdown-menu dropdown-menu-right">
+                    
+                    <a class="dropdown-item" href="#" data-action="print"><i class="fas fa-print"></i>print</a>
+                    
+                    <a class="dropdown-item" href="#" data-action="reload"><i class="fas fa-redo-alt text-orange-peel"></i>Actualiser</a>
+                </div>
+            </div>
+        </div>
+        <div class="table-responsive">
+            <table class="table display data-table text-nowrap">
+                <thead>
+                    <tr>
+                        <th> 
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input checkAll" id="assosLabel">
+                                <label for="assosLabel" class="form-check-label">Id</label>
+                            </div>
+                        </th>
+                        <th>Photo</th>
+                        <th>Nom Complet</th>
+                        <th>Genre</th>
+                        <th>Spécialité</th>
+                        <th>Phone</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php $rqt = mysqli_query($db, "SELECT * FROM teachers WHERE `delete` = 0 AND active = 1 AND valide = 1");
+                        while($row = mysqli_fetch_array($rqt)){ $res = (object) $row;?>
+                        <tr>
+                            <td <?= ($res->user_id == '0') ? 'class="bg-warning"' : null ?>>
+                                <div class="form-check">
+                                    <input type="checkbox" class="form-check-input" id="assosLabelSS">
+                                <label for="assosLabelSS" class="form-check-label">Id</label>
+                                </div>
+                            </td>
+                            <td class="text-center"><img src="/layouts/default/img/figure/student2.webp" alt="teacher"></td>
+                            <td><?= "$res->firstname $res->lastname" ?></td>
+                            <td><?= $res->gender ?></td>
+                            <td><?= $res->speciality ?></td>
+                            <td><?= $res->phone ?></td>
+                        </tr>
+                    <?php } ?>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

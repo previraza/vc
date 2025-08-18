@@ -1,0 +1,47 @@
+$('table.data-tables').DataTable({
+    processing:     true,
+    serverSide:     true,
+    serverMethod:   'post',
+    paging:         true,
+    retrieve:       true,
+    stateSave:      true,
+    info:           true,
+    lengthChange:   true,
+    lengthMenu:     [20, 50, 75, 100, 500, 1000],
+    dom:            'Blfrtip',
+    buttons: [{
+        extend: 'collection',
+        text: 'Exporter',
+        buttons: ['copy', 'csv', 'excel', 'pdf', 'print']
+    }], ajax: {
+        'url':'/app/admin/jsons/course/ue.php'
+    }, columnDefs: [{
+        targets: 8,
+        render: function ( data, type, row, meta ) {
+            return `<div class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown"
+                            aria-expanded="false">
+                            <span class="flaticon-more-button-of-three-dots"></span>
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-right">
+                            <a class="dropdown-item" href="?fa69951bc733eb82713e936be33597e1=DATA_CRYPTING_ON:fa69951bc733eb82713e936be33597e1=WABTECHS_CRYPTING_ON: e91497f38407364c8e86ade9098950d978814190&MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3VIRAZA_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3&MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3&WABTECHS_CRYPTING_ON_LAVINGOL&MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3&b557c222c8ddcdf87e033706aad08e4ef7cf90d3=course--editUe--${row.id}"><i class="fas fa-cogs text-dark-pastel-green"></i>Modifier</a>
+                            <a class="dropdown-item" href="?fa69951bc733eb82713e936be33597e1=DATA_CRYPTING_ON:fa69951bc733eb82713e936be33597e1=WABTECHS_CRYPTING_ON: e91497f38407364c8e86ade9098950d978814190&MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3VIRAZA_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3&MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3&WABTECHS_CRYPTING_ON_LAVINGOL&MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3&b557c222c8ddcdf87e033706aad08e4ef7cf90d3=course--deleteUe.$--${row.id}"><i class="fas fa-times text-orange-red"></i>Supprimer</a>
+                        </div>
+                    </div>`;
+        }
+    }], 'columns': [
+        { data: 'id' },
+        { data: 'code' },
+        { data: 'name' },
+        { data: 'cmi' },
+        { data: 'td' },
+        { data: 'tp' },
+        { data: 'ue' },
+        { data: 'titular' },
+    ]
+}).on('draw', () => {
+    $('a[data-exec]').on('click', e => {
+        e.preventDefault();
+        Function(e.target.dataset.exec)();
+    });
+})

@@ -1,0 +1,230 @@
+<?php viewOnlyBy('ADMIN'); $pageTitle = "Nouveau Enseignant" ?>
+
+<div class="card height-auto">
+    <div class="card-body">
+        <div class="heading-layout1">
+            <div class="item-title">
+                <h3>Ajouter un Nouveau Enseignant</h3>
+            </div>
+            <div class="dropdown">
+                <a class="dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-expanded="false">...</a>
+
+                <div class="dropdown-menu dropdown-menu-right">
+                    
+                    <a class="dropdown-item" href="#" data-action="print"><i class="fas fa-print"></i>print</a>
+                    
+                    <a class="dropdown-item" href="#" data-action="reload"><i class="fas fa-redo-alt text-orange-peel"></i>Actualiser</a>
+                </div>
+            </div>
+        </div>
+        <form class=new-added-form id=addTeacher>
+            <div class=row>
+                <div class="col-xl-3 col-lg-6 col-12 form-group">
+                    <label>Nom *</label>
+                    <input type="text" placeholder="" name="firstname" class="form-control">
+                </div>
+                <div class="col-xl-3 col-lg-6 col-12 form-group">
+                    <label>Postnom *</label>
+                    <input type="text" placeholder="" name="lastname" class="form-control">
+                </div>
+                <div class="col-xl-3 col-lg-6 col-12 form-group">
+                    <label>Sexe *</label>
+                    <select class="select2" name="gender">
+                        <option value="M">Masculin</option>
+                        <option value="F">féminin</option>
+                        <option value="A">Autre</option>
+                    </select>
+                </div>
+                <div class="col-xl-3 col-lg-6 col-12 form-group">
+                    <label>Matricule</label>
+                    <input type="text" placeholder="" name="matricule" class="form-control">
+                </div>
+                <div class="col-xl-3 col-lg-6 col-12 form-group">
+                    <label>Naissance *</label>
+                    <input type="text" placeholder="yyyy/mm/dd" class="form-control air-datepicker" name="birthday">
+                    <i class="far fa-calendar-alt"></i>
+                </div>
+                <div class="col-xl-3 col-lg-6 col-12 form-group">
+                    <label>Père</label>
+                    <input type="text" placeholder="" class="form-control" name="father">
+                </div>
+                <div class="col-xl-3 col-lg-6 col-12 form-group">
+                    <label>Mère</label>
+                    <input type="text" placeholder="" class="form-control" name="mother">
+                </div>
+                <div class="col-xl-3 col-lg-6 col-12 form-group">
+                    <label>Attribution *</label>
+                    <select class="select2" name="role">
+                        <option value="EN">Enseignant</option>
+                        <option value="SJ">Secretaire de Jury</option>
+                        <option value="CJ">Chef de Jury</option>
+                        <option value="CS">Chef de <?=$mci?></option>
+                        <option value="DC">Directeur de Cabinet</option>
+                        <option value="AE">Administrateur des etudiants</option>
+                        <option value="AB">Administrateur de Budget</option>
+                        <option value="SA">Secrétaire Général Administratif</option>
+                        <option value="SR">Secrétaire Général Académique / Recherche</option>
+                        <option value="SG">Secrétaire Général Académique</option>
+                        <option value="DG">Directeur Général</option>
+                    </select>
+                </div>
+                <div class="col-xl-3 col-lg-6 col-12 form-group">
+                    <label>Grade *</label>
+                    <select class="select2" name="title">
+                        <option value="CO">Collaborateur</option>
+                        <option value="ASS">Assistant de Recherche</option>
+                        <option value="ASS1">Assistant Niveau 1</option>
+                        <option value="ASS2">Assistant Niveau 2</option>
+                        <option value="CT">Chef de Travaux</option>
+                        <option value="PA">Professeur Associer</option>
+                        <option value="P">Professeur</option>
+                        <option value="PO">Professeur Ordinaire</option>
+                        <option value="PE">Professeur Emerite</option>
+                    </select>
+                </div>
+                <div class="col-xl-3 col-lg-6 col-12 form-group">
+                    <label>Diplôme</label>
+                    <input type="text" placeholder="" class="form-control" name="speciality">
+                </div>
+                <div class="col-xl-3 col-lg-6 col-12 form-group">
+                    <label>Engagement *</label>
+                    <input type="text" placeholder="yyyy/mm/dd" class="form-control air-datepicker" name="Joining_date">
+                    <i class="far fa-calendar-alt"></i>
+                </div>
+                <div class="col-xl-3 col-lg-6 col-12 form-group">
+                    <label>Acte de nomination *</label>
+                    <input type="text" placeholder="" class="form-control" name="acte">
+                </div>
+                <div class="col-xl-3 col-lg-6 col-12 form-group">
+                    <label>Nationalité *</label>
+                    <input type="text" placeholder="" class="form-control" name="country" value="Congolaise">
+                </div>
+                <div class="col-xl-3 col-lg-6 col-12 form-group">
+                    <label>Religion *</label>
+                    <select class="select2" name="religion">
+                        <option value="">Selectioner religion</option>
+                        <option value="3">Chrétien</option>
+                        <option value="1">Islamiste</option>
+                        <option value="2">Hindu</option>
+                        <option value="3">Buddiste</option>
+                        <option value="0">Autres</option>
+                    </select>
+                </div>
+                <div class="col-xl-3 col-lg-6 col-12 form-group">
+                    <label>E-Mail</label>
+                    <input type="email" placeholder="" class="form-control" name="email">
+                </div>
+                <div class="col-xl-3 col-lg-6 col-12 form-group">
+                    <label>Address</label>
+                    <input type="text" placeholder="" class="form-control" name="address">
+                </div>
+                <div class="col-xl-3 col-lg-6 col-12 form-group">
+                    <label>Phone <span class="btn btn-info pl-3 h-100 ml10">+</span></label>
+                    <input type="text" placeholder="" class="form-control" name="phone[]">
+                </div>
+                <div class="col-xl-3 col-lg-6 col-12 form-group">
+                    <label>Status *</label>
+                    <select class="select2" name="activity">
+                        <option value="A">En Activité</option>
+                        <option value="M">En Congé Maladie</option>
+                        <option value="F">En Formation</option>
+                        <option value="0">Autres</option>
+                    </select>
+                </div>
+                <div class="col-lg-6 col-12 form-group">
+                    <label>Observation</label>
+                    <textarea class="textarea form-control" name="observation" id="form-message" cols="10" rows="5"></textarea>
+                </div>
+                <div class="col-lg-6 col-12 form-group mg-t-30">
+                    <label class="text-dark-medium">Upload Student Photo (150px X 150px)</label>
+                    <input type="file" class="form-control-file" name="profile">
+                    <input type="hidden" name="CON_47">
+                    <input type="hidden" name="mine" value="<?= isset($in_admin) ? $user->id : 0; ?>">
+                    <input type="hidden" name="username" value="<?= isset($in_admin) ? " '$user->username' " : 'NULL'; ?>">
+                </div>
+                <div class="mx-4 alert hidden alert-danger alert-dismissible fade show" role="alert" id="errorRapport">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                        <span class="sr-only">Close</span>
+                    </button>
+                    <strong>Erreur : </strong>Une erreur s'est produit pendant l'ajout.<br>Si celà persiste veuillez contacter votre administrateur système.
+                </div>
+                <div class="col-12 form-group mg-t-8">
+                    <button type="submit" id="addStudent" class="btn-fill-lg btn-gradient-yellow btn-hover-bluedark">Save</button>
+                    <button type="reset" class="btn-fill-lg bg-blue-dark btn-hover-yellow">Reset</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<div class="card height-auto">
+    <div class="card-body">
+        <div class="heading-layout1">
+            <div class="item-title">
+                <h3>Informations Suplémentaires</h3>
+            </div>
+        </div>
+        <form class="new-added-form" id="addTeacher">
+            <div class="row">
+                <div class="col-lg-6 col-12 form-group">
+                    <label>Biographie</label>
+                    <textarea form=addTeacher class="textarea form-control" name="biographie" placeholder="Quelques détails sur moi" id="form-message" cols="10" rows="5"></textarea>
+                </div>
+                <div class="col-xl-3 col-lg-6 col-12 form-group">
+                    <label>Site Web *</label>
+                    <input form=addTeacher type="text" placeholder="" name="siteweb" class="form-control">
+                </div>
+                <div class="col-xl-3 col-6 form-group">
+                    <label>Facebook *</label>
+                    <input form=addTeacher type="text" placeholder="" name="facebook" class="form-control">
+                </div>
+                <div class="col-xl-3 col-6 form-group">
+                    <label>LinkedIn *</label>
+                    <input form=addTeacher type="text" placeholder="" name="linkedin" class="form-control">
+                </div>
+                <div class="col-xl-3 col-6 form-group">
+                    <label>Twitter *</label>
+                    <input form=addTeacher type="text" placeholder="" name="twitter" class="form-control">
+                </div>
+                <div class="col-xl-3 col-6 form-group">
+                    <label>Telegram *</label>
+                    <input  form=addTeacher type="text" placeholder="" name="telegram" class="form-control">
+                </div>
+                <div class="col-xl-3 col-lg-6 col-12 form-group">
+                    <label>Etat-Civil *</label>
+                    <select form=addTeacher  class="select2" name="etatcivil">
+                        <option value="C">Célibataire</option>
+                        <option value="M">Marié (e)</option>
+                        <option value="D">Divorcé (e)</option>
+                        <option value="V">Veuf (ve)</option>
+                        <option value="A">Autre</option>
+                    </select>
+                </div>
+                <div class="col-xl-3 col-lg-6 col-12 form-group">
+                    <label>Enfants <span class="btn btn-info pl-3 h-100 ml10">+</span></label>
+                    <input form=addTeacher type="text" placeholder="" class="form-control" name="child[]">
+                </div>
+                <div class="col-lg-9 col-12 form-group">
+                    <label>Parcours</label>
+                    <textarea form=addTeacher class="textarea form-control" name="parcours" placeholder="Mon parcours" id="form-message" cols="10" rows="5"></textarea>
+                </div>
+                <div class="col-xl-4 col-lg-4 col-4 form-group">
+                    <label>Communication *</label>
+                    <input form=addTeacher type="number" max=100 min=25 class="form-control air-number" name=communication>
+                </div>
+                <div class="col-xl-4 col-lg-4 col-4 form-group">
+                    <label>Consultation *</label>
+                    <input form=addTeacher type="number" max=100 min=25 class="form-control air-number" name=consultation>
+                </div>
+                <div class="col-xl-4 col-lg-4 col-4 form-group">
+                    <label>Management *</label>
+                    <input form=addTeacher type="number" max=100 min=25 class="form-control air-number" name=management>
+                </div>
+                <div class="col-12 form-group mg-t-8">
+                    <button form=addTeacher type="submit" id="addStudent" class="btn-fill-lg btn-gradient-yellow btn-hover-bluedark">Save</button>
+                    <button form=addTeacher type="reset" class="btn-fill-lg bg-blue-dark btn-hover-yellow">Reset</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

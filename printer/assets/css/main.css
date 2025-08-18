@@ -1,0 +1,26 @@
+td.update-case{
+    -webkit-user-modify: read-write;
+    background-color: #444;
+    color:wheat;
+ }.table-style8 th, .table-style8 td {
+    padding: 4px;
+    font-size: 10px;
+    line-height: 1;
+ }.del-on-print th {border-radius: 0 !important;}.del-on-print tbody th {padding-left: 10px !important;}.del-on-print td {text-align: center !important;}
+
+@page {
+    size: A5;
+    margin: 5mm;
+}
+
+body > div > div > main > div.as-invoice.invoice_style2 {
+    background-image: url(/assets/images/ista.jpg);
+    background-repeat: no-repeat;
+    background-size: 50%;
+    background-position: center;
+}
+
+body > div > div > main > div.as-invoice.invoice_style2 > div#download_section {
+    background-color: #ffffffe0;
+    color: black;
+}

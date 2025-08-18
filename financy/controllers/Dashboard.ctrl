@@ -1,0 +1,56 @@
+<?php
+class Dashboard extends Controller
+{
+    protected $role = [
+        '*:A:A:AA' => ['title' => 'Directeur Generale', 'src' => 'dash-adg'],
+        'A:A:A:AA' => ['title' => 'Assistant Directeur Generale', 'src' => 'dash-adg'],
+        'A:F:A:ES' => ['title' => 'Administrateur de buget', 'src' => 'dash-ab'],
+        'S:F:S:ES' => ['title' => 'Gestionnaire Financier Section', 'src' => 'dash-gfs'],
+        '0:F:S:ES' => ['title' => 'Agent Financier Section', 'src' => 'dash-afs'],
+        '0:F:A:E0' => ['title' => 'Agent Encaissement Etablissement', 'src' => 'dash-aefe'],
+        '0:F:A:0S' => ['title' => 'Agent Decaissement Etablissement', 'src' => 'dash-adfe'],
+        '0:F:A:I0' => ['title' => 'Agent Imprimaire Finance', 'src' => 'dash-aife'],
+    ];
+
+    public function __construct()
+    {
+        parent::__construct();
+        $this->User = $this->loadModel('users');
+        $this->Payment = $this->loadModel('payments');
+        $this->Slip = $this->loadModel('slips');
+        $this->Fee = $this->loadModel('fees');
+    }
+
+    public function index()
+    {
+        $this->pathIs();
+        $app = app();
+        $app->ASSETS['_css'] .= '<link rel="stylesheet" href="/assets/vendor/swiperSlider/swiper-bundle.min.css">';
+        $app->ASSETS['_js'] .= '<script src="/assets/vendor/swiperSlider/swiper-bundle.min.js"></script>';
+        $app->ASSETS['css'] .= '<style>li.card.card-slide.swiper-slide {height: fit-content;}</style>';
+        $app->ASSETS['_js'] .= '<script src="/assets/js/plugins/circle-progress.js"></script>';
+        $app->ASSETS['_js'] .= '<script src="/assets/js/plugins/custom-circle-progress.js" defer></script>';
+        $app->ASSETS['js'] .= '<script src="../e-commerce/assets/js/ecommerce.js" defer></script>';
+        $app->ASSETS['_css'] .= '<link rel="stylesheet" href="/assets/css/hope-ui.min.css?v=2.2.0" />';
+        $app->ASSETS['_css'] .= '<link rel="stylesheet" href="/assets/css/pro.min.css?v=2.2.0" />';
+
+        $this->compact('Fee', $this->Fee);
+        $this->compact('User', $this->User);
+        $this->compact('Payment', $this->Payment);
+        $this->compact('Slip', $this->Slip);
+        return $this->view([$this->directory, $this->role[auth()->role]['src'] ?? ''], true, true, true);
+    }
+
+    public function pathIs()
+    {
+        switch (auth()->role) {
+            case '0:F:A:I0':
+                    $this->compact('all_payments', array_merge($this->Payment->all(), $this->Slip->all()));
+                break;
+            
+            default:
+                # code...
+                break;
+        }
+    }
+}

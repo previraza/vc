@@ -1,0 +1,67 @@
+<script type=text/javascript src=https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.15.3/xlsx.full.min.js></script>
+<?php $pageTitle = "Fiche de Cotation"; $_GET['H_title'] = '';
+    function addSelectCourse($a,$b){
+        $_GET['H_title'] = $a;
+        return $b;
+    } $rcc = isset($_POST['rcc']) ? $_POST['rcc'] : 'c';
+?>
+<div class="card height-auto">
+    <div class="card-body">
+        <div class="heading-layout1">
+            <div class="item-title">
+                <h3 id=fiche-title>Fiche de cote</h3>
+                <div></div>
+            </div>
+           <div class="dropdown">
+                <a class="dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-expanded="false">...</a>
+                <div class="dropdown-menu dropdown-menu-right">
+                    <a class="dropdown-item" href="#" onclick="submitAll()" data-action="null"><i class="fas fa-save text-blue"></i>Save</a>
+                    <a class="dropdown-item" href="#" id="editing" data-action="null"><i class="fas fa-cogs text-dark-pastel-green"></i>Edit</a>
+                    <label class="dropdown-item" aria-expanded="false" for="upXlsx" data-action="null"><i class="fas fa-file-alt text-dark-pastel-green"></i>Importer</label>
+                    <input class=d-none type="file" id="upXlsx" accept=".xls, .xlsx">
+                    <a class="dropdown-item" href="#" data-action="print"><i class="fas fa-print"></i>print</a>
+                    <a class="dropdown-item" href="#" data-action="reload"><i class="fas fa-redo-alt text-orange-peel"></i>Actualiser</a>
+                </div>
+            </div>
+        </div>
+        <form class="mg-b-20" method="POST">
+            <div class="row gutters-4">
+                <div class="col-xl-3 col-12 form-group">
+                    <input type="text" placeholder="Non de l'étudiant" class="form-control" name="student_name">
+                </div>
+                <div class="col-xl-6 col-12 form-group">
+                    <select class="select2" name="course">
+                        <?php $TFE = 0; $rqt_scop12 = mysqli_query($db, "SELECT courses.id, courses.name, sections.name AS section_name, options.name AS option_name, level.name AS level_name, classes.name AS classe_name, courses.TFE FROM courses JOIN teachers ON teachers.id = courses.titular JOIN classes ON classes.id = courses.class JOIN sections ON sections.id = classes.section JOIN options ON options.id = classes.option JOIN level ON level.id = classes.level WHERE courses.active = 1 AND courses.delete = 0 AND teachers.user_id = $user->id AND classes.active = 1 AND classes.delete = 0"); 
+                        while ($row = mysqli_fetch_array($rqt_scop12)){ if(isset($links[2]) && $links[2] == $row['id']) $TFE = $row['TFE']; ?>
+                            <option <?= (isset($_POST['course']) && $_POST['course'] == $row['id']) ? addSelectCourse("$row[section_name] / $row[option_name] / $row[level_name] / $row[classe_name] / $row[name]",'selected') : (!isset($_POST['course']) && isset($links[2]) && $links[2] == $row['id'] ? addSelectCourse("$row[section_name] / $row[option_name] / $row[level_name] / $row[classe_name] / $row[name]",'selected') : null)?> value="<?= $row['id'] ?>"><?=  "$row[section_name] / $row[option_name] / $row[level_name] / $row[classe_name] / $row[name]" ?></option>
+                        <?php } ?>
+                    </select>
+                </div>               
+                <div class="col-xl-3 col-12 form-group">
+                    <select class="select2" name="rcc">
+                        <option vlaue=c <?= isset($_POST['rcc'])&&$_POST['rcc']=='c'?'selected':null?>>Grille Complete</option>
+                        <option value=ae <?= isset($_POST['rcc'])&&$_POST['rcc']=='ae'?'selected':null?>>Grille Sans Echècs</option>
+                        <option value=se <?= isset($_POST['rcc'])&&$_POST['rcc']=='se'?'selected':null?>>Grille Des Echècs</option>
+                    </select>
+                </div>
+                <div class="col-12 form-group">
+                    <button type="submit" class="fw-btn-fill btn-gradient-yellow">RECHERCHE</button>
+                </div>
+            </div>
+        </form>
+        <div class="table-responsive">
+            <table class="table display dataTable-dyn-table text-nowrap">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Photo</th>
+                        <th>NOMS</th>
+                        <?=$TFE==1?'<th class="text-center">COTE</th>':null?>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody class=dataTable-dyn-body></tbody>
+            </table>
+        </div>
+    </div>
+</div>

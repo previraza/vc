@@ -1,0 +1,213 @@
+<?php viewOnlyBy('AB','A-AB','SFC'); $pageTitle = "Payements" ?>
+<?php 
+    if (isset($_POST['action'], $_POST['id']) && is_numeric($_POST['id'])){
+        extract(array_trait_string($_POST));
+        if (mysqli_query($db, "UPDATE `payments` SET `valide` = ".($action == 'valide' ? 1 : ($action == 'suspend' ? 0 : NULL ))." WHERE id = $id AND user_id = $user->id")){ ?>
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                    <span class="sr-only">Close</span>
+                </button>
+                <strong>Succes : </strong>Le payement a été <?= $action == 'valide' ? 'valider' : ('suspend' ? 'suspendu' : 'modifier') ?> avec succès. 
+            </div>
+        <?php }else{ ?>
+            <div class="alert alert-danger alert-dismissible fade show" role="alert"> 
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                    <span class="sr-only">Close</span>
+                </button>
+                <strong>Echec : </strong>Le Profile choisit est introuvable. 
+            </div>
+        <?php }
+    }
+?>
+<div class="card height-auto">
+    <div class="card-body">
+        <div class="heading-layout1">
+            <div class="item-title">
+                <h3>Formulaire de payement</h3>
+            </div>
+            <div class="dropdown">
+                <a class="dropdown-toggle" href="#" role="button" 
+                data-toggle="dropdown" aria-expanded="false">...</a>
+
+                <div class="dropdown-menu dropdown-menu-right">
+                <a class="dropdown-item" href="#" data-action="print"><i class="fas fa-print"></i>print</a>
+                    
+                    <a class="dropdown-item" href="#" data-action="reload"><i class="fas fa-redo-alt text-orange-peel"></i>Actualiser</a>
+                </div>
+            </div>
+        </div>
+        <form class="new-added-form" id="addPayment" method="POST">
+            <div class="row">
+                <div class="col-xl-8 col-lg-8 col-12 form-group">
+                    <label>Classe *</label>
+                    <select class="select2" name="class" id="classes" required>
+                        <option value="REGISTER">Demande d'Inscription</option>
+                        <?php $rqt = mysqli_query($db, "SELECT classes.id AS id, classes.name AS classe, sections.name AS section, options.name AS option, level.name AS level, classes.promotion AS promo FROM classes JOIN sections ON sections.id = classes.section JOIN options ON options.id = classes.option JOIN level ON level.id = classes.level WHERE classes.active = 1") or die(debug(mysqli_error($db)));
+                            while ($ROW = mysqli_fetch_array($rqt)){ $row = (object) $ROW; $firstClass = isset($firstClass) ? $firstClass : $ROW['id'] ?>
+                                <option value="<?= $row->id ?>"><?= $row->promo++."-$row->promo / $row->section / $row->option / $row->level / $row->classe" ?></option>
+                        <?php } ?>
+                    </select>
+                    <input type="hidden" name="CON_47" value="true">
+                </div>
+                <div class="col-xl-4 col-lg-6 col-12 form-group">
+                    <label>Etudiants *</label>
+                    <select class="select2" name="student" id="students" required>
+                        <?php $rqt = mysqli_query($db, "SELECT register.id, CONCAT(register.nom, ' ', register.postnom) AS name FROM register LEFT JOIN payments ON (payments.student = register.id) WHERE register.active = 1 AND register.delete = 0 AND register.traite = 0 AND (payments.id IS NULL OR payments.valide = 0)") or die(debug(mysqli_error($db)));
+                            while ($ROW = mysqli_fetch_array($rqt)){ $row = (object) $ROW; ?>
+                                <option value="<?= $row->id ?>"><?= "$row->name" ?></option>
+                        <?php } ?>
+                    </select>
+                </div>
+                <div class="col-xl-6 col-lg-6 col-12 form-group">
+                    <label>Motif du frais *</label>
+                    <select class="select2" name="type" required>
+                        <option value="INSCR">Inscription</option>
+                        <option value="CARD1">Carte d'Etudiant</option>
+                        <option value="CARD2">Carte du Personnel</option>
+                        <option value="REINS">Reinscription (Orientation)</option>
+                        <option value="ENR_1">Enrolement Premier Semestre (Mi-Session)</option>
+                        <option value="ENR_2">Enrolement Deuxième Semestre (Session)</option>
+                        <option value="ENR_3">Enrolement Session de Ratrapage (Deuxième Session)</option>
+                        <option value="FRST1">Frais Scolaire Tranche 1</option>
+                        <option value="FRST2">Frais Scolaire Tranche 2</option>
+                        <option value="FRST3">Frais Scolaire Tranche 3</option>
+                        <option value="CARNE">Carnet</option>
+                        <option value="RE_AT">Retrait Attestation</option>
+                        <option value="STAGE">Stage</option>
+                        <option value="AN_SJ">Anterinement du Sujet</option>
+                        <option value="LEG_D">Legalisation du Diplôme</option>
+                    </select>
+                </div>
+                <div class="col-xl-6 col-lg-6 col-12 form-group">
+                    <label>Type de payement *</label>
+                    <select class="select2" name="bank" required id=chooseMci>
+                        <option value="M">Perception Manuel</option>
+                        <option value="B">Banque BOA</option>
+                        <option value="R">Banque Rawbank</option>
+                    </select>
+                </div>
+                <div class="col-xl-3 col-lg-6 col-12 d-none form-group" id=afterChooseMci>
+                    <label>Numéro du bordereau *</label>
+                    <input type="number" min="0" placeholder="" class="form-control" name="number">
+                </div>
+                <div class="col-xl-4 col-lg-6 col-12 form-group">
+                    <label>Montant *</label>
+                    <input type="number" min="0" placeholder="" class="form-control" name="sum" required>
+                </div>
+                <div class="col-lg-4 col-12 form-group">
+                    <label>Devise *</label>
+                    <select class="select2" name="devise">
+                        <option selected value="FC">Franc Congolai</option>
+                        <option value="USD">Dollars Américain</option>
+                    </select>
+                </div>
+                <div class="col-lg-4 col-12 form-group mg-t-8" style="margin:auto 0 15px;">
+                    <button type="submit" class="btn-fill-lg btn-gradient-yellow btn-hover-bluedark">Save</button>
+                    <button type="reset" class="btn-fill-lg bg-blue-dark btn-hover-yellow">Reset</button>
+                </div>
+                <div id="responseMessage" class="col-12 form-group"></div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="card height-auto">
+    <div class="card-body">
+        <div class="heading-layout1">
+            <div class="item-title">
+                <h3>Rapport de payements</h3>
+            </div>
+            <div class="dropdown">
+                <a class="dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-expanded="false">...</a>
+
+                <div class="dropdown-menu dropdown-menu-right">
+                    
+                    <a class="dropdown-item" href="#" data-action="print"><i class="fas fa-print"></i>print</a>
+                    
+                    <a class="dropdown-item" href="#" data-action="reload"><i class="fas fa-redo-alt text-orange-peel"></i>Actualiser</a>
+                </div>
+            </div>
+        </div>
+        <form class="mg-b-20">
+            <div class="row gutters-8">
+                <div class="col-3-xxxl col-xl-3 col-lg-3 col-12 form-group">
+                    <input type="text" placeholder="Search by ID ..." class="form-control">
+                </div>
+                <div class="col-4-xxxl col-xl-4 col-lg-3 col-12 form-group">
+                    <input type="text" placeholder="Search by Name ..." class="form-control">
+                </div>
+                <div class="col-4-xxxl col-xl-3 col-lg-3 col-12 form-group">
+                    <input type="text" placeholder="Search by Phone ..." class="form-control">
+                </div>
+                <div class="col-1-xxxl col-xl-2 col-lg-3 col-12 form-group">
+                    <button type="submit" class="fw-btn-fill btn-gradient-yellow">RECHERCHE</button>
+                </div>
+            </div>
+        </form>
+        <div class="table-responsive">
+            <table class="table display data-table text-nowrap">
+                <thead>
+                    <tr>
+                        <th>
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input checkAll" id="assosLabel">
+                                <label for="assosLabel" class="form-check-label">Id</label>
+                            </div>
+                        </th>
+                        <td>Nom et postnom</td>
+                        <td>Matricul</td>
+                        <td>Motif</td>
+                        <td>Montant</td>
+                        <td>Devise</td>
+                        <td>Classe</td>
+                        <td>Date</td>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody id="paymentLibraries">
+                    <?php $rqt = mysqli_query($db, "SELECT payments.*, CONCAT(register.nom,' ',register.postnom) AS std_name FROM payments LEFT JOIN register ON payments.student = register.id WHERE payments.`delete` = 0 AND user_id = $user->id  ORDER BY date DESC");
+                        while ($row = mysqli_fetch_array($rqt)) { $res = (object) $row ; ?>
+                            <tr id="Element-<?= $res->id ?>">
+                                <td class="<?= $res->valide == 1 ? 'bg-success' : ($res->valide == 0 ? 'bg-danger' : NULL)?>">
+                                    <div class="form-check">
+                                        <input type="checkbox" class="form-check-input">
+                                        <label class="form-check-label">#<?=$res->id?></label>
+                                    </div>
+                                </td>
+                                <td><?=$res->student_name?$res->student_name:$res->std_name?></td>
+                                <td><?=$res->student_matricul?$res->student_matricul:'N-E'?></td>
+                                <td><?=$res->type?></td>
+                                <td><?=$res->sum?></td>
+                                <td><?=$res->devise?></td>
+                                <td><?=$res->class?></td>
+                                <td><?=$res->date?></td>
+                                <td>
+                                    <div class="dropdown">
+                                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false" aria-label="Plus d'option">
+                                            <span class="flaticon-more-button-of-three-dots"></span>
+                                        </a>
+                                        <div class="dropdown-menu dropdown-menu-right">
+                                            <form action="?fa69951bc733eb82713e936be33597e1=DATA_CRYPTING_ON:fa69951bc733eb82713e936be33597e1=WABTECHS_CRYPTING_ON: e91497f38407364c8e86ade9098950d978814190&MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3VIRAZA_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3&MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3&WABTECHS_CRYPTING_ON_LAVINGOL&MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3&b557c222c8ddcdf87e033706aad08e4ef7cf90d3=financy--payment" method="POST" class="d-none" id="valide_<?= $res->id ?>">
+                                                <input type="hidden" name="id" value="<?= $res->id ?>">
+                                                <input type="hidden" name="action" value="valide">
+                                            </form>
+                                            <form action="?fa69951bc733eb82713e936be33597e1=DATA_CRYPTING_ON:fa69951bc733eb82713e936be33597e1=WABTECHS_CRYPTING_ON: e91497f38407364c8e86ade9098950d978814190&MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3VIRAZA_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3&MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3&WABTECHS_CRYPTING_ON_LAVINGOL&MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3&b557c222c8ddcdf87e033706aad08e4ef7cf90d3=financy--payment" method="POST" class="d-none" id="suspend_<?= $res->id ?>">
+                                                <input type="hidden" name="id" value="<?= $res->id ?>">
+                                                <input type="hidden" name="action" value="suspend">
+                                            </form>
+                                            <a class="dropdown-item<?= $res->valide == 0 ? " hidden d-none" : NULL ?>" data-link="external" href="/app/admin/pages/actions/print-facture.php?id=<?= $res->id ?>" target="_blank"><i class="fas fa-print"></i>Imprimer</a>
+                                            <a class="dropdown-item<?= $res->valide == 1 ? " hidden d-none" : NULL ?>" href="#" onclick="document.querySelector('#valide_<?= $res->id ?>').submit()"><i class="fas fa-redo-alt text-dark-pastel-green"></i>Valider</a>
+                                            <a class="dropdown-item<?= $res->valide == 0 ? " hidden d-none" : NULL ?>" href="#" onclick="document.querySelector('#suspend_<?= $res->id ?>').submit()"><i class="fas fa-redo-alt text-orange-peel"></i>Suspendre</a>
+                                            <a class="dropdown-item" onclick="if (confirm('vous effectuez une suppression de la ligne sélectionnée')) location.href='?fa69951bc733eb82713e936be33597e1=DATA_CRYPTING_ON:fa69951bc733eb82713e936be33597e1=WABTECHS_CRYPTING_ON: e91497f38407364c8e86ade9098950d978814190&MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3VIRAZA_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3&MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3&WABTECHS_CRYPTING_ON_LAVINGOL&MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3&b557c222c8ddcdf87e033706aad08e4ef7cf90d3=financy--delete.$--<?= $res->id ?>&returnOn=register'"><i class="fas fa-times text-orange-red"></i>Supprimer</a>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>        
+                    <?php } ?>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

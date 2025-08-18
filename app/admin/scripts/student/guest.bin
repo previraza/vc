@@ -1,0 +1,30 @@
+$('#addStudent').on('submit', (e) => {
+    e.preventDefault();$('#errorRapport').addClass('hidden')
+    var data = new FormData(e.currentTarget);
+    $.ajax({
+        url: `/app/settings/add/guest-students.php?sending_by=mcisme&$timer={Date.now()}`,
+        data: data,
+        type: "POST",
+        contentType: false,
+        cache: false,
+        processData: false,
+        success: function(response) {
+            try {
+                var res = JSON.parse(response);
+                if (res.status == 'succes') location.href = `/app/admin/pages/actions/print-register.php?id=${res.content}`;
+                else if (res.status == 'error') {
+                    console.log(res.content);
+                    $('#errorRapport').removeClass('hidden').html(`<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span>
+                        <span class="sr-only">Close</span></button><strong>Erreur : ` + res.content);
+                } else if (res.status == 'save') {
+                    $('#errorRapport').removeClass('hidden alert-danger').addClass('alert-succes').removeClass('hidden').html(`<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span>
+                        <span class="sr-only">Close</span></button><strong>Enregistrement N° : ` + res.content);
+                }
+            } catch (error) {
+                console.error(response);
+                $('#errorRapport').removeClass('hidden');
+            }
+        }
+    });
+});
+$('#profile').on('change', e => $('#profileZone')[0].style.backgroundImage = `url("${URL.createObjectURL(e.target.files[0])}")`)

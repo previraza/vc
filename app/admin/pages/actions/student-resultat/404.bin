@@ -1,0 +1,6 @@
+<h1>
+    Système : <?=strtolower($std->sys)?>
+</h1>
+<h3>
+    Le système sélectionné n'est pas actuellement reconnu dans ce serveur
+</h3>

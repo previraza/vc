@@ -1,0 +1,77 @@
+<?php $pageTitle = "Toutes les Notifications" ?>
+
+<div class="row">
+    <div class="col-12">
+        <div class="card height-auto">
+            <div class="card-body">
+                <div class="heading-layout1">
+                    <div class="item-title">
+                        <h3>Notice Board</h3>
+                    </div>
+                     <div class="dropdown">
+                        <a class="dropdown-toggle" href="#" role="button" 
+                        data-toggle="dropdown" aria-expanded="false">...</a>
+
+                        <div class="dropdown-menu dropdown-menu-right">
+                    <a class="dropdown-item" href="#" data-action="print"><i class="fas fa-print"></i>print</a>
+                    
+                    <a class="dropdown-item" href="#" data-action="reload"><i class="fas fa-redo-alt text-orange-peel"></i>Actualiser</a>
+                        </div>
+                    </div>
+                </div>
+                <form class="mg-b-20" method="POST">
+                    <div class="row gutters-8">
+                        <div class="col-lg-5 col-12 form-group">
+                            <select name="posted_on" class="select2">
+                                <option value="">Selectionner un niveau</option>
+                                <option value="all">Tout les monde</option>
+                                <option value="sec"><?=$mci?></option>
+                                <option value="opt">Option</option>
+                                <option value="pmt">Promotion</option>
+                                <option value="lev">Niveau</option>
+                                <option value="cla">Classe</option>
+                                <option value="adm">Administratif</option>
+                                <option value="ens">Enseignant</option>
+                                <option value="agn">Agent</option>
+                                <option value="std">Etudiant</option>
+                            </select>
+                        </div>
+                        <div class="col-lg-5 col-12 form-group">
+                            <input type="text" placeholder="Search by Title ..." class="form-control">
+                        </div>
+                        <div class="col-lg-2 col-12 form-group">
+                            <button type="submit" class="fw-btn-fill btn-gradient-yellow">RECHERCHE</button>
+                        </div>
+                    </div>
+                </form>
+                <div class="notice-board-wrap">
+                    <?php 
+                        $to_class = array(
+                            'all' => 'bg-primary',
+                            'sec' => 'bg-dark-pastel-green',
+                            'opt' => 'bg-skyblue',
+                            'lev' => 'bg-pink',
+                            'cla' => 'bg-yellow',
+                            'pmt' => 'bg-orange',
+                            'std' => 'bg-secondary',
+                            'ens' => 'bg-green',
+                            'agn' => 'bg-dark',
+                            'adm' => 'bg-blue-dark',
+                        );
+                        $rqt = mysqli_query($db, "SELECT * FROM notifications WHERE notifications.active = 1 AND notifications.delete = 0"
+                                                            .((isset($_POST['posted_on']) && $_POST['posted_on']) ? " AND posted_on = '$_POST[posted_on]'" : NULL )
+                                                            .((isset($_POST['posted_to']) && $_POST['posted_to']) ? " AND posted_to = $_POST[posted_to]" : NULL )
+                                                            .' ORDER BY posted_date DESC'
+                                                        ) ;
+                        while ($row = mysqli_fetch_array($rqt)) { ?>
+                        <div class="notice-list">
+                            <div class="post-date text-title-specimen <?= $to_class[$row['posted_on']] ?>"><?= $row['title'] ?></div>
+                            <h6 class="notice-title"><a href="#"><?= $row['content'] ?></a></h6>
+                            <div class="entry-meta"> <?= $row['posted_by'] ?> / <span><?= $row['posted_date'] ?></span></div>
+                        </div>
+                    <?php } ?>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,112 @@
+<?php viewOnlyBy('SG', 'DG','SR','AB','SA'); $pageTitle = "Toutes les transactions" ?>
+
+<div class="card height-auto">
+    <div class="card-body">
+        <div class="heading-layout1">
+            <div class="item-title">
+                <h3>Toutes les transactions</h3>
+            </div>
+            <div class="dropdown">
+                <a class="dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-expanded="false">...</a>
+
+                <div class="dropdown-menu dropdown-menu-right">
+                    <a class="dropdown-item" href="#" data-action="print"><i class="fas fa-print"></i>print</a>
+                    
+                    <a class="dropdown-item" href="#" data-action="reload"><i class="fas fa-redo-alt text-orange-peel"></i>Actualiser</a>
+                </div>
+            </div>
+        </div>
+        <form class="mg-b-20" method="POST" id="formSearchFincancy">
+            <div class="row gutters-8">
+                                <div class="col-xl-3 col-lg-6 col-12 form-group">
+                    <label><?=$mci?></label>
+                    <select class="select2" name="section" id="s_sec">
+                        <?php $rqt = mysqli_query($db, "SELECT * FROM sections WHERE active = 1") or die(debug(mysqli_error($db)));
+                            while ($ROW = mysqli_fetch_array($rqt)){ $row = (object) $ROW; $_fs = isset($_fs) ? $_fs : $ROW['id']?>
+                                <option value="<?= $row->id ?>"><?= $row->name ?></option>
+                        <?php } ?>
+                        <option value="*">Toutes les <?=$mci?>s</option>
+                    </select>
+                </div>
+                <div class="col-xl-3 col-lg-6 col-12 form-group">
+                    <label>Option</label>
+                    <select class="select2" name="option" id="s_opt">
+                        <?php $rqt = mysqli_query($db, "SELECT * FROM options WHERE active = 1 AND ".($_fs=='*'?'1':'section = '.$_fs)) or die(debug(mysqli_error($db)));
+                            while ($ROW = mysqli_fetch_array($rqt)){ $row = (object) $ROW; ?>
+                                <option value="<?= $row->id ?>"><?= $row->name ?></option>
+                            <?php } ?>
+                            <option value="*">Toutes les options</option>
+                    </select>
+                </div>
+                <div class="col-xl-2 col-lg-6 col-12 form-group">
+                    <label>Niveau</label>
+                    <select class="select2" name="level">
+                        <option selected value="*">Tous les niveaux</option>
+                        <?php $rqt = mysqli_query($db, "SELECT * FROM level WHERE active = 1") or die(debug(mysqli_error($db)));
+                            while ($ROW = mysqli_fetch_array($rqt)){ $row = (object) $ROW; ?>
+                                <option value="<?= $row->id ?>"><?= $row->name ?></option>
+                        <?php } ?>
+                        <input type="hidden" name="CON_47" value="true">
+                    </select>
+                </div>
+                <div class="col-xl-2 col-lg-6 col-12 form-group">
+                    <label>Promotion *</label>
+                    <select class="select2" name="promotion">
+                        <option selected value="*">Année Académique </option>
+                        <?php $year = 2023;
+                            while ($year > 2021){ ?>
+                                <option value="<?= --$year ?>"><?= $year." - ".($year+1); ?></option>
+                        <?php } ?>
+                        <input type="hidden" name="CON_47" value="true">
+                    </select>
+                </div>
+                <div class="col-xl-2 col-lg-6 col-12 form-group">
+                    <label for="">Solde</label>
+                    <input type="number" name="solde" class="form-control"  required placeholder="Solde...">
+                </div>
+            </div>
+        </form>
+        <button type="submit" class="fw-btn-fill btn-gradient-yellow" form="formSearchFincancy">SEARCH</button>
+        <div class="table-responsive">
+            <table class="table data-table text-nowrap">
+                <thead>
+                    <tr>
+                        <th>
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input checkAll" id="assosLabel">
+                                <label for="assosLabel" class="form-check-label">Id</label>
+                            </div>
+                        </th>
+                        <th>Type</th>
+                        <td>Nom et postnom</td>
+                        <td>Matricul</td>
+                        <td>Motif</td>
+                        <td>Montant</td>
+                        <td>Classe</td>
+                        <td>Date</td>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php $rqt = mysqli_query($db, "SELECT * FROM payments WHERE `delete` = 0".(isset($_POST['solde']) ? " AND (sum) = ".$_POST['solde']." ":NULL)." ORDER BY date DESC");
+                    while ($row = mysqli_fetch_array($rqt)) { $res = (object) $row ; ?>
+                    <tr id="Element-<?= $res->id ?>">
+                        <td class="<?= $res->valide == 1 ? 'bg-success' : ($res->valide == 0 ? 'bg-danger' : NULL)?>">
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input">
+                                <label class="form-check-label">#<?=$res->id?></label>
+                            </div>
+                        </td>
+                        <td>Frais Etudiant</td>
+                        <td><?=$res->student_name?></td>
+                        <td><?=$res->student_matricul?></td>
+                        <td><?=$res->type?></td>
+                        <td><?=$res->sum?></td>
+                        <td><?=$res->class?></td>
+                        <td><?=$res->date?></td>
+                    </tr>
+                    <?php } ?>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

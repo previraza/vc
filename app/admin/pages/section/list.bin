@@ -1,0 +1,54 @@
+<?php $pageTitle = "Section" ?>
+
+
+<div class="card height-auto">
+    <div class="card-body">
+        <div class="heading-layout1">
+            <div class="item-title">
+                <h3>Liste de <?=$mci?></h3>
+            </div>
+            <div class="dropdown">
+                <a class="dropdown-toggle" href="#" role="button" data-toggle="dropdown"
+                    aria-expanded="false">...</a>
+
+                <div class="dropdown-menu dropdown-menu-right">
+                    <a class="dropdown-item" href="#" data-action="print"><i class="fas fa-print"></i>print</a>
+                    <a class="dropdown-item" href="#" data-action="reload"><i class="fas fa-redo-alt text-orange-peel"></i>Actualiser</a>
+                </div>
+            </div>
+        </div>
+        <div class="table-responsive">
+            <table class="table display data-table text-nowrap">
+                <thead>
+                    <tr>
+                        <th>
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input checkAll" id="assosLabel">
+                                <label for="assosLabel" class="form-check-label">Id</label>
+                            </div>
+                        </th>
+                        <th>Nom de la <?=$mci?></th>
+                        <th>Code</th>
+                        <th>Titulaire</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php $rqt = mysqli_query($db, "SELECT sections.*, CONCAT(teachers.firstname, ' ', teachers.lastname) AS titulary FROM sections LEFT JOIN teachers ON teachers.id = sections.titular WHERE sections.active = 1") or die(debug(mysqli_error($db)));
+                        while ($ROW = mysqli_fetch_array($rqt)){ $row = (object) $ROW; ?>
+                            <tr id="Element-<?= $row->id ?>">
+                                <td>
+                                    <div class="form-check">
+                                        <input type="checkbox" class="form-check-input">
+                                        <label class="form-check-label">#<?= $row->id ?></label>
+                                    </div>
+                                </td>
+                                <td><?= $row->name ?></td>
+                                <td><?= $row->code ?></td>
+                                <td><?= $row->titulary ?></td>
+                            </tr>
+                    <?php } ?>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

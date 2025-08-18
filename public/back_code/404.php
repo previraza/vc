@@ -1,0 +1,20 @@
+<!-- Start of Breadcrumb section
+============================================= -->
+<section id="ft-breadcrumb" class="ft-breadcrumb-section position-relative" data-background="/layouts/default/images/portfolio/12.webp">
+    <span class="background_overlay"></span>
+    <span class="design-shape position-absolute"><img src="/public/assets/img/shape/tmd-sh.webp" alt=""></span>
+    <div class="container">
+        <div class="ft-breadcrumb-content headline text-center position-relative">
+            <h2>Institut Supérieur de Techniques Appliquées </h2>
+            <div class="ft-breadcrumb-list ul-li">
+                <ul>
+                    <li><a href="#">Erreur</a></li>
+                    <li>404</li>
+                </ul>
+            </div>
+            <h3 class="text-white-50 pt-3">La page dont vous essayer de voire est introuvable...</h3>
+        </div>
+    </div>
+</section>
+<!-- End of Breadcrumb section
+============================================= -->

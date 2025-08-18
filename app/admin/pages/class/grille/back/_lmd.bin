@@ -1,0 +1,147 @@
+<table class="table bs-table table-striped table-bordered text-nowrap">
+    <thead>
+        <!-- MATIERES LISTES -->
+        <?php $COTES = array('credit' => array(), 'courses' => array(), 'students' => array(),);
+            
+            $typeOfGrille = isset($_POST['periode'])&&$_POST['periode']!='CS'&&$_POST['periode']!='RS'&&$_POST['periode']!='AS'?($_POST['periode']=='PS'?" AND (part = 1 OR part = 3 OR part = 5)":($_POST['periode']=='DS'?" AND (part = 2 OR part = 4 OR part = 6)":null)):null;
+            
+            $rqt = mysqli_query($db, "SELECT courses.*, ue.ue AS ue_credit, ue.code AS ue_code, ue.name AS ue_name FROM courses LEFT JOIN ue ON ue.id = courses.ue WHERE active = 1 AND class = $class->id $typeOfGrille ORDER BY part, id");
+            $class_course = mysqli_num_rows($rqt); $all_courses=""; $cou_part=$ue=[];
+
+            while ($course = mysqli_fetch_object($rqt)){
+                $rqt_cote = mysqli_query($db, "SELECT `student`, `course`, ROUND((`TP1`+`TP2`+`TP3`)/12+(`INT1`+`INT2`)/8+`EXAM`/2,2) AS TOTAL, `RATR`, `JURY` FROM cotes WHERE active = 1 AND course = ".$course->id) or die(mysqli_error($db));
+                while($all_cote = mysqli_fetch_object($rqt_cote)) {
+                    $COTES['students'][$row_cote['student']][$row_cote['course']] = $row_cote;
+                }
+                $COTES['credit'][$course->id] = $course->credit;
+                if(isset($all_cou[$course->part])) $all_cou[$course->part].='<th class="write-mode-tb fw-100"><span>'.$course->name.'</span></th>';
+                else $all_cou[$course->part] = '<th class="write-mode-tb fw-100"><span>'.$course->name.'</span></th>';
+                isset($cou_part[$course->part])?$cou_part[$course->part]++:$cou_part[$course->part]=1;
+                if(!isset($_ue[$course->ue])) $_ue[$course->ue] = (object)[
+                    'part'  => $course->part,
+                    'name'  => $course->ue_name,
+                    'code'  => $course->ue_code,
+                    'credit'  => $course->ue_credit,
+                    'ec'    => [],
+                ]; $_ue[$course->ue]->ec[]=(object)['credit'=>$course->credit,'name'=>$course->name,];
+            } $class_res_tot = ($credit = array_sum($COTES['credit']))*20;
+
+            $trs_cou_part = $trs_ue = $trs_ec_code = $trs_ec_credit = $trs_ue_code = $trs_ue_credit = ""; 
+            $_trs_ue = $_trs_ec_code = $_trs_ec_credit = $_trs_ue_code = $_trs_ue_credit = [];
+            foreach ($_ue as $ue) {
+                $_trs_ue[$ue->part] = (isset($_trs_ue[$ue->part])?$_trs_ue[$ue->part]:null).'<th colspan='.count($ue->ec).'>'.$ue->name.'</th>';
+                $_trs_ue_code[$ue->part] = (isset($_trs_ue_code[$ue->part])?$_trs_ue_code[$ue->part]:null).'<th colspan='.count($ue->ec).'>'.$ue->code.'</th>';
+                if(count($ue->ec)>1){
+                    $_trs_ue_credit[$ue->part] = (isset($_trs_ue_credit[$ue->part])?$_trs_ue_credit[$ue->part]:null).'<th colspan='.count($ue->ec).'>'.$ue->credit.'</th>';
+                    foreach ($ue->ec as $i => $ec_){
+                        $_trs_ec_code[$ue->part] = (isset($_trs_ec_code[$ue->part])?$_trs_ec_code[$ue->part]:'').'<th>EC'.($i+1).'</th>';
+                        $_trs_ec_credit[$ue->part] = (isset($_trs_ec_credit[$ue->part])?$_trs_ec_credit[$ue->part]:'')."<th>$ec_->credit</th>";
+                    }
+                } else $_trs_ue_credit[$ue->part] = (isset($_trs_ue_credit[$ue->part])?$_trs_ue_credit[$ue->part]:null).'<th rowspan=3 colspan='.count($ue->ec).'>'.$ue->credit.'</th>';
+            }
+
+            foreach ($cou_part as $k => $l) {
+                $trs_cou_part .= "<th colspan=".($l+2).">SEMESTRE $k</th>";
+                $all_courses .= $all_cou[$k]."<th class=write-mode-tb><span>CREDIT VALIDÉS SEMESTRE $k</span></th><th class=write-mode-tb><span>CREDIT NON VALIDÉS SEMESTRE $k</span></th>";
+                $trs_ue .= $_trs_ue[$k]; 
+                $trs_ue_code .= $_trs_ue_code[$k]."<th colspan=2>SEM $k</th>";
+                $trs_ue_credit .= $_trs_ue_credit[$k]."<th rowspan=3>30</th><th rowspan=3>30</th>";
+                $trs_ec_code .= isset($_trs_ec_code[$k])?$_trs_ec_code[$k]:null; 
+                $trs_ec_credit .= isset($_trs_ec_credit[$k])?$_trs_ec_credit[$k]:null; 
+            }   $trs_ue_credit.="<th rowspan=3>60</th><th rowspan=3>60</th><th rowspan=3>20</th>";
+                $all_courses.="
+                    <th class=write-mode-tb><span>TOTAL GENERALE - CREDIT VALIDÉS</span></th>
+                    <th class=write-mode-tb><span>TOTAL GENERALE - CREDIT NON VALIDÉS</span></th>
+                    <th class=write-mode-tb><span>MOYENNE GENERALE ANNUELLE</span></th>
+                    <th class=write-mode-tb><span>GRADE (CECT)</span></th>
+                ";
+        ?>
+
+        <tr>
+            <th rowspan="6" colspan="2"><?= "$class->level_name <br /> $class->option_name".($class->name ? " <br /> $class->name" : null) ?></th>
+            <?= $class_course ? '<th colspan="'.($class_course+4).'">Matières</th>' : NULL ?>
+            <th rowspan="3" colspan="4" style="vertical-align:middle">Résultats</th>
+            <th rowspan="9" rowspan="2"></th>
+        </tr>
+        <tr>
+            <?=$trs_cou_part?>
+        </tr>
+        <tr>
+            <!-- LES UNITES D'ENSEINGEMENTS -->
+            <?=$trs_ue_code?>
+        </tr>
+        <tr>
+            <!-- LES CREDITS PAR UNITE D'ENSEINGEMENT -->
+            <?=$trs_ue_credit?>
+        </tr>
+        <tr>
+            <!-- LES CODES DES ELEMENTS CONTITUTIFS -->
+            <?=$trs_ec_code?>
+        </tr>
+        <tr>
+            <!-- LES CREDITS DES ELEMENTS CONTITUTIFS -->
+            <?=$trs_ec_credit?>
+        </tr>
+        <tr>
+            <!-- MATIERES LISTES -->
+            <th colspan="2" style="vertical-align:bottom">NOM & POSTNOM</th>
+            <?=$all_courses?>
+        </tr>
+    </thead>
+    <tbody>
+        <?php $rqt_std = mysqli_query($db, "SELECT * FROM students WHERE active = 1 AND class = ".$class->id." ORDER BY firstname");
+            $count = 0;
+            while($std = mysqli_fetch_object($rqt_std)) {
+                $echec = $success = $np = $credits = $cote_credit = 0 ; $cote = array();
+            ?><tr>
+                <!-- DATA STUDENT -->
+                <td><?= ++$count ?></td>
+                <td class="text-left"><?= "$std->firstname $std->lastname" ?></td>
+
+                <!-- RESULT STUDENT -->
+                <?php foreach($COTES['credit'] AS $course => $credit) {
+                    $jury=$cote=0;
+                    if(isset($COTES['students'][$std->id][$course])){
+                        $pre_cote = $COTES['students'][$std->id][$course]['TOTAL']+0;
+                        $cote = ($pre_cote < 10 && $COTES['students'][$std->id][$course]['RATR']) ? $COTES['students'][$std->id][$course]['RATR'] : $pre_cote ;
+                        $jury = $COTES['students'][$std->id][$course]['JURY'];
+                    } else $np++; if($cote < 10) $echec++ ; else {$success++; $credits+=$credit;}
+                    $cote_credit += ($final = $jury&&$jury!=$cote?$jury:$cote)*$credit;
+                    echo "<th data-student='$std->id' data-course='$course' data-cote='$cote'".($jury && $jury != $cote?"data-toggle=tooltip data-placement=top data-original-title='$cote' data-simbing":null).' class="text-center '.($final < 10 ? 'text-danger' : 'text-success').'">'.$final.'</th>';
+                } ?>
+
+                <!-- RESULT CALC -->
+                <td><?= $credits ?></td>
+                <td><?= $cote_credit ?></td>
+                <td><?= $echec ?></td>
+                <td><?= $success ?></td>
+                <td><?= $np ?></td>
+                <td><?= $res = $cote_credit ? number_format(($cote_credit * 100 / ($class->system  == 'LMD' ? 5 : 1)) / $class_res_tot, 2) : 0 ?></td>
+                <td><?= $decision = $class->system == "LMD"
+                                    ? (($res >= 20) ? 'S' : (($res >= 18) ? 'A' : (($res >= 16) ? 'B' : (($res >= 14) ? 'C' : (($res >= 12) ? 'D' : (($res >= 10) ? 'E' : (($res >= 8) ? 'F' : (($res >= 6) ? 'G' : (($res >= 4) ? 'H' : (($res >= 2) ? 'I' : 'J'))))))))))
+                                    : (($res >= 85) ? 'G-D' : (($res >= 70) ? 'DIS' : (($res >= 50) ? 'SAT' : (($res >= 40) ? 'A' : 'AA'))))
+                        ?>
+                </td>
+                <td>
+                    <div class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false" aria-label="Plus d'option">
+                            <span class="flaticon-more-button-of-three-dots"></span>
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-right">
+                            <a class="dropdown-item" href="?fa69951bc733eb82713e936be33597e1=DATA_CRYPTING_ON:fa69951bc733eb82713e936be33597e1=WABTECHS_CRYPTING_ON: e91497f38407364c8e86ade9098950d978814190&MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3VIRAZA_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3&MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3&WABTECHS_CRYPTING_ON_LAVINGOL&MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3&b557c222c8ddcdf87e033706aad08e4ef7cf90d3=student--details--<?= $std->id ?>"><i class="fas fa-cogs text-dark-pastel-green"></i>Profile</a>
+                            <a class="dropdown-item" data-exec="open('/app/admin/pages/actions/student-resultat?code=<?= $std->key ?>&anacad=2022')"><i class="fas fa-redo-alt text-orange-peel"></i>Bulletin</a>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+        <?php } ?>
+    </tbody>
+</table>
+<style type="text/css" media="print">
+    @page {
+        size: landscape;
+    }
+    body {
+        writing-mode: tb-lr;
+    }
+</style>

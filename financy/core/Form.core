@@ -1,0 +1,90 @@
+<?php class FORM
+{
+    public static $data = [];
+    public static function init($data): void
+    {
+        self::$data = $data ?? [];
+    }
+    public static function group(string $htmlElement): string
+    {
+        return '<div class="form-group">' . $htmlElement . '</div>';
+    }
+    public static function label(string $name = '', string $for = '', string $class = ''): string
+    {
+        return '<label for="input_' . $for . '" class="form-label ' . $class . '">' . ucfirst($name) . '</label>';
+
+    }
+    public static function input(string $name = '', $title = null, bool $required = true, $type = 'text', $options = [], $class = 'form-control'): string
+    {
+        $opt = (object) $options;
+        return self::group(
+            self::label($title ?? $name, $name) . '<input type="' . $type . '" class="' .
+            $class . ' input_' . $type . '" id="input_' . $name . '" name="data[' . $name . ']"
+            min="' . ($opt->min ?? '') . '" max="' . ($opt->max ?? '') . '"' . ($opt->cpass ?? false ? 'data-cpass="' . $opt->cpass . '"' : null) . '
+            value="' . (self::$data->$name ?? $_POST['data'][$name] ?? '') . '" 
+            aria-describedby="' . $name . '" ' . ($required ? 'required' : null) . '>'
+        );
+    }
+
+    public static function select(string $name = '', $options = [], $title = null, bool $required = true, string $parent = null): string
+    {
+        $r = self::label($title ?? $name, $name) . '<div class=d-grid>
+            <select class="select2-basic-single js-states form-select form-control" data-parent="input_' . $name . '"
+            id="input_' . $name . '" name="data[' . $name . ']" aria-describedby="' . $name . '" ' . ($required ? 'required' : null) . '>';
+        if (is_array($options))
+            foreach ($options as $value => $option_name)
+                $r .= '<option ' . ((self::$data->$name ?? $_POST['data'][$name] ?? '') == 'USD' ? 'selected' : null) . ' value="' . $value . '">' . $option_name . '</option>';
+        elseif ($options instanceof database) {
+            foreach ($options->all() as $option) {
+                $option = (object) $option;
+                $option_name = $option->name ?? '';
+                $value = $option->id;
+                $r .= '<option ' . ((self::$data->$name ?? $_POST['data'][$name] ?? '') == 'USD' ? 'selected' : null) . ' value="' . $value . '">' . $option_name . '</option>';
+            }
+        }
+        $r .= '</select></div>';
+        return self::group($r);
+    }
+
+    public static function selectMultiple(string $name = '', $options = [], $title = null, bool $required = true): string
+    {
+        $r = self::label($title ?? $name, $name) . '<div class=d-grid>
+            <select multiple class="form-control choices-multiple-remove-button"
+            id="input_' . $name . '" name="data[' . $name . '][]" aria-describedby="' . $name . '" ' . ($required ? 'required' : null) . '>';
+        if (is_array($options))
+            foreach ($options as $value => $option_name)
+                $r .= '<option ' . (in_array('A', explode('|', (self::$data->$name ?? $_POST['data'][$name] ?? ''))) ? 'selected' : null) . ' value="' . $value . '">' . $option_name . '</option>';
+        elseif ($options instanceof database) {
+            foreach ($options->all() as $option) {
+                $option_name = $option->name;
+                $value = $option->id;
+                $r .= '<option ' . (in_array('A', explode('|', (self::$data->$name ?? $_POST['data'][$name] ?? ''))) ? 'selected' : null) . ' value="' . $value . '">' . $option_name . '</option>';
+            }
+        }
+        $r .= '</select></div>';
+        return self::group($r);
+    }
+
+    public static function textarea(string $name = '', $title = null, bool $tinyMCE = false)
+    {
+        return self::group(self::label($title ?? $name, $name) . '<textarea class="form-control ' . ($tinyMCE ? 'tinyMCI' : '') . '" id="input_' . $name . '" name="data[' . $name . ']" value="' . (self::$data->$name ?? $_POST['data'][$name] ?? '') . '"  style="height:200px"></textarea>');
+    }
+
+    public static function choose(string $name = '', $title = null, bool $required = true, bool $checked = false, $type = 'checkbox', $options = [], $class = 'form-check-input'): string
+    {
+        $opt = (object) $options;
+        return self::group(
+            '<input type="' . $type . '" class="' .
+            $class . ' input_' . $type . '" id="input_' . $name . '" name="data[' . $name . ']"
+            min="' . ($opt->min ?? '') . '" max="' . ($opt->max ?? '') . '"' . ($opt->cpass ?? false ? 'data-cpass="' . $opt->cpass . '"' : null) . '
+            value="' . (self::$data->$name ?? $_POST['data'][$name] ?? '') . '" 
+            ' . ($checked ? 'checked' : null) . ' 
+            aria-describedby="' . $name . '" ' . ($required ? 'required' : null) . '>' . self::label($title ?? $name, $name, 'form-check-label')
+        );
+    }
+
+    public static function inputPoster()
+    {
+
+    }
+}

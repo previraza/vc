@@ -1,0 +1,47 @@
+$('#addNotification').on('submit', (e) => {
+    e.preventDefault();
+    var data = new FormData(e.currentTarget);
+    $.ajax({
+        url: "/app/settings/add/notifications.php?sending_by=mcisme",
+        data: data,
+        type: "POST",
+        contentType: false,
+        cache: false,
+        processData: false,
+        success: function(response) {
+            try {
+                var res = JSON.parse(response);
+                if (res.status == 'succes') {
+                    $('#response_message').html(`
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                                <span class="sr-only">Close</span>
+                            </button>Enregister avec succes.
+                        </div>
+                    `)
+                } else if (res.status == 'error') {
+                    console.log(res.content);
+                    $('#response_message').html(`
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                                <span class="sr-only">Close</span>
+                            </button>Echec d'enregistrement.
+                        </div>
+                    `)
+                }
+            } catch (error) {
+                console.log(response);
+                $('#response_message').html(`
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                            <span class="sr-only">Close</span>
+                        </button>Echec d'enregistrement.
+                    </div>
+                `)
+            }
+        }
+    });
+});

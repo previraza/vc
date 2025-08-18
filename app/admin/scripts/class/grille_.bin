@@ -1,0 +1,66 @@
+$('#grDelibereBtn').on('click', () => $('.delibereBtn').each((idx, e) => {
+    updateStudent(e);
+}));
+_updateStudent = e => {
+    let r=e.querySelector('.lastTd').dataset;
+    $.ajax({
+        url: "/app/settings/edit/_generatePalmares.php?sending_by=mcisme",
+        data: {
+            completed: r.completed,
+            resultat: r.resultat,
+            student: r.student,
+            mention: r.mention,
+            credit: r.credit,
+            CON_47: 'MCISME'
+        }, type: "POST",
+        success: function(response) {
+            try {
+                let res = JSON.parse(response);
+                e.className += (res.status == 'succes') ? ' bg-warning' : ' bg-dark text-white';
+                if (res.status == 'error') console.log('Erreur ' + res.code + ' : ' + res.content);
+            } catch (error) {
+                console.error(response);
+            }
+        }
+    })
+}
+
+updateStudent = e => {
+    let r=e.querySelector('.lastTd').dataset;
+    if(r.ended == '1' && r.periode != 'full'){
+        $.ajax({
+            url: "/app/settings/edit/generatePalmares.php?sending_by=mcisme",
+            data: {
+                student: r.student,
+                periode: r.periode,
+                CON_47: 'MCISME'
+            }, type: "POST",
+            success: function(response) {
+                try {let res = JSON.parse(response);
+                    e.className += (res.status == 'succes') ? ' bg-warning' : ' bg-dark text-white';
+                    if (res.status == 'error') console.log('Erreur ' + res.code + ' : ' + res.content);
+                } catch (error) {
+                    console.error(response);
+                }
+            }
+        })
+    }
+}
+
+$('tr.delibereBtn[data-<?= isset($_POST['periode'])?$_POST['periode']:'undefined' ?>]').each((idx, e) =>{
+    if(e.dataset.<?= isset($_POST['periode'])?$_POST['periode']:'undefined' ?>) e.style.backgroundColor = 'wheat';
+    else e.dataset.excepted = true;
+}); $('#delExcepted').on('click', e=>{
+    if(e.currentTarget.checked) $('tr.delibereBtn[data-excepted]').fadeOut(); else $('tr.delibereBtn[data-excepted]').fadeIn()
+});
+
+window.backStudent = function (id, state = false){
+    fetch("https://www.ista.ac.cd/app/admin/jsons/student/backToGrille/?std="+id+(state?'&state='+state:'')).then(
+        (Response) => {
+            if(Response.status==201) $('#std_'+id).addClass('bg-success');
+            else if(Response.status==204) $('#std_'+id).addClass('bg-primary');
+            else if(Response.status==500) $('#std_'+id).addClass('bg-danger');
+            else console.log(Response.status);
+        }
+    )
+}

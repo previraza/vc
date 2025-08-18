@@ -1,0 +1,61 @@
+<?php $pageTitle = "Liste des Enseignant" ?>
+
+<div class="card height-auto">
+    <div class="card-body">
+        <div class="heading-layout1">
+            <div class="item-title">
+                <h3>Tous les Enseignant</h3>
+            </div>
+           <div class="dropdown">
+                <a class="dropdown-toggle" href="#" role="button" 
+                data-toggle="dropdown" aria-expanded="false">...</a>
+
+                <div class="dropdown-menu dropdown-menu-right">
+                    
+                    <a class="dropdown-item" href="#" data-action="print"><i class="fas fa-print"></i>print</a>
+                    
+                    <a class="dropdown-item" href="#" data-action="reload"><i class="fas fa-redo-alt text-orange-peel"></i>Actualiser</a>
+                </div>
+            </div>
+        </div>
+        <div class="table-responsive">
+            <table class="table display data-table text-nowrap">
+                <thead>
+                    <tr>
+                        <th> 
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input checkAll" id="assosLabel">
+                                <label for="assosLabel" class="form-check-label">Id</label>
+                            </div>
+                        </th>
+                        <th>Photo</th>
+                        <th>Nom Complet</th>
+                        <th>Genre</th>
+                        <th>Spécialité</th>
+                        <th>Phone</th>
+                        <th>Charge Horraire</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php $rqt = $db_poo->query("SELECT DISTINCT teachers.* FROM teachers JOIN courses ON (courses.titular = teachers.id OR courses.titular_2 = teachers.id) JOIN classes ON classes.id = courses.class JOIN sections ON sections.id = classes.section JOIN options ON options.id = classes.option JOIN level ON level.id = classes.level WHERE teachers.active = 1 AND courses.active = 1 AND classes.active = 1 AND level.active = 1 AND options.active = 1 AND sections.active = 1 AND teachers.valide = 1 AND sections.id = $user->mySection");
+                        while($res = $rqt->fetch_object()) { ?>
+                        <tr>
+                            <td <?= ($res->user_id == '0') ? 'class="bg-warning"' : null ?>>
+                                <div class="form-check">
+                                    <input type="checkbox" class="form-check-input" id="assosLabelSS">
+                                <label for="assosLabelSS" class="form-check-label">Id</label>
+                                </div>
+                            </td>
+                            <td class="text-center"><img src="/layouts/default/img/figure/student2.webp" alt="teacher"></td>
+                            <td><?= "$res->firstname $res->lastname" ?></td>
+                            <td><?= $res->gender ?></td>
+                            <td><?= $res->speciality ?></td>
+                            <td><?= $res->phone ?></td>
+                            <th><i>En attente de traitement </i></th>
+                        </tr>
+                    <?php } ?>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

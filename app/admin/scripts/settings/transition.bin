@@ -1,0 +1,63 @@
+const acadYear = $("#transi_academy_year").val()||<?=date("Y")-1?>
+
+async function updateStudent(e) {
+    let response = await fetch('/app/admin/jsons/classes')
+    let classes = await response.json()
+    let i = 0;
+    while (i<=classes.content.length) 
+        if(isNaN(parseInt(classes.content[i++].next)))
+            await fetch(`/app/archive/passable?y=${acadYear}&class=${classes.content[i].id}`);
+    e.className = 'success';
+}
+
+$('.data-table-x').DataTable({
+    paging: false,
+    retrieve: true,
+    stateSave: true,
+    info: false,
+    lengthChange: false,
+    lengthMenu: [100, 500, 1000],
+    columnDefs: [{
+        targets: [0, -1], // column or columns numbers
+        orderable: false // set orderable for selected columns
+    }], dom: 'Bfrtip',
+    buttons: [{
+        extend: 'collection',
+        text: 'Exporter',
+        buttons: ['copy', 'csv', 'excel', 'pdf', 'print']
+    }]
+});
+
+$('#formTransitionConfig').on('submit', e => {
+    e.preventDefault();
+    (document.getElementById('admin_key').value == 'ADM-MCI-1303-0708')?$('#transitionConfig').fadeIn():alert('La clef entrer n\'est pas valide');
+})
+
+$('#startTransitionConfig').on('click', e => {
+    $('#transitionConfig tbody tr').each(async (i,e) => {
+        let s = e.querySelector('select');
+        let d = s.dataset;
+        let v;
+        switch (d.select2Id) {
+            case 'config_indexation':
+                v = await fetch(`/app/archive?config_indexation&y=${acadYear}`)
+                e.className = v.ok?'success':'error';
+                break;
+            case 'config_migration_database':
+                v = await fetch(`/app/archive?config_migration_database&y=${acadYear}`);
+                e.className = v.ok?'success':'error';
+                break;
+            case 'config_update_students':
+                $state = await updateStudent(e);
+                break;
+            case 'config_update_config':
+                v = await fetch(`/app/archive?config_update_config&y=${acadYear}`);
+                e.className = v.ok?'success':'error';
+                break;
+            default:
+                v = await fetch(`/app/archive?config_migration_table&y=${acadYear}&table=${d.table}&action=${s.value}`);
+                e.className = v.ok?'success':'error';
+                break;
+        }
+    });
+})

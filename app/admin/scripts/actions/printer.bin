@@ -1,0 +1,20 @@
+$('.del-print').remove();
+(function(){
+    if("content" in document.createElement('template')){
+        let header = document.querySelector('#templatePrintHeader'), 
+            footer = document.querySelector('#templatePrintFooter');
+
+        if (header) {
+            let printerHeader = document.querySelector("#printHeader");
+            printerHeader.innerHTML = null;
+            printerHeader.appendChild(document.importNode(header.content, true));
+            document.querySelector('.header-space').style.height = printerHeader.clientHeight+'px';
+        }
+        if (footer) {
+            let printerFooter = document.querySelector("#printFooter");
+            printerFooter.innerHTML = null;
+            printerFooter.appendChild(document.importNode(footer.content, true));
+            document.querySelector('.footer-space').style.height = printerFooter.clientHeight+'px';
+        }
+    }
+})()

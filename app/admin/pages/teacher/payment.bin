@@ -1,0 +1,761 @@
+<?php $pageTitle = "Payement Enseignant " ?>
+
+
+<div class="card height-auto">
+    <div class="card-body">
+        <div class="heading-layout1">
+            <div class="item-title">
+                <h3>All Teachers Payment History</h3>
+            </div>
+           <div class="dropdown">
+                <a class="dropdown-toggle" href="#" role="button" 
+                data-toggle="dropdown" aria-expanded="false">...</a>
+
+                <div class="dropdown-menu dropdown-menu-right">
+                    
+                    <a class="dropdown-item" href="#" data-action="print"><i class="fas fa-print"></i>print</a>
+                    
+                    <a class="dropdown-item" href="#" data-action="reload"><i class="fas fa-redo-alt text-orange-peel"></i>Actualiser</a>
+                </div>
+            </div>
+        </div>
+        <form class="mg-b-20">
+            <div class="row gutters-8">
+                <div class="col-3-xxxl col-xl-3 col-lg-3 col-12 form-group">
+                    <input type="text" placeholder="Search by ID ..." class="form-control">
+                </div>
+                <div class="col-4-xxxl col-xl-4 col-lg-3 col-12 form-group">
+                    <input type="text" placeholder="Search by Name ..." class="form-control">
+                </div>
+                <div class="col-4-xxxl col-xl-3 col-lg-3 col-12 form-group">
+                    <input type="text" placeholder="Search by Phone" class="form-control">
+                </div>
+                <div class="col-1-xxxl col-xl-2 col-lg-3 col-12 form-group">
+                    <button type="submit" class="fw-btn-fill btn-gradient-yellow">RECHERCHE</button>
+                </div>
+            </div>
+        </form>
+        <div class="table-responsive">
+            <table class="table data-table text-nowrap">
+                <thead>
+                    <tr>
+                        <th> 
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input checkAll" id="assosLabel">
+                                <label for="assosLabel" class="form-check-label">Roll</label>
+                            </div>
+                        </th>
+                        <th>Photo</th>
+                        <th>Nom Complet</th>
+                        <th>Genre</th>
+                        <th>Class</th>
+                        <th>Subject</th>
+                        <th>Amount</th>
+                        <th>Status</th>
+                        <th>Phone</th>
+                        <th>E-mail</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input">
+                                <label class="form-check-label">#0021</label>
+                            </div>
+                        </td>
+                        <td class="text-center"><img src="/layouts/default/img/figure/student2.webp" alt="student"></td>
+                        <td>Mark Willy</td>
+                        <td>Male</td>
+                        <td>2</td>
+                        <td>English</td>
+                        <td>$2,0000.00</td>
+                        <td class="badge badge-pill badge-success d-block mg-t-8">Paid</td>
+                        <td>+ 123 9988568</td>
+                        <td><a href="https://www.radiustheme.com/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="365d574c5f50575e5f5b0f0576515b575f5a1855595b">[email&#160;protected]</a></td>
+                         <td>
+                            <div class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false" aria-label="Plus d'option">
+                                    <span class="flaticon-more-button-of-three-dots"></span>
+                                </a>
+                                <div class="dropdown-menu dropdown-menu-right">
+                                    <a class="dropdown-item" href="#"><i class="fas fa-times text-orange-red"></i>Close</a>
+                                    <a class="dropdown-item" href="#"><i class="fas fa-cogs text-dark-pastel-green"></i>Edit</a>
+                                    <a class="dropdown-item" href="#"><i class="fas fa-redo-alt text-orange-peel"></i>Refresh</a>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input">
+                                <label class="form-check-label">#0022</label>
+                            </div>
+                        </td>
+                        <td class="text-center"><img src="layouts/default/img/figure/student3.webp" alt="student"></td>
+                        <td>Jessia Rose</td>
+                        <td>Female</td>
+                        <td>1</td>
+                        <td>Mathematics</td>
+                        <td>$2,0000.00</td>
+                        <td class="badge badge-pill badge-danger d-block mg-t-8">Paid</td>
+                        <td>+ 123 9988568</td>
+                        <td><a href="https://www.radiustheme.com/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="244f455e4d42454c4d491d17644349454d480a474b49">[email&#160;protected]</a></td>
+                         <td>
+                            <div class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false" aria-label="Plus d'option">
+                                    <span class="flaticon-more-button-of-three-dots"></span>
+                                </a>
+                                <div class="dropdown-menu dropdown-menu-right">
+                                    <a class="dropdown-item" href="#"><i class="fas fa-times text-orange-red"></i>Close</a>
+                                    <a class="dropdown-item" href="#"><i class="fas fa-cogs text-dark-pastel-green"></i>Edit</a>
+                                    <a class="dropdown-item" href="#"><i class="fas fa-redo-alt text-orange-peel"></i>Refresh</a>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input">
+                                <label class="form-check-label">#0023</label>
+                            </div>
+                        </td>
+                        <td class="text-center"><img src="layouts/default/img/figure/student4.webp" alt="student"></td>
+                        <td>Mark Willy</td>
+                        <td>Male</td>
+                        <td>2</td>
+                        <td>Mathematics</td>
+                        <td>$2,0000.00</td>
+                        <td class="badge badge-pill badge-success d-block mg-t-8">Paid</td>
+                        <td>+ 123 9988568</td>
+                        <td><a href="https://www.radiustheme.com/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="f49f958e9d92959c9d99cdc7b49399959d98da979b99">[email&#160;protected]</a></td>
+                         <td>
+                            <div class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false" aria-label="Plus d'option">
+                                    <span class="flaticon-more-button-of-three-dots"></span>
+                                </a>
+                                <div class="dropdown-menu dropdown-menu-right">
+                                    <a class="dropdown-item" href="#"><i class="fas fa-times text-orange-red"></i>Close</a>
+                                    <a class="dropdown-item" href="#"><i class="fas fa-cogs text-dark-pastel-green"></i>Edit</a>
+                                    <a class="dropdown-item" href="#"><i class="fas fa-redo-alt text-orange-peel"></i>Refresh</a>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input">
+                                <label class="form-check-label">#0024</label>
+                            </div>
+                        </td>
+                        <td class="text-center"><img src="layouts/default/img/figure/student5.webp" alt="student"></td>
+                        <td>Jessia Rose</td>
+                        <td>Female</td>
+                        <td>1</td>
+                        <td>Mathematics</td>
+                        <td>$5,0000.00</td>
+                        <td class="badge badge-pill badge-success d-block mg-t-8">Paid</td>
+                        <td>+ 123 9988568</td>
+                        <td><a href="https://www.radiustheme.com/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="fb909a81929d9a939296c2c8bb9c969a9297d5989496">[email&#160;protected]</a></td>
+                         <td>
+                            <div class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false" aria-label="Plus d'option">
+                                    <span class="flaticon-more-button-of-three-dots"></span>
+                                </a>
+                                <div class="dropdown-menu dropdown-menu-right">
+                                    <a class="dropdown-item" href="#"><i class="fas fa-times text-orange-red"></i>Close</a>
+                                    <a class="dropdown-item" href="#"><i class="fas fa-cogs text-dark-pastel-green"></i>Edit</a>
+                                    <a class="dropdown-item" href="#"><i class="fas fa-redo-alt text-orange-peel"></i>Refresh</a>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input">
+                                <label class="form-check-label">#0021</label>
+                            </div>
+                        </td>
+                        <td class="text-center"><img src="/layouts/default/img/figure/student2.webp" alt="student"></td>
+                        <td>Mark Willy</td>
+                        <td>Male</td>
+                        <td>2</td>
+                        <td>English</td>
+                        <td>$4,0000.00</td>
+                        <td class="badge badge-pill badge-success d-block mg-t-8">Paid</td>
+                        <td>+ 123 9988568</td>
+                        <td><a href="https://www.radiustheme.com/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="6e050f1407080f060703575d2e09030f0702400d0103">[email&#160;protected]</a></td>
+                         <td>
+                            <div class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false" aria-label="Plus d'option">
+                                    <span class="flaticon-more-button-of-three-dots"></span>
+                                </a>
+                                <div class="dropdown-menu dropdown-menu-right">
+                                    <a class="dropdown-item" href="#"><i class="fas fa-times text-orange-red"></i>Close</a>
+                                    <a class="dropdown-item" href="#"><i class="fas fa-cogs text-dark-pastel-green"></i>Edit</a>
+                                    <a class="dropdown-item" href="#"><i class="fas fa-redo-alt text-orange-peel"></i>Refresh</a>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input">
+                                <label class="form-check-label">#0022</label>
+                            </div>
+                        </td>
+                        <td class="text-center"><img src="layouts/default/img/figure/student3.webp" alt="student"></td>
+                        <td>Jessia Rose</td>
+                        <td>Female</td>
+                        <td>1</td>
+                        <td>Mathematics</td>
+                        <td>$2,0000.00</td>
+                        <td class="badge badge-pill badge-danger d-block mg-t-8">Paid</td>
+                        <td>+ 123 9988568</td>
+                        <td><a href="https://www.radiustheme.com/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="ea818b90838c8b828387d3d9aa8d878b8386c4898587">[email&#160;protected]</a></td>
+                         <td>
+                            <div class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false" aria-label="Plus d'option">
+                                    <span class="flaticon-more-button-of-three-dots"></span>
+                                </a>
+                                <div class="dropdown-menu dropdown-menu-right">
+                                    <a class="dropdown-item" href="#"><i class="fas fa-times text-orange-red"></i>Close</a>
+                                    <a class="dropdown-item" href="#"><i class="fas fa-cogs text-dark-pastel-green"></i>Edit</a>
+                                    <a class="dropdown-item" href="#"><i class="fas fa-redo-alt text-orange-peel"></i>Refresh</a>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input">
+                                <label class="form-check-label">#0023</label>
+                            </div>
+                        </td>
+                        <td class="text-center"><img src="layouts/default/img/figure/student4.webp" alt="student"></td>
+                        <td>Mark Willy</td>
+                        <td>Male</td>
+                        <td>2</td>
+                        <td>Mathematics</td>
+                        <td>$2,0000.00</td>
+                        <td class="badge badge-pill badge-success d-block mg-t-8">Paid</td>
+                        <td>+ 123 9988568</td>
+                        <td><a href="https://www.radiustheme.com/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="016a607b68676069686c383241666c60686d2f626e6c">[email&#160;protected]</a></td>
+                         <td>
+                            <div class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false" aria-label="Plus d'option">
+                                    <span class="flaticon-more-button-of-three-dots"></span>
+                                </a>
+                                <div class="dropdown-menu dropdown-menu-right">
+                                    <a class="dropdown-item" href="#"><i class="fas fa-times text-orange-red"></i>Close</a>
+                                    <a class="dropdown-item" href="#"><i class="fas fa-cogs text-dark-pastel-green"></i>Edit</a>
+                                    <a class="dropdown-item" href="#"><i class="fas fa-redo-alt text-orange-peel"></i>Refresh</a>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input">
+                                <label class="form-check-label">#0024</label>
+                            </div>
+                        </td>
+                        <td class="text-center"><img src="layouts/default/img/figure/student5.webp" alt="student"></td>
+                        <td>Jessia Rose</td>
+                        <td>Female</td>
+                        <td>1</td>
+                        <td>Mathematics</td>
+                        <td>$1,0000.00</td>
+                        <td class="badge badge-pill badge-success d-block mg-t-8">Paid</td>
+                        <td>+ 123 9988568</td>
+                        <td><a href="https://www.radiustheme.com/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="1c777d66757a7d747571252f5c7b717d7570327f7371">[email&#160;protected]</a></td>
+                         <td>
+                            <div class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false" aria-label="Plus d'option">
+                                    <span class="flaticon-more-button-of-three-dots"></span>
+                                </a>
+                                <div class="dropdown-menu dropdown-menu-right">
+                                    <a class="dropdown-item" href="#"><i class="fas fa-times text-orange-red"></i>Close</a>
+                                    <a class="dropdown-item" href="#"><i class="fas fa-cogs text-dark-pastel-green"></i>Edit</a>
+                                    <a class="dropdown-item" href="#"><i class="fas fa-redo-alt text-orange-peel"></i>Refresh</a>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input">
+                                <label class="form-check-label">#0021</label>
+                            </div>
+                        </td>
+                        <td class="text-center"><img src="/layouts/default/img/figure/student2.webp" alt="student"></td>
+                        <td>Mark Willy</td>
+                        <td>Male</td>
+                        <td>2</td>
+                        <td>English</td>
+                        <td>$3,0000.00</td>
+                        <td class="badge badge-pill badge-success d-block mg-t-8">Paid</td>
+                        <td>+ 123 9988568</td>
+                        <td><a href="https://www.radiustheme.com/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="79121803101f18111014404a391e14181015571a1614">[email&#160;protected]</a></td>
+                         <td>
+                            <div class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false" aria-label="Plus d'option">
+                                    <span class="flaticon-more-button-of-three-dots"></span>
+                                </a>
+                                <div class="dropdown-menu dropdown-menu-right">
+                                    <a class="dropdown-item" href="#"><i class="fas fa-times text-orange-red"></i>Close</a>
+                                    <a class="dropdown-item" href="#"><i class="fas fa-cogs text-dark-pastel-green"></i>Edit</a>
+                                    <a class="dropdown-item" href="#"><i class="fas fa-redo-alt text-orange-peel"></i>Refresh</a>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input">
+                                <label class="form-check-label">#0022</label>
+                            </div>
+                        </td>
+                        <td class="text-center"><img src="layouts/default/img/figure/student3.webp" alt="student"></td>
+                        <td>Jessia Rose</td>
+                        <td>Female</td>
+                        <td>1</td>
+                        <td>Mathematics</td>
+                        <td>$2,0000.00</td>
+                        <td class="badge badge-pill badge-danger d-block mg-t-8">Paid</td>
+                        <td>+ 123 9988568</td>
+                        <td><a href="https://www.radiustheme.com/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="deb5bfa4b7b8bfb6b7b3e7ed9eb9b3bfb7b2f0bdb1b3">[email&#160;protected]</a></td>
+                         <td>
+                            <div class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false" aria-label="Plus d'option">
+                                    <span class="flaticon-more-button-of-three-dots"></span>
+                                </a>
+                                <div class="dropdown-menu dropdown-menu-right">
+                                    <a class="dropdown-item" href="#"><i class="fas fa-times text-orange-red"></i>Close</a>
+                                    <a class="dropdown-item" href="#"><i class="fas fa-cogs text-dark-pastel-green"></i>Edit</a>
+                                    <a class="dropdown-item" href="#"><i class="fas fa-redo-alt text-orange-peel"></i>Refresh</a>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input">
+                                <label class="form-check-label">#0023</label>
+                            </div>
+                        </td>
+                        <td class="text-center"><img src="layouts/default/img/figure/student4.webp" alt="student"></td>
+                        <td>Mark Willy</td>
+                        <td>Male</td>
+                        <td>2</td>
+                        <td>Mathematics</td>
+                        <td>$2,0000.00</td>
+                        <td class="badge badge-pill badge-success d-block mg-t-8">Paid</td>
+                        <td>+ 123 9988568</td>
+                        <td><a href="https://www.radiustheme.com/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="7e151f0417181f161713474d3e19131f1712501d1113">[email&#160;protected]</a></td>
+                         <td>
+                            <div class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false" aria-label="Plus d'option">
+                                    <span class="flaticon-more-button-of-three-dots"></span>
+                                </a>
+                                <div class="dropdown-menu dropdown-menu-right">
+                                    <a class="dropdown-item" href="#"><i class="fas fa-times text-orange-red"></i>Close</a>
+                                    <a class="dropdown-item" href="#"><i class="fas fa-cogs text-dark-pastel-green"></i>Edit</a>
+                                    <a class="dropdown-item" href="#"><i class="fas fa-redo-alt text-orange-peel"></i>Refresh</a>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input">
+                                <label class="form-check-label">#0024</label>
+                            </div>
+                        </td>
+                        <td class="text-center"><img src="layouts/default/img/figure/student5.webp" alt="student"></td>
+                        <td>Jessia Rose</td>
+                        <td>Female</td>
+                        <td>1</td>
+                        <td>Mathematics</td>
+                        <td>$8,0000.00</td>
+                        <td class="badge badge-pill badge-success d-block mg-t-8">Paid</td>
+                        <td>+ 123 9988568</td>
+                        <td><a href="https://www.radiustheme.com/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="f79c968d9e91969f9e9acec4b7909a969e9bd994989a">[email&#160;protected]</a></td>
+                         <td>
+                            <div class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false" aria-label="Plus d'option">
+                                    <span class="flaticon-more-button-of-three-dots"></span>
+                                </a>
+                                <div class="dropdown-menu dropdown-menu-right">
+                                    <a class="dropdown-item" href="#"><i class="fas fa-times text-orange-red"></i>Close</a>
+                                    <a class="dropdown-item" href="#"><i class="fas fa-cogs text-dark-pastel-green"></i>Edit</a>
+                                    <a class="dropdown-item" href="#"><i class="fas fa-redo-alt text-orange-peel"></i>Refresh</a>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input">
+                                <label class="form-check-label">#0021</label>
+                            </div>
+                        </td>
+                        <td class="text-center"><img src="/layouts/default/img/figure/student2.webp" alt="student"></td>
+                        <td>Mark Willy</td>
+                        <td>Male</td>
+                        <td>2</td>
+                        <td>English</td>
+                        <td>$2,0000.00</td>
+                        <td class="badge badge-pill badge-success d-block mg-t-8">Paid</td>
+                        <td>+ 123 9988568</td>
+                        <td><a href="https://www.radiustheme.com/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="7f141e0516191e171612464c3f18121e1613511c1012">[email&#160;protected]</a></td>
+                         <td>
+                            <div class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false" aria-label="Plus d'option">
+                                    <span class="flaticon-more-button-of-three-dots"></span>
+                                </a>
+                                <div class="dropdown-menu dropdown-menu-right">
+                                    <a class="dropdown-item" href="#"><i class="fas fa-times text-orange-red"></i>Close</a>
+                                    <a class="dropdown-item" href="#"><i class="fas fa-cogs text-dark-pastel-green"></i>Edit</a>
+                                    <a class="dropdown-item" href="#"><i class="fas fa-redo-alt text-orange-peel"></i>Refresh</a>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input">
+                                <label class="form-check-label">#0022</label>
+                            </div>
+                        </td>
+                        <td class="text-center"><img src="layouts/default/img/figure/student3.webp" alt="student"></td>
+                        <td>Jessia Rose</td>
+                        <td>Female</td>
+                        <td>1</td>
+                        <td>Mathematics</td>
+                        <td>$2,0000.00</td>
+                        <td class="badge badge-pill badge-danger d-block mg-t-8">Paid</td>
+                        <td>+ 123 9988568</td>
+                        <td><a href="https://www.radiustheme.com/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="a6cdc7dccfc0c7cecfcb9f95e6c1cbc7cfca88c5c9cb">[email&#160;protected]</a></td>
+                         <td>
+                            <div class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false" aria-label="Plus d'option">
+                                    <span class="flaticon-more-button-of-three-dots"></span>
+                                </a>
+                                <div class="dropdown-menu dropdown-menu-right">
+                                    <a class="dropdown-item" href="#"><i class="fas fa-times text-orange-red"></i>Close</a>
+                                    <a class="dropdown-item" href="#"><i class="fas fa-cogs text-dark-pastel-green"></i>Edit</a>
+                                    <a class="dropdown-item" href="#"><i class="fas fa-redo-alt text-orange-peel"></i>Refresh</a>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input">
+                                <label class="form-check-label">#0023</label>
+                            </div>
+                        </td>
+                        <td class="text-center"><img src="layouts/default/img/figure/student4.webp" alt="student"></td>
+                        <td>Mark Willy</td>
+                        <td>Male</td>
+                        <td>2</td>
+                        <td>Mathematics</td>
+                        <td>$5,000.00</td>
+                        <td class="badge badge-pill badge-success d-block mg-t-8">Paid</td>
+                        <td>+ 123 9988568</td>
+                        <td><a href="https://www.radiustheme.com/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="107b716a79767178797d292350777d71797c3e737f7d">[email&#160;protected]</a></td>
+                         <td>
+                            <div class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false" aria-label="Plus d'option">
+                                    <span class="flaticon-more-button-of-three-dots"></span>
+                                </a>
+                                <div class="dropdown-menu dropdown-menu-right">
+                                    <a class="dropdown-item" href="#"><i class="fas fa-times text-orange-red"></i>Close</a>
+                                    <a class="dropdown-item" href="#"><i class="fas fa-cogs text-dark-pastel-green"></i>Edit</a>
+                                    <a class="dropdown-item" href="#"><i class="fas fa-redo-alt text-orange-peel"></i>Refresh</a>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input">
+                                <label class="form-check-label">#0024</label>
+                            </div>
+                        </td>
+                        <td class="text-center"><img src="layouts/default/img/figure/student5.webp" alt="student"></td>
+                        <td>Jessia Rose</td>
+                        <td>Female</td>
+                        <td>1</td>
+                        <td>Mathematics</td>
+                        <td>$2,0000.00</td>
+                        <td class="badge badge-pill badge-success d-block mg-t-8">Paid</td>
+                        <td>+ 123 9988568</td>
+                        <td><a href="https://www.radiustheme.com/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="acc7cdd6c5cacdc4c5c1959feccbc1cdc5c082cfc3c1">[email&#160;protected]</a></td>
+                         <td>
+                            <div class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false" aria-label="Plus d'option">
+                                    <span class="flaticon-more-button-of-three-dots"></span>
+                                </a>
+                                <div class="dropdown-menu dropdown-menu-right">
+                                    <a class="dropdown-item" href="#"><i class="fas fa-times text-orange-red"></i>Close</a>
+                                    <a class="dropdown-item" href="#"><i class="fas fa-cogs text-dark-pastel-green"></i>Edit</a>
+                                    <a class="dropdown-item" href="#"><i class="fas fa-redo-alt text-orange-peel"></i>Refresh</a>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input">
+                                <label class="form-check-label">#0021</label>
+                            </div>
+                        </td>
+                        <td class="text-center"><img src="/layouts/default/img/figure/student2.webp" alt="student"></td>
+                        <td>Mark Willy</td>
+                        <td>Male</td>
+                        <td>2</td>
+                        <td>English</td>
+                        <td>$2,0000.00</td>
+                        <td class="badge badge-pill badge-success d-block mg-t-8">Paid</td>
+                        <td>+ 123 9988568</td>
+                        <td><a href="https://www.radiustheme.com/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="c4afa5beada2a5acada9fdf784a3a9a5ada8eaa7aba9">[email&#160;protected]</a></td>
+                         <td>
+                            <div class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false" aria-label="Plus d'option">
+                                    <span class="flaticon-more-button-of-three-dots"></span>
+                                </a>
+                                <div class="dropdown-menu dropdown-menu-right">
+                                    <a class="dropdown-item" href="#"><i class="fas fa-times text-orange-red"></i>Close</a>
+                                    <a class="dropdown-item" href="#"><i class="fas fa-cogs text-dark-pastel-green"></i>Edit</a>
+                                    <a class="dropdown-item" href="#"><i class="fas fa-redo-alt text-orange-peel"></i>Refresh</a>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input">
+                                <label class="form-check-label">#0022</label>
+                            </div>
+                        </td>
+                        <td class="text-center"><img src="layouts/default/img/figure/student3.webp" alt="student"></td>
+                        <td>Jessia Rose</td>
+                        <td>Female</td>
+                        <td>1</td>
+                        <td>Mathematics</td>
+                        <td>$2,000.00</td>
+                        <td class="badge badge-pill badge-danger d-block mg-t-8">Paid</td>
+                        <td>+ 123 9988568</td>
+                        <td><a href="https://www.radiustheme.com/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="5d363c27343b3c353430646e1d3a303c3431733e3230">[email&#160;protected]</a></td>
+                         <td>
+                            <div class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false" aria-label="Plus d'option">
+                                    <span class="flaticon-more-button-of-three-dots"></span>
+                                </a>
+                                <div class="dropdown-menu dropdown-menu-right">
+                                    <a class="dropdown-item" href="#"><i class="fas fa-times text-orange-red"></i>Close</a>
+                                    <a class="dropdown-item" href="#"><i class="fas fa-cogs text-dark-pastel-green"></i>Edit</a>
+                                    <a class="dropdown-item" href="#"><i class="fas fa-redo-alt text-orange-peel"></i>Refresh</a>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input">
+                                <label class="form-check-label">#0023</label>
+                            </div>
+                        </td>
+                        <td class="text-center"><img src="layouts/default/img/figure/student4.webp" alt="student"></td>
+                        <td>Mark Willy</td>
+                        <td>Male</td>
+                        <td>2</td>
+                        <td>Mathematics</td>
+                        <td>$2,0000.00</td>
+                        <td class="badge badge-pill badge-success d-block mg-t-8">Paid</td>
+                        <td>+ 123 9988568</td>
+                        <td><a href="https://www.radiustheme.com/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="c8a3a9b2a1aea9a0a1a5f1fb88afa5a9a1a4e6aba7a5">[email&#160;protected]</a></td>
+                         <td>
+                            <div class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false" aria-label="Plus d'option">
+                                    <span class="flaticon-more-button-of-three-dots"></span>
+                                </a>
+                                <div class="dropdown-menu dropdown-menu-right">
+                                    <a class="dropdown-item" href="#"><i class="fas fa-times text-orange-red"></i>Close</a>
+                                    <a class="dropdown-item" href="#"><i class="fas fa-cogs text-dark-pastel-green"></i>Edit</a>
+                                    <a class="dropdown-item" href="#"><i class="fas fa-redo-alt text-orange-peel"></i>Refresh</a>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input">
+                                <label class="form-check-label">#0024</label>
+                            </div>
+                        </td>
+                        <td class="text-center"><img src="layouts/default/img/figure/student5.webp" alt="student"></td>
+                        <td>Jessia Rose</td>
+                        <td>Female</td>
+                        <td>1</td>
+                        <td>Mathematics</td>
+                        <td>$2,0000.00</td>
+                        <td class="badge badge-pill badge-success d-block mg-t-8">Paid</td>
+                        <td>+ 123 9988568</td>
+                        <td><a href="https://www.radiustheme.com/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="c4afa5beada2a5acada9fdf784a3a9a5ada8eaa7aba9">[email&#160;protected]</a></td>
+                         <td>
+                            <div class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false" aria-label="Plus d'option">
+                                    <span class="flaticon-more-button-of-three-dots"></span>
+                                </a>
+                                <div class="dropdown-menu dropdown-menu-right">
+                                    <a class="dropdown-item" href="#"><i class="fas fa-times text-orange-red"></i>Close</a>
+                                    <a class="dropdown-item" href="#"><i class="fas fa-cogs text-dark-pastel-green"></i>Edit</a>
+                                    <a class="dropdown-item" href="#"><i class="fas fa-redo-alt text-orange-peel"></i>Refresh</a>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input">
+                                <label class="form-check-label">#0021</label>
+                            </div>
+                        </td>
+                        <td class="text-center"><img src="/layouts/default/img/figure/student2.webp" alt="student"></td>
+                        <td>Mark Willy</td>
+                        <td>Male</td>
+                        <td>2</td>
+                        <td>English</td>
+                        <td>$2,0000.00</td>
+                        <td class="badge badge-pill badge-success d-block mg-t-8">Paid</td>
+                        <td>+ 123 9988568</td>
+                        <td><a href="https://www.radiustheme.com/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="513a302b38373039383c686211363c30383d7f323e3c">[email&#160;protected]</a></td>
+                         <td>
+                            <div class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false" aria-label="Plus d'option">
+                                    <span class="flaticon-more-button-of-three-dots"></span>
+                                </a>
+                                <div class="dropdown-menu dropdown-menu-right">
+                                    <a class="dropdown-item" href="#"><i class="fas fa-times text-orange-red"></i>Close</a>
+                                    <a class="dropdown-item" href="#"><i class="fas fa-cogs text-dark-pastel-green"></i>Edit</a>
+                                    <a class="dropdown-item" href="#"><i class="fas fa-redo-alt text-orange-peel"></i>Refresh</a>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input">
+                                <label class="form-check-label">#0022</label>
+                            </div>
+                        </td>
+                        <td class="text-center"><img src="layouts/default/img/figure/student3.webp" alt="student"></td>
+                        <td>Jessia Rose</td>
+                        <td>Female</td>
+                        <td>1</td>
+                        <td>Mathematics</td>
+                        <td>$2,0000.00</td>
+                        <td class="badge badge-pill badge-danger d-block mg-t-8">Paid</td>
+                        <td>+ 123 9988568</td>
+                        <td><a href="https://www.radiustheme.com/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="3a515b40535c5b52535703097a5d575b535614595557">[email&#160;protected]</a></td>
+                         <td>
+                            <div class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false" aria-label="Plus d'option">
+                                    <span class="flaticon-more-button-of-three-dots"></span>
+                                </a>
+                                <div class="dropdown-menu dropdown-menu-right">
+                                    <a class="dropdown-item" href="#"><i class="fas fa-times text-orange-red"></i>Close</a>
+                                    <a class="dropdown-item" href="#"><i class="fas fa-cogs text-dark-pastel-green"></i>Edit</a>
+                                    <a class="dropdown-item" href="#"><i class="fas fa-redo-alt text-orange-peel"></i>Refresh</a>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input">
+                                <label class="form-check-label">#0023</label>
+                            </div>
+                        </td>
+                        <td class="text-center"><img src="layouts/default/img/figure/student4.webp" alt="student"></td>
+                        <td>Mark Willy</td>
+                        <td>Male</td>
+                        <td>2</td>
+                        <td>Mathematics</td>
+                        <td>$2,0000.00</td>
+                        <td class="badge badge-pill badge-success d-block mg-t-8">Paid</td>
+                        <td>+ 123 9988568</td>
+                        <td><a href="https://www.radiustheme.com/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="254e445f4c43444d4c481c16654248444c490b464a48">[email&#160;protected]</a></td>
+                         <td>
+                            <div class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false" aria-label="Plus d'option">
+                                    <span class="flaticon-more-button-of-three-dots"></span>
+                                </a>
+                                <div class="dropdown-menu dropdown-menu-right">
+                                    <a class="dropdown-item" href="#"><i class="fas fa-times text-orange-red"></i>Close</a>
+                                    <a class="dropdown-item" href="#"><i class="fas fa-cogs text-dark-pastel-green"></i>Edit</a>
+                                    <a class="dropdown-item" href="#"><i class="fas fa-redo-alt text-orange-peel"></i>Refresh</a>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input">
+                                <label class="form-check-label">#0024</label>
+                            </div>
+                        </td>
+                        <td class="text-center"><img src="layouts/default/img/figure/student5.webp" alt="student"></td>
+                        <td>Jessia Rose</td>
+                        <td>Female</td>
+                        <td>1</td>
+                        <td>Mathematics</td>
+                        <td>$2,0000.00</td>
+                        <td class="badge badge-pill badge-success d-block mg-t-8">Paid</td>
+                        <td>+ 123 9988568</td>
+                        <td><a href="https://www.radiustheme.com/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="dbb0baa1b2bdbab3b2b6e2e89bbcb6bab2b7f5b8b4b6">[email&#160;protected]</a></td>
+                         <td>
+                            <div class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false" aria-label="Plus d'option">
+                                    <span class="flaticon-more-button-of-three-dots"></span>
+                                </a>
+                                <div class="dropdown-menu dropdown-menu-right">
+                                    <a class="dropdown-item" href="#"><i class="fas fa-times text-orange-red"></i>Close</a>
+                                    <a class="dropdown-item" href="#"><i class="fas fa-cogs text-dark-pastel-green"></i>Edit</a>
+                                    <a class="dropdown-item" href="#"><i class="fas fa-redo-alt text-orange-peel"></i>Refresh</a>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

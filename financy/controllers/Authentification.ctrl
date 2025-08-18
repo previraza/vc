@@ -1,0 +1,44 @@
+<?php
+class Authentification extends Controller
+{
+    public $directory = 'auth';
+    public function __construct()
+    {
+        parent::__construct();
+        $this->User = $this->loadModel('users');
+    }
+
+    public function index()
+    {
+        $app = Application::init();
+        $session = Session::init();
+        if (isset($_POST['STATE']) && $_POST['STATE'] === 'FINANCY::LOGIN') {
+            if ($this->_login() && $session->connectMe())
+                $app->request->back();
+            $app->log_err = $session->getAndDestroy('FINANCY::LOGIN');
+        }
+        return $this->view([$this->directory, 'login'], false, false, false);
+    }
+
+    public function _login(): bool
+    {
+        $session = Session::init();
+        if (!isset($_POST['FINANCY::LOGIN::USERNAME'], $_POST['FINANCY::LOGIN::PASSWORD']))
+            return false;
+        $r = $this->User->login($_POST['FINANCY::LOGIN::USERNAME'], $_POST['FINANCY::LOGIN::PASSWORD']);
+        if (is_int($r))
+            return
+                !$session->set('FINANCY::LOGIN', $r == 1 ? ['Incorect password', 'error'] : ($r == 0 ? ['No user found', 'info'] : ['Unknown error', 'error']));
+        elseif (is_object($r) && isset($r->enc)){
+            $session->set('DATA::MENU', Menu::setMenu($r->role));
+            return $session->set('FINANCY::ME', $r);
+        } else return false;
+    }
+
+    public function logout()
+    {
+        Session::init()->destroy('FINANCY::ME');
+        return $this->index();
+    }
+
+}

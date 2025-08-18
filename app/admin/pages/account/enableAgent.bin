@@ -1,0 +1,122 @@
+<?php viewOnlyBy('ADMIN', 'SG', 'DG','SR','AB','SA'); $pageTitle = "Agent Actif" ?>
+<div class="card height-auto">
+    <div class="card-body">
+        <div class="heading-layout1">
+            <div class="item-title">
+                <h3>Compte agents actif</h3>
+            </div>
+            <div class="dropdown">
+                <a class="dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-expanded="false">...</a>
+
+                <div class="dropdown-menu dropdown-menu-right">
+                    <a class="dropdown-item" href="#" data-action="print"><i class="fas fa-print"></i>print</a>
+
+                    <a class="dropdown-item" href="#" data-action="reload"><i class="fas fa-redo-alt text-orange-peel"></i>Actualiser</a>
+                </div>
+            </div>
+        </div>
+        <div class="table-responsive">
+            <table class="table display data-table text-nowrap">
+                <thead>
+                    <tr>
+                        <th>
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input checkAll" id="assosLabel">
+                                <label for="assosLabel" class="form-check-label">Id</label>
+                            </div>
+                        </th>
+                        <th>Photo</th>
+                        <th>Grade</th>
+                        <th>Nom</th>
+                        <th>Postnom</th>
+                        <th>Sexe</th>
+                        <th>Matricule</th>
+                        <th>Naissance</th>
+                        <th>Engagement</th>
+                        <th>Fonction</th>
+                        <th>Phone</th>
+                        <th>Status</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php $rqt = mysqli_query($db, 
+                                "SELECT agents.* FROM agents JOIN accounts  ON accounts.id  = agents.user_id WHERE accounts.role = 'agent' AND agents.active = 1 AND agents.valide = 1 AND agents.delete = 0 AND agents.user_id != 0 ORDER BY title DESC, firstname"
+                            );
+                        while($row = mysqli_fetch_array($rqt)){ $res = (object) $row;?>
+                    <tr>
+                        <td id="shodan_res_<?= $res->id ?>">
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input">
+                                <label class="form-check-label">#<?= $res->id ?></label>
+                            </div>
+                        </td>
+                            <td class="text-center"><img src="/layouts/default/img/figure/student2.webp" alt="teacher"></td>
+                            <td><?= $res->title ?></td>
+                            <td><?= $res->firstname ?></td>
+                            <td><?= $res->lastname ?></td>
+                            <td><?= $res->gender ?></td>
+                            <td><?= $res->matricul ?></td>
+                            <td><?= $res->birthday ?></td>
+                            <td><?= $res->Joining_date ?></td>
+                            <td><?= $res->role ?></td>
+                            <td><?= $res->phone ?></td>
+                            <td><?= $res->title ?></td>
+                        <td>
+                            <div class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false" aria-label="Plus d'option">
+                                    <span class="flaticon-more-button-of-three-dots"></span>
+                                </a>
+                                <div class="dropdown-menu dropdown-menu-right">
+                                    <a class="dropdown-item" data-exec="mci_generator_enc(<?= "$res->id, '$res->matricul'" ?>)" data-action="null" href="\?fa69951bc733eb82713e936be33597e1=DATA_CRYPTING_ON:fa69951bc733eb82713e936be33597e1=WABTECHS_CRYPTING_ON: e91497f38407364c8e86ade9098950d978814190&MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3VIRAZA_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3&MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3&WABTECHS_CRYPTING_ON_LAVINGOL&MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3&b557c222c8ddcdf87e033706aad08e4ef7cf90d3=account--enableTeacher"><i class="fas fa-play text-green"></i>Générer</a>
+                                    <a class="dropdown-item" href="?fa69951bc733eb82713e936be33597e1=DATA_CRYPTING_ON:fa69951bc733eb82713e936be33597e1=WABTECHS_CRYPTING_ON: e91497f38407364c8e86ade9098950d978814190&MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3VIRAZA_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3&MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3&WABTECHS_CRYPTING_ON_LAVINGOL&MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3&b557c222c8ddcdf87e033706aad08e4ef7cf90d3=teacher--details--<?= $res->id ?>"><i class="fas fa-redo-alt text-blue"></i>Profile</a>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    <?php } ?>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<!-- Modal -->
+<div class="modal fade" id="modelId" tabindex="-1" role="dialog" aria-labelledby="modelTitleId" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalTitle"></h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            </div>
+            <div class="modal-body">
+                <div class="container-fluid">
+                    <form class="#" method="post" id="submitFormulary" data-id="0">
+                        <div class="row">
+                            <div class="col-2">SSID : </div>
+                            <div class="col-8"><input type="text" class="w-100 mb-3 radius-4 border-0 bg-ash px-3" name="user_name" id="contentSSID"></div>
+                            <div class="col-2">
+                                <div class="btn btn rounded text-white bg-info" aria-label="Copy">Copy</div>
+                            </div>
+                        </div>
+                        <input type="hidden" name="user_id" id="contentID" value="0"/>
+                        <input type="hidden" name="klk" id="contentID" value="kelkin"/>
+                        <input type="hidden" name="CON_47" id="MCISME" value="loveStorage"/>
+                        <input type="submit" id="submitFormularyBtn" class="d-none"/>
+                        <div class="row">
+                            <div class="col-2">KEY : </div>
+                            <div class="col-8"><input type="text" class="w-100 mb-3 radius-4 border-0 bg-ash px-3" name="user_pass" id="contentKEY"></div>
+                            <div class="col-2">
+                                <div class="btn btn rounded text-white bg-info" aria-label="Copy">Copy</div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <div class="modalMessageTextFooter alert alert-warning w-100"></div>
+                <button type="button" type="reset" class="btn btn-secondary mb-3" data-dismiss="modal">Annuler</button>
+                <button type="button" onclick="document.querySelector('#submitFormularyBtn').click();" id="submitPreBtn" class="btn btn-primary mb-3">Sauvegarder</button>
+            </div>
+        </div>
+    </div>
+</div>

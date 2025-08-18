@@ -1,0 +1,91 @@
+var $count_std = 0;
+class TrLine {
+    constructor($std) {
+        $count_std++;
+        let $tr = document.createElement('tr'),
+            $tds = `
+            <td>
+                <div class="form-check">
+                    <input type="checkbox" class="form-check-input">
+                    <label class="form-check-label">${$std.id}</label>
+                </div>
+            </td>
+            <td class="text-center"><img src="/layouts/default/img/figure/student2.webp" alt="student"></td>
+            <td>${$std.fullname}</td>
+            <td>${$std.sexe}</td>
+            <td>${$std.age}</td>
+            <td ${($std.user_id == '0') ? 'class="bg-warning"' : null}>${$std.code}</td>
+            <td>${$std.pourcentage}</td>
+            <td>${$std.section}</td>
+            <td>${$std.frais}</td>
+            <td>${$std.reg_date}</td>
+            <td>
+                <div class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown"
+                        aria-expanded="false">
+                        <span class="flaticon-more-button-of-three-dots"></span>
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-right">
+                        <a class="dropdown-item delibereBtn" href="#" data-userid="${$std.id}" data-action="null"><i class="fas fa-play text-dark-pastel-green"></i>Passer</a>
+                        <a class="dropdown-item" data-exec="open('/app/admin/pages/actions/print-register.php?id=${$std.id}')"><i class="fas fa-user"></i>Profile</a>
+                    </div>
+                </div>
+            </td>
+        `; $tr.innerHTML = $tds;
+        $tr.id = 'editing_'+$count_std;
+        $tr.dataset.coteOf = $std.firstname+' '+$std.lastname;
+        return $tr;
+    }
+}
+$('table.dataTable-dyn-table>tbody').append(<?=json_encode($db_pdo->query(
+    "SELECT *, numero_bordereau AS code, CONCAT(nom, ' ', postnom, ' ', prenom) AS fullname, register.date AS reg_date, DATE_FORMAT(FROM_DAYS(DATEDIFF(NOW(), register.date_de_naissance)), '%Y') + 0 AS age, payments.sum AS frais, register.id FROM register LEFT JOIN payments ON (payments.student = register.id AND payments.type = 'INSCR') WHERE register.type = 'recrutement' AND register.delete = 0 AND traite = 0 ORDER BY created_at, fullname"
+)->fetchAll(PDO::FETCH_OBJ));?>.map(i=>new TrLine(i)));
+
+$('table.dataTable-dyn-table').DataTable({
+    paging: false,
+    retrieve: true,
+    stateSave: true,
+    info: false,
+    lengthChange: false,
+    lengthMenu: [20, 50, 75, 100],
+    columnDefs: [{
+        targets: [0, -1],
+        orderable: false 
+    }], dom: 'Bfrtip',
+    buttons: [{
+        extend: 'collection',
+        text: 'Exporter',
+        buttons: ['copy', 'csv', 'excel', 'pdf', 'print']
+    }]
+});
+delibBtn = $('.delibereBtn').on('click', e => {
+    e.preventDefault();
+    updateStudent(e);
+});
+$('#grDelibereBtn').on('click', () => delibBtn.click())
+
+updateStudent = e => {
+    window.temp = e;
+    $.ajax({
+        url: "/app/settings/edit/updateStudent.php?sending_by=mcisme",
+        data: {
+            user_id: e.target.dataset.userid,
+            CON_47: 'MCISME',
+            preparatoire: "EmmaWAB"
+        },
+        type: "POST",
+        success: function(response) {
+            try {
+                let res = JSON.parse(response);
+                $('td', $(e.target).parents('tr'))[0].className = (res.status == 'succes') ? 'bg-info text-white' : 'bg-danger text-white';
+                if (res.status == 'error') alert('Erreur ' + res.code + ' : ' + res.content);
+            } catch (error) {
+                console.error(response);
+            }
+        }
+    })
+}
+$('a[data-exec]').on('click', e => {
+    e.preventDefault();
+    Function(e.target.dataset.exec)();
+});

@@ -1,0 +1,40 @@
+<?php
+require_once __DIR__.DIRECTORY_SEPARATOR.'constants';
+require_once __DIR__.DS.'functions';
+
+define('db', $settings['db'][get_host($_SERVER['SERVER_NAME'])]);
+
+try {
+    $db_pdo = new PDO('mysql:host='.db['host'].';charset=utf8;dbname='.db['name'], db['user'], db['pass']);
+    $adminer = $connection = mysqli_connect(db['host'], db['user'], db['pass'], 'adminer');
+    mysqli_set_charset($adminer, 'utf8');
+    $db = $connection = mysqli_connect(db['host'], db['user'], db['pass'], db['name']);
+    mysqli_set_charset($db, 'utf8');
+    $db_poo = new mysqli(db['host'], db['user'], db['pass'], db['name']);
+    $db_poo->set_charset('utf8');
+
+    $IN_MAINTENANCE = 0;
+} catch (\Throwable $th) {
+    $IN_MAINTENANCE = 1;
+}
+
+if(isset($_SESSION['USER']) && $_SESSION['USER']){
+    $user = (object) $_SESSION['USER'];
+    $user->departement_id = 1;
+    $user->departement_name = "Informatique";
+}
+
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+include_once __DIR__."/../../admin/class/activities.php";
+$logger = new ActivityLogger($db_pdo);
+if(!(($_GET['page']??'x') == '404')) {
+    if($logger->log('page-action', [
+        'srv' => $_SERVER,
+        'req' => $_REQUEST,
+        'ses' => $_SESSION,
+    ])) {
+        echo "vze";
+    };
+}

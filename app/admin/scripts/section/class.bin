@@ -1,0 +1,7 @@
+submitAll = () => {
+    $('td > div > input[type=checkbox]:checked').parents('tr').each((i,e)=> submitOne(e.dataset.id))
+}, submitOne = (id) => {
+    $.post("", {classe: id, sendBy: 'adminer_norefer'}, function(data, textStatus) {
+        if (textStatus == 'success') $('#Element-'+id).toggleClass('bg-success text-white');
+    })
+};

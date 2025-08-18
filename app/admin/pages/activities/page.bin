@@ -1,0 +1,53 @@
+<?php
+viewOnlyBy('ADMIN');
+$pageTitle = "Pages avec Activités";
+
+// Récupère les pages et le nombre d'activités par page
+$stmt = $db_pdo->query(
+    "SELECT `page`, COUNT(*) AS `count` 
+      FROM `activities` 
+      GROUP BY `page` 
+      ORDER BY `count` DESC"
+);
+$pages = $stmt->fetchAll(PDO::FETCH_ASSOC);
+?>
+
+<div class="card shadow-sm">
+    <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h3>Pages avec Activités</h3>
+            <a class="dropdown btn btn-secondary dropdown-toggle" href="#" data-action="reload"><i class="fas fa-redo-alt me-2"></i>Actualiser</a>
+        </div>
+        <div class="table-responsive">
+            <table class="table data-table data-table-activities-page table-striped table-bordered text-nowrap">
+                <thead>
+                    <tr>
+                        <th class="text-center" style="width: 50px;">
+                            <input type="checkbox" id="checkAllPages">
+                        </th>
+                        <th>Page</th>
+                        <th class="text-center">Activités</th>
+                        <th class="text-center">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($pages as $i => $row): ?>
+                        <tr>
+                            <td class="text-center">
+                                <input type="checkbox" class="page-check" data-page="<?= htmlspecialchars($row['page'], ENT_QUOTES) ?>">
+                            </td>
+                            <td><?= htmlspecialchars($row['page']) ?></td>
+                            <td class="text-center"><?= (int)$row['count'] ?></td>
+                            <td class="text-center">
+                              <form method="post" action="?fa69951bc733eb82713e936be33597e1=DATA_CRYPTING_ON:e91497f38407364c8e86ade9098950d978814190&MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3=activities--page$">
+                                  <input type="hidden" name="activity_page" value="<?= htmlspecialchars($row['page'], ENT_QUOTES) ?>">
+                                  <button type="submit" class="btn btn-sm btn-primary">Voir</button>
+                              </form>
+                          </td>
+                        </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

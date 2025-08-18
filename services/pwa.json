@@ -1,0 +1,62 @@
+{
+    "name": "SNEN VIRAZA",
+    "short_name": "SNEN",
+    "description": "Apprenez, Manager & Partager de l'Education avec le système de numérisation de l'education national par viraza",
+    "start_url": "/app/?generator=sw",
+    "id": "?sw_key=mcisme_generator__service_worker",
+    "display": "standalone",
+    "theme_color": "#2784ce",
+    "background_color": "#f0f1f3",
+    "orientation": "portrait-primary",
+    "icons": [{
+        "src": "/layouts/default/icon/viraza - 30x30.webp",
+        "type": "image/png",
+        "sizes": "30x30"
+    }, {
+        "src": "/layouts/default/icon/viraza - 50x50.webp",
+        "type": "image/png",
+        "sizes": "50x50"
+    }, {
+        "src": "/layouts/default/icon/viraza - 75x75.webp",
+        "type": "image/png",
+        "sizes": "75x75"
+    }, {
+        "src": "/layouts/default/icon/viraza - 96x96.webp",
+        "type": "image/png",
+        "sizes": "96x96"
+    }, {
+        "src": "/layouts/default/icon/viraza - 128x128.webp",
+        "type": "image/png",
+        "sizes": "128x128"
+    }, {
+        "src": "/layouts/default/icon/viraza - 144x144.webp",
+        "type": "image/png",
+        "sizes": "144x144"
+    }, {
+        "src": "/layouts/default/icon/viraza - 152x152.webp",
+        "type": "image/png",
+        "sizes": "152x152"
+    }, {
+        "src": "/layouts/default/icon/viraza - 192x192.webp",
+        "type": "image/png",
+        "sizes": "192x192",
+        "purpose": "maskable"
+    }, {
+        "src": "/layouts/default/icon/viraza - 196x196.webp",
+        "type": "image/png",
+        "sizes": "196x196"
+    }, {
+        "src": "/layouts/default/icon/viraza - 360x360.webp",
+        "type": "image/png",
+        "sizes": "360x360"
+    }, {
+        "src": "/layouts/default/icon/viraza - 512x512.webp",
+        "type": "image/png",
+        "sizes": "512x512"
+    }],
+    "prefer_related_applications": true,
+    "related_application": [{
+        "platform": "viraza",
+        "id": "com.viraza.snen.test"
+    }]
+}

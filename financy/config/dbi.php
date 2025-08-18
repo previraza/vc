@@ -1,0 +1,1 @@
+<?php $dbi = new Mysqli('localhost','u579919216_snen','Snen_2_0','u579919216_snen');

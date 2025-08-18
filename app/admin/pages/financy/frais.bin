@@ -1,0 +1,217 @@
+<?php viewOnlyBy('AB','SFC'); $pageTitle = "Frais Etudiant" ?>
+<?php 
+    if (isset($_POST['action'], $_POST['id']) && is_numeric($_POST['id'])){
+        extract(array_trait_string($_POST));
+        if (mysqli_query($db, "UPDATE `frais` SET `active` = ".($action == 'enable' ? 1 : ($action == 'disable' ? 0 : NULL ))." WHERE id = $id AND ('$user->role' = 'AB' || frais.user_id = $user->id)")){ ?>
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                    <span class="sr-only">Close</span>
+                </button>
+                <strong>Succes : </strong>Le frais a été <?= $action == 'enable' ? 'activer' : ('disable' ? 'desactiver' : 'modifier') ?> avec succès. 
+            </div>
+        <?php }else{ ?>
+            <div class="alert alert-danger alert-dismissible fade show" role="alert"> 
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                    <span class="sr-only">Close</span>
+                </button>
+                <strong>Echec : </strong>Le Profile choisit est introuvable. 
+            </div>
+        <?php }
+    }
+?>
+<div class="card height-auto">
+    <div class="card-body">
+        <div class="heading-layout1">
+            <div class="item-title">
+                <h3>Formulaire d'ajout de frais</h3>
+            </div>
+            <div class="dropdown">
+                <a class="dropdown-toggle" href="#" role="button" 
+                data-toggle="dropdown" aria-expanded="false">...</a>
+
+                <div class="dropdown-menu dropdown-menu-right">
+                <a class="dropdown-item" href="#" data-action="print"><i class="fas fa-print"></i>print</a>
+                    
+                    <a class="dropdown-item" href="#" data-action="reload"><i class="fas fa-redo-alt text-orange-peel"></i>Actualiser</a>
+                </div>
+            </div>
+        </div>
+        <form class="new-added-form" id="addFrais" method="POST">
+            <div class="row">
+                <div class="col-lg-6 col-12 form-group">
+                    <label>Motif du frais *</label>
+                    <select class="select2" name="type">
+                        <option value=1>Attestation de réussite</option>
+                        <option value=2>Carnet de l'étudiant</option>
+                        <option value=3>Dépot TFC et Mémoire</option>
+                        <option value=4>Enrolement</option>
+                        <option value=5>Etude</option>
+                        <option value=6>Fiche de scolarité</option>
+                        <option value=7>Homologation de diplôme</option>
+                        <option value=8>Legalisation</option>
+                        <option value=9>Réinscription</option>
+                        <option value=10>Enterinement de sujet</option>
+                        <option value=11>Rélevé de cote</option>
+                        <option value=12>Stage de formation</option>
+                    </select>
+                </div>
+                <div class="col-xl-3 col-lg-6 col-12 form-group">
+                    <label>Niveau *</label>
+                    <select class="select2" name="level" required>
+                        <?php $rqt = mysqli_query($db, "SELECT * FROM level WHERE active = 1") or die(debug(mysqli_error($db)));
+                            while ($ROW = mysqli_fetch_array($rqt)){ $row = (object) $ROW; ?>
+                                <option value="<?= $row->id ?>"><?= $row->name ?></option>
+                        <?php } ?>
+                    </select>
+                </div>
+                <div class="col-xl-3 col-lg-6 col-12 form-group">
+                    <label>Promotion *</label>
+                    <select class="select2" name="year" required>
+                        <?php $year = 2023;
+                            while ($year > 2021){ ?>
+                                <option value="<?= --$year ?>"><?= $year." - ".($year+1); ?></option>
+                        <?php } ?>
+                        <input type="hidden" name="CON_47" value="true">
+                    </select>
+                </div>
+                <div class="col-xl-5 col-lg-6 col-12 form-group">
+                    <label>Numéro de compte *</label>
+                    <input type="number" placeholder="" class="form-control" name="account" required>
+                </div>
+                <div class="col-xl-4 col-lg-6 col-12 form-group">
+                    <label>Montant *</label>
+                    <input type="number" min="0" placeholder="" class="form-control" name="solde" required>
+                </div>
+                <div class="col-lg-3 col-12 form-group">
+                    <label>Devise *</label>
+                    <select class="select2" name="devise">
+                        <option selected value="FC">Franc Congolais</option>
+                        <option value="$">Dollars Américain</option>
+                    </select>
+                </div>
+                <div class="col-lg-3 col-12 form-group">
+                    <label>Payable en *</label>
+                    <select class="select2" name="tranches" id="tranches">
+                        <option selected value="once">Une tranche</option>
+                        <option value="multi">Plusieurs tranches</option>
+                    </select>
+                </div>
+                <div class="col-xl-3 col-lg-6 col-12 form-group trancheIs" style="display:none;">
+                    <label>Tranche 1 *</label>
+                    <input type="number" min="0" placeholder="" class="form-control" name="tranche[]" required>
+                </div>
+                <div class="col-xl-3 col-lg-6 col-12 form-group trancheIs" style="display:none;">
+                    <label>Tranche 2 *</label>
+                    <input type="number" min="0" placeholder="" class="form-control" name="tranche[]" required>
+                </div>
+                <div class="col-xl-3 col-lg-6 col-12 form-group trancheIs" style="display:none;">
+                    <label>Tranche 3 *</label>
+                    <input type="number" min="0" placeholder="" class="form-control" name="tranche[]" required>
+                </div>
+                <div id="responseMessage" class="col-12 form-group"></div>
+                <div class="col-12 form-group mg-t-8">
+                    <button type="submit" class="btn-fill-lg btn-gradient-yellow btn-hover-bluedark">Save</button>
+                    <button type="reset" class="btn-fill-lg bg-blue-dark btn-hover-yellow">Reset</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="card height-auto">
+    <div class="card-body">
+        <div class="heading-layout1">
+            <div class="item-title">
+                <h3>Liste des frais étudiant</h3>
+            </div>
+            <div class="dropdown">
+                <a class="dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-expanded="false">...</a>
+
+                <div class="dropdown-menu dropdown-menu-right">
+                    
+                    <a class="dropdown-item" href="#" data-action="print"><i class="fas fa-print"></i>print</a>
+                    
+                    <a class="dropdown-item" href="#" data-action="reload"><i class="fas fa-redo-alt text-orange-peel"></i>Actualiser</a>
+                </div>
+            </div>
+        </div>
+        <form class="mg-b-20">
+            <div class="row gutters-8">
+                <div class="col-3-xxxl col-xl-3 col-lg-3 col-12 form-group">
+                    <input type="text" placeholder="Search by ID ..." class="form-control">
+                </div>
+                <div class="col-4-xxxl col-xl-4 col-lg-3 col-12 form-group">
+                    <input type="text" placeholder="Search by Name ..." class="form-control">
+                </div>
+                <div class="col-4-xxxl col-xl-3 col-lg-3 col-12 form-group">
+                    <input type="text" placeholder="Search by Phone ..." class="form-control">
+                </div>
+                <div class="col-1-xxxl col-xl-2 col-lg-3 col-12 form-group">
+                    <button type="submit" class="fw-btn-fill btn-gradient-yellow">RECHERCHE</button>
+                </div>
+            </div>
+        </form>
+        <div class="table-responsive">
+            <table class="table display data-table text-nowrap">
+                <thead>
+                    <tr>
+                        <th>
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input checkAll" id="assosLabel">
+                                <label for="assosLabel" class="form-check-label">Id</label>
+                            </div>
+                        </th>
+                        <td>Motif de frais</td>
+                        <td>Numéro de compte</td>
+                        <td>Niveau</td>
+                        <td>Promotion</td>
+                        <td>Montant</td>
+                        <td>Devise</td>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody id="fraisLibraries">
+                    <?php $rqt = mysqli_query($db, "SELECT * FROM frais WHERE `delete` = 0 ORDER BY year DESC");
+                        while ($row = mysqli_fetch_array($rqt)) { $res = (object) $row ; ?>
+                            <tr id="Element-<?= $res->id ?>">
+                                <td class="<?= $res->active == 1 ? 'bg-success' : ($res->active == 0 ? 'bg-danger' : NULL)?>">
+                                    <div class="form-check">
+                                        <input type="checkbox" class="form-check-input">
+                                        <label class="form-check-label">#<?=$res->id?></label>
+                                    </div>
+                                </td>
+                                <td><?=$res->type?></td>
+                                <td><?=$res->account?></td>
+                                <td><?=$res->level?></td>
+                                <td><?=$res->year?></td>
+                                <td><?=$res->solde?></td>
+                                <td><?=$res->devise?></td>
+                                <td>
+                                    <div class="dropdown">
+                                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false" aria-label="Plus d'option">
+                                            <span class="flaticon-more-button-of-three-dots"></span>
+                                        </a>
+                                        <div class="dropdown-menu dropdown-menu-right">
+                                            <form action="?fa69951bc733eb82713e936be33597e1=DATA_CRYPTING_ON:fa69951bc733eb82713e936be33597e1=WABTECHS_CRYPTING_ON: e91497f38407364c8e86ade9098950d978814190&MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3VIRAZA_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3&MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3&WABTECHS_CRYPTING_ON_LAVINGOL&MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3&b557c222c8ddcdf87e033706aad08e4ef7cf90d3=financy--frais" method="POST" class="d-none" id="enable_<?= $res->id ?>">
+                                                <input type="hidden" name="id" value="<?= $res->id ?>">
+                                                <input type="hidden" name="action" value="enable">
+                                            </form>
+                                            <form action="?fa69951bc733eb82713e936be33597e1=DATA_CRYPTING_ON:fa69951bc733eb82713e936be33597e1=WABTECHS_CRYPTING_ON: e91497f38407364c8e86ade9098950d978814190&MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3VIRAZA_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3&MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3&WABTECHS_CRYPTING_ON_LAVINGOL&MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3&b557c222c8ddcdf87e033706aad08e4ef7cf90d3=financy--frais" method="POST" class="d-none" id="disable_<?= $res->id ?>">
+                                                <input type="hidden" name="id" value="<?= $res->id ?>">
+                                                <input type="hidden" name="action" value="disable">
+                                            </form>
+                                            <a class="dropdown-item<?= $res->active == 1 ? " hidden d-none" : NULL ?>" href="#" onclick="document.querySelector('#enable_<?= $res->id ?>').submit()"><i class="fas fa-redo-alt text-dark-pastel-green"></i>Activer</a>
+                                            <a class="dropdown-item<?= $res->active == 0 ? " hidden d-none" : NULL ?>" href="#" onclick="document.querySelector('#disable_<?= $res->id ?>').submit()"><i class="fas fa-redo-alt text-orange-peel"></i>Désactiver</a>
+                                            <a class="dropdown-item" href="?fa69951bc733eb82713e936be33597e1=DATA_CRYPTING_ON:fa69951bc733eb82713e936be33597e1=WABTECHS_CRYPTING_ON: e91497f38407364c8e86ade9098950d978814190&MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3VIRAZA_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3&MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3&WABTECHS_CRYPTING_ON_LAVINGOL&MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3&b557c222c8ddcdf87e033706aad08e4ef7cf90d3=frais--delete.$--<?= $res->id ?>"><i class="fas fa-times text-orange-red"></i>Supprimer</a>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>        
+                    <?php } ?>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

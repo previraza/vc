@@ -1,0 +1,464 @@
+<?php $pageTitle = "Tableau de Bord Section" ?>
+
+<?php
+ $stdFemale = $stdMale = 0; $stdCount = [];
+
+ $student = $db_poo->query("SELECT students.*, options.name AS option_name, level.name AS level_name, promotion FROM students JOIN classes ON classes.id = students.class JOIN sections ON sections.id = classes.section JOIN options ON options.id = classes.option JOIN level ON level.id = classes.level WHERE students.active = 1 AND classes.active = 1 AND level.active = 1 AND options.active = 1 AND sections.active = 1 AND students.valide = 1 AND sections.id = $user->mySection");
+ $teacher = $db_poo->query("SELECT DISTINCT teachers.* FROM teachers JOIN courses ON (courses.titular = teachers.id OR courses.titular_2 = teachers.id) JOIN classes ON classes.id = courses.class JOIN sections ON sections.id = classes.section JOIN options ON options.id = classes.option JOIN level ON level.id = classes.level WHERE teachers.active = 1 AND courses.active = 1 AND classes.active = 1 AND level.active = 1 AND options.active = 1 AND sections.active = 1 AND teachers.valide = 1 AND sections.id = $user->mySection");
+ $course = $db_poo->query("SELECT courses.*, CONCAT(teachers.firstname,' ',teachers.lastname) AS titular, options.name AS option_name, level.name AS level_name, promotion, classes.name AS designation FROM courses LEFT JOIN classes ON classes.id = courses.class LEFT JOIN sections ON sections.id = classes.section LEFT JOIN options ON options.id = classes.option LEFT JOIN level ON level.id = classes.level LEFT JOIN teachers ON teachers.id = courses.titular WHERE courses.active = 1 AND classes.active = 1 AND level.active = 1 AND options.active = 1 AND sections.active = 1 AND sections.id = $user->mySection");
+ $class = $db_poo->query("SELECT classes.*, options.name AS option_name, level.name AS level_name, promotion FROM classes JOIN sections ON sections.id = classes.section JOIN options ON options.id = classes.option JOIN level ON level.id = classes.level JOIN teachers ON (classes.titular = teachers.id OR classes.titular_2 = teachers.id) WHERE classes.active = 1 AND level.active = 1 AND options.active = 1 AND sections.active = 1 AND sections.id = $user->mySection");
+
+ if($user->mySection){ ?>
+ 
+<div class="row">
+ <div class="col-12">   
+  <div class="row">
+   <div class="col-lg-3 col-sm-6 col-12">
+    <div class="dashboard-summery-two">
+     <div class="item-icon bg-light-magenta">
+      <i class="flaticon-classmates text-magenta"></i>
+     </div>
+     <div class="item-content">
+      <div class="item-number"><span class="counter" data-num="<?=$student->num_rows?>"><?=$student->num_rows?></span></div>
+      <div class="item-title">Total Etudiants</div>
+     </div>
+    </div>
+   </div>
+   <div class="col-lg-3 col-sm-6 col-12">
+    <div class="dashboard-summery-two">
+     <div class="item-icon bg-light-blue">
+      <i class="flaticon-shopping-list text-blue"></i>
+     </div>
+     <div class="item-content">
+      <div class="item-number"><span class="counter" data-num="<?=$course->num_rows?>"><?=$course->num_rows?></span></div>
+      <div class="item-title">Total Cours</div>
+     </div>
+    </div>
+   </div>
+   <div class="col-lg-3 col-sm-6 col-12">
+    <div class="dashboard-summery-two">
+     <div class="item-icon bg-light-red">
+      <i class="flaticon-mortarboard text-red"></i>
+     </div>
+     <div class="item-content">
+      <div class="item-number"><span class="counter" data-num="<?=$teacher->num_rows?>"><?=$teacher->num_rows?></span></div>
+      <div class="item-title">Total Enseignants</div>
+     </div>
+    </div>
+   </div>
+   <div class="col-lg-3 col-sm-6 col-12">
+    <div class="dashboard-summery-two">
+     <div class="item-icon bg-light-green">
+      <i class="flaticon-back-arrow-circular-symbol text-green"></i>
+     </div>
+     <div class="item-content">
+      <div class="item-number"><span class="counter" data-num="<?=$class->num_rows?>"><?=$class->num_rows?></span></div>
+      <div class="item-title">Nombres Classes</div>
+     </div>
+    </div>
+   </div>
+  </div>
+ </div>
+ <div class="col-lg-6 col-xl-6">
+  <div class="card dashboard-card-three">
+   <div class="card-body">
+    <div class="heading-layout1">
+     <div class="item-title">
+      <h3>Etudiants</h3>
+     </div>
+     <div class="dropdown">
+      <a class="dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-expanded="false">...</a>
+
+      <div class="dropdown-menu dropdown-menu-right">
+       <a class="dropdown-item" href="#" data-action="print"><i class="fas fa-print"></i>print</a>
+       <a class="dropdown-item" href="#" data-action="reload"><i class="fas fa-redo-alt text-orange-peel"></i>Actualiser</a>
+      </div>
+     </div>
+    </div>
+    <div class="doughnut-chart-wrap">
+     <canvas chart-values="<?= "$stdFemale|$stdMale" ?>" chart-bgColor="#304ffe|#ffa601" chart-labels="Etudiantes Féminin|Etudiants Madculin" chart-label="Totale des Etudiants" id="student-doughnut-chart" width="612" height="300" style="display: block; width: 612px; height: 300px;" class="chartjs-render-monitor"></canvas>
+    </div>
+    <div class="student-report">
+     <div class="student-count pseudo-bg-blue">
+      <h4 class="item-title">Féminin</h4>
+      <div class="item-number">
+       <?= $stdFemale ?>
+      </div>
+     </div>
+     <div class="student-count pseudo-bg-yellow">
+      <h4 class="item-title">Masculin</h4>
+      <div class="item-number">
+       <?= $stdMale ?>
+      </div>
+     </div>
+    </div>
+   </div>
+  </div>
+ </div>
+ <div class="col-lg-6 col-xl-6">
+  <div class="card dashboard-card-six">
+   <div class="card-body">
+    <div class="heading-layout1 mg-b-17 py-3">
+     <div class="item-title">
+      <h3>Notifications</h3>
+     </div>
+    </div>
+    <div class="notice-board-wrap" style="max-height:370px;">
+     <?php 
+      $to_class = array(
+       'all' => 'bg-primary',
+       'sec' => 'bg-dark-pastel-green',
+       'opt' => 'bg-skyblue',
+       'lev' => 'bg-pink',
+       'cla' => 'bg-yellow',
+       'pmt' => 'bg-orange',
+       'std' => 'bg-secondary',
+       'ens' => 'bg-green',
+       'agn' => 'bg-dark',
+       'adm' => 'bg-blue-dark',
+      );
+      $rqt = mysqli_query($db, "SELECT * FROM notifications WHERE notifications.active = 1 AND notifications.delete = 0"
+               .((isset($_POST['posted_on']) && $_POST['posted_on']) ? " AND posted_on = '$_POST[posted_on]'" : NULL )
+               .((isset($_POST['posted_to']) && $_POST['posted_to']) ? " AND posted_to = $_POST[posted_to]" : NULL )
+               .' ORDER BY posted_date DESC'
+              ) ;
+      while ($row = mysqli_fetch_array($rqt)) { ?>
+     <div class="notice-list">
+      <div class="post-date text-title-specimen <?= $to_class[$row['posted_on']] ?>">
+       <?= $row['title'] ?>
+      </div>
+      <h6 class="notice-title">
+       <a href="#">
+        <?= $row['content'] ?>
+       </a>
+      </h6>
+      <div class="entry-meta">
+       <?= $row['posted_by'] ?> / <span><?= $row['posted_date'] ?></span></div>
+     </div>
+     <?php } ?>
+    </div>
+   </div>
+  </div>
+ </div>
+</div>
+<div class="row">
+ <div class="col-12">
+  <div class="card dashboard-card-eleven">
+   <div class="card-body">
+    <div class="heading-layout1">
+     <div class="item-title">
+      <h3>Nos Cours</h3>
+     </div>
+     <div class="dropdown">
+      <a class="dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-expanded="false">...</a>
+
+      <div class="dropdown-menu dropdown-menu-right">
+       <a class="dropdown-item" href="#" data-action="print"><i class="fas fa-print"></i>print</a>
+       <a class="dropdown-item" href="#" data-action="reload"><i class="fas fa-redo-alt text-orange-peel"></i>Actualiser</a>
+      </div>
+     </div>
+    </div>
+    <div class="table-box-wrap">
+     <div class="table-responsive student-table-box">
+      <table class="table display data-table text-nowrap">
+       <thead>
+        <tr>
+         <th>
+          <div class="form-check">
+           <input type="checkbox" class="form-check-input checkAll" id="assosLabelS1">
+           <label for="assosLabelS1" class="form-check-label">Id</label>
+          </div>
+         </th>
+         <th>Designation</th>
+         <th>titulaire</th>
+         <th>Credit</th>
+         <th>Classe</th>
+         <th>Option</th>
+         <th>Niveau</th>
+         <th>Promotion</th>
+         <th></th>
+        </tr>
+       </thead>
+       <tbody>
+        <?php while ($ROW = $course->fetch_array()){ $row = (object) $ROW; ?>
+        <tr id="Element-<?= $ROW[0] ?>">
+         <td>
+          <div class="form-check">
+           <input type="checkbox" class="form-check-input">
+           <label class="form-check-label">#</label>
+          </div>
+         </td>
+         <td>
+          <?= $row->name ?>
+         </td>
+         <td>
+          <?= $row->titular ?>
+         </td>
+         <td>
+            <?= $row->credit ?>
+        </td>
+        <td>
+            <?= $row->designation ?>
+        </td>
+         <td>
+          <?= $row->option_name ?>
+         </td>
+         <td>
+          <?= $row->level_name ?>
+         </td>
+         <td>
+          <?= $row->promotion.' - '.++$row->promotion ?>
+         </td>
+         <td>
+          <div class="dropdown">
+           <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false" aria-label="Plus d'option">
+            <span class="flaticon-more-button-of-three-dots"></span>
+           </a>
+           <div class="dropdown-menu dropdown-menu-right">
+            <a class="dropdown-item" href="?fa69951bc733eb82713e936be33597e1=DATA_CRYPTING_ON:fa69951bc733eb82713e936be33597e1=WABTECHS_CRYPTING_ON: e91497f38407364c8e86ade9098950d978814190&MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3VIRAZA_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3&MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3&WABTECHS_CRYPTING_ON_LAVINGOL&MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3&b557c222c8ddcdf87e033706aad08e4ef7cf90d3=course--attendence--<?= $ROW[0] ?>"><i class="fas fa-redo-alt text-orange-peel"></i>Explorer</a>
+            <form action="?fa69951bc733eb82713e936be33597e1=DATA_CRYPTING_ON:fa69951bc733eb82713e936be33597e1=WABTECHS_CRYPTING_ON: e91497f38407364c8e86ade9098950d978814190&MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3VIRAZA_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3&MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3&WABTECHS_CRYPTING_ON_LAVINGOL&MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3&b557c222c8ddcdf87e033706aad08e4ef7cf90d3=course--cote--<?= $row->class ?>" method="POST" class="d-none" id="cote_<?= $row->id ?>">
+             <input type="hidden" name="promotion" value="<?= --$row->promotion ?>">
+             <input type="hidden" name="section" value="<?= $row->section ?>">
+             <input type="hidden" name="option" value="<?= $row->option ?>">
+             <input type="hidden" name="level" value="<?= $row->level ?>">
+             <input type="hidden" name="course" value="<?= $row->id ?>">
+            </form>
+            <a class="dropdown-item" href="#" onclick="document.querySelector('#cote_<?= $row->id ?>').submit()"><i class="fas fa-grip-vertical text-blue"></i>Grille</a>
+           </div>
+          </div>
+         </td>
+        </tr>
+        <?php } ?>
+       </tbody>
+      </table>
+     </div>
+    </div>
+   </div>
+  </div>
+ </div>
+ <div class="col-12">
+  <div class="card dashboard-card-eleven">
+   <div class="card-body">
+    <div class="heading-layout1">
+     <div class="item-title">
+      <h3>Nos Classes</h3>
+     </div>
+     <div class="dropdown">
+      <a class="dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-expanded="false">...</a>
+
+      <div class="dropdown-menu dropdown-menu-right">
+       <a class="dropdown-item" href="#" data-action="print"><i class="fas fa-print"></i>print</a>
+       <a class="dropdown-item" href="#" data-action="reload"><i class="fas fa-redo-alt text-orange-peel"></i>Actualiser</a>
+      </div>
+     </div>
+    </div>
+    <div class="table-box-wrap">
+     <div class="table-responsive">
+      <table class="table display data-table text-nowrap">
+       <thead>
+        <tr>
+         <th>
+          <div class="form-check">
+           <input type="checkbox" class="form-check-input checkAll" id="assosLabel">
+           <label for="assosLabel" class="form-check-label">Id</label>
+          </div>
+         </th> 
+         <th>Photo</th>
+         <th>Désignation</th>
+         <th>Niveau</th>
+         <th>Option</th>
+         <th>Promotion</th>
+         <th>Chef Jury</th>
+         <th>Secrétaire Jury</th>
+         <th></th>
+        </tr>
+       </thead>
+       <tbody>
+        <?php while ($ROW = $class->fetch_array()) {$res = (object) $ROW; ?>
+        <tr>
+         <td>
+          <div class="form-check">
+           <input type="checkbox" class="form-check-input">
+           <label class="form-check-label">#</label>
+          </div>
+         </td>
+         <td class="text-center"><img src="/layouts/default/img/figure/student2.webp" alt="student"></td>
+         <td>
+          <?= $res->name ?>
+         </td>
+         <td>
+          <?= $res->level_name ?>
+         </td>
+         <td>
+          <?= $res->option_name ?>
+         </td>
+         <td>
+          <?= "$res->promotion - ".++$res->promotion ?>
+         </td>
+         <td>
+          <?= "$res->titular" ?>
+         </td>
+         <td>
+          <?= $res->titular_2 ?>
+         </td>
+         <td>
+            <div class="dropdown">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown"
+                    aria-expanded="false">
+                    <span class="flaticon-more-button-of-three-dots"></span>
+                </a>
+                <div class="dropdown-menu dropdown-menu-right">
+                    <form action="?fa69951bc733eb82713e936be33597e1=DATA_CRYPTING_ON:fa69951bc733eb82713e936be33597e1=WABTECHS_CRYPTING_ON: e91497f38407364c8e86ade9098950d978814190&MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3VIRAZA_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3&MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3&WABTECHS_CRYPTING_ON_LAVINGOL&MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3&b557c222c8ddcdf87e033706aad08e4ef7cf90d3=class--explore--<?= $res->id ?>" method="POST" class="d-none" id="explore_<?= $res->id ?>">
+                        <input type="hidden" name="promotion" value="<?= --$res->promotion ?>">
+                        <input type="hidden" name="section" value="<?= $res->section ?>">
+                        <input type="hidden" name="option" value="<?= $res->option ?>">
+                        <input type="hidden" name="level" value="<?= $res->level ?>">
+                    </form>
+                    <a class="dropdown-item" href="#" onclick="document.querySelector('#explore_<?= $res->id ?>').submit()"><i class="fas fa-redo-alt text-orange-peel"></i>Explorer</a>
+                    <a class="dropdown-item" href="?fa69951bc733eb82713e936be33597e1=DATA_CRYPTING_ON:fa69951bc733eb82713e936be33597e1=WABTECHS_CRYPTING_ON: e91497f38407364c8e86ade9098950d978814190&MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3VIRAZA_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3&MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3&WABTECHS_CRYPTING_ON_LAVINGOL&MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3&b557c222c8ddcdf87e033706aad08e4ef7cf90d3=class--grille--<?= $res->id ?>"><i class="fas fa-grip-vertical text-blue"></i>Grille</a>
+                </div>
+            </div>
+        </td>
+        </tr>
+        <?php } ?>
+       </tbody>
+      </table>
+     </div>
+    </div>
+   </div>
+  </div>
+ </div>
+ <div class="col-12">
+  <div class="card dashboard-card-eleven">
+   <div class="card-body">
+    <div class="heading-layout1">
+     <div class="item-title">
+      <h3>Nos Enseignants</h3>
+     </div>
+     <div class="dropdown">
+      <a class="dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-expanded="false">...</a>
+
+      <div class="dropdown-menu dropdown-menu-right">
+       <a class="dropdown-item" href="#" data-action="print"><i class="fas fa-print"></i>print</a>
+       <a class="dropdown-item" href="#" data-action="reload"><i class="fas fa-redo-alt text-orange-peel"></i>Actualiser</a>
+      </div>
+     </div>
+    </div>
+    <div class="table-box-wrap">
+     <div class="table-responsive">
+      <table class="table display data-table text-nowrap">
+       <thead>
+        <tr>
+         <th>
+          <div class="form-check">
+           <input type="checkbox" class="form-check-input checkAll" id="assosLabel">
+           <label for="assosLabel" class="form-check-label">Id</label>
+          </div>
+         </th>
+        <th>Photo</th>
+        <th>Nom Complet</th>
+        <th>Genre</th>
+        <th>Spécialité</th>
+        <th>Phone</th>
+        </tr>
+       </thead>
+       <tbody>
+       <?php while ($ROW = $teacher->fetch_array()) {$res = (object) $ROW; ?>
+        <tr>
+            <td <?=( $res->user_id == '0') ? 'class="bg-warning"' : null ?>>
+                <div class="form-check">
+                    <input type="checkbox" class="form-check-input">
+                    <label class="form-check-label">#</label>
+                </div>
+            </td>
+            <td class="text-center"><img src="/layouts/default/img/figure/student2.webp" alt="teacher"></td>
+            <td><?= "$res->firstname $res->lastname" ?></td>
+            <td><?= $res->gender ?></td>
+            <td><?= $res->speciality ?></td>
+            <td><?= $res->phone ?></td>
+        </tr>
+        <?php } ?>
+       </tbody>
+      </table>
+     </div>
+    </div>
+   </div>
+  </div>
+ </div>
+ <div class="col-12">
+  <div class="card dashboard-card-eleven">
+   <div class="card-body">
+    <div class="heading-layout1">
+     <div class="item-title">
+      <h3>Nos Etudiants</h3>
+     </div>
+     <div class="dropdown">
+      <a class="dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-expanded="false">...</a>
+
+      <div class="dropdown-menu dropdown-menu-right">
+       <a class="dropdown-item" href="#" data-action="print"><i class="fas fa-print"></i>print</a>
+       <a class="dropdown-item" href="#" data-action="reload"><i class="fas fa-redo-alt text-orange-peel"></i>Actualiser</a>
+      </div>
+     </div>
+    </div>
+    <div class="table-box-wrap">
+     <div class="table-responsive">
+      <table class="table display data-table text-nowrap">
+       <thead>
+        <tr>
+         <th>
+          <div class="form-check">
+           <input type="checkbox" class="form-check-input checkAll" id="assosLabel">
+           <label for="assosLabel" class="form-check-label">Id</label>
+          </div>
+         </th>
+         <th>Photo</th>
+         <th>Nom Complet</th>
+         <th>Genre</th>
+         <th>Unité</th>
+         <th>Option</th>
+         <th>Niveau</th>
+         <th>Promotion</th>
+         <th>Profile</th>
+        </tr>
+       </thead>
+       <tbody>
+       <?php while ($ROW = $student->fetch_array()) {$res = (object) $ROW; ?>
+        <tr>
+         <td <?=( $res->user_id == '0') ? 'class="bg-warning"' : null ?>>
+          <div class="form-check">
+           <input type="checkbox" class="form-check-input">
+           <label class="form-check-label">#<?= $res->id ?></label>
+          </div>
+         </td>
+         <td class="text-center"><img src="/layouts/default/img/figure/student2.webp" alt="student"></td>
+         <td>
+          <?= "$res->firstname $res->lastname" ?>
+         </td>
+         <td>
+          <?= $res->gender ?>
+         </td>
+         <td>
+          <?= $res->credit ?>
+         </td>
+         <td>
+          <?= $res->option_name ?>
+         </td>
+         <td>
+          <?= $res->level_name ?>
+         </td>
+         <td>
+          <?= "$res->promotion - ".++$res->promotion ?>
+         </td>
+         <td><a class="dropdown-item" href="?fa69951bc733eb82713e936be33597e1=DATA_CRYPTING_ON:fa69951bc733eb82713e936be33597e1=WABTECHS_CRYPTING_ON: e91497f38407364c8e86ade9098950d978814190&MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3VIRAZA_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3&MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3&WABTECHS_CRYPTING_ON_LAVINGOL&MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3&b557c222c8ddcdf87e033706aad08e4ef7cf90d3=student--details--<?= $res->id ?>"><i class="fas fa-redo-alt text-blue"></i></a></td>
+        </tr>
+        <?php } ?>
+       </tbody>
+      </table>
+     </div>
+    </div>
+   </div>
+  </div>
+ </div>
+</div>
+<?php } ?>

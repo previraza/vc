@@ -1,0 +1,7 @@
+<?php class SlipsModel extends PaymentDataBase
+{
+    public static $db;
+    public $table = 'financy_slip';
+    public $name = 'slip';
+
+}

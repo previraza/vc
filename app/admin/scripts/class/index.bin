@@ -1,0 +1,11 @@
+submitAll = (type) => {
+    $('td > div > input[type=checkbox]:checked').parents('tr').each((i,e)=> submitOne(e.dataset.id, type))
+}, submitOne = (id, ty) => {
+    let e = $('#Element-'+id);
+    $.post("", { action: ty, classe: id, sendBy: 'adminer_norefer'}, function(data, textStatus) {
+        if (textStatus == 'success'){
+            if(ty == 'delib') e.toggleClass('bg-warning');
+            if(ty == 'finished') e.toggleClass('bg-dark text-warning');
+        }
+    })
+};

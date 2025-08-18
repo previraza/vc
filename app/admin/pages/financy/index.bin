@@ -1,0 +1,315 @@
+<?php viewOnlyBy('SG', 'DG','SR','AB','SA'); $pageTitle = "Tableau de bord Financière";
+    $frais = mysqli_query($db, "SELECT frais.*, level.name AS level_name FROM frais JOIN level ON level.id = frais.level WHERE frais.delete = 0 AND frais.active = 1 AND level.delete = 0 AND level.active = 1");
+    $payments = mysqli_query($db, "SELECT * FROM payments WHERE `delete` = 0 AND active = 1 AND valide = 1") ;
+    $PAYMENTS = $FRAIS = $TYPE = [] ;
+    while($frai = mysqli_fetch_array($frais)){
+        $FRAIS[] = $frai; 
+        $TYPE[$frai['type']] = $TYPE_COUNT[$frai['type']] = 0;
+    }
+    while($pay = mysqli_fetch_array($payments)){
+        $PAYMENTS[] = $pay;
+        if(isset($TYPE[$pay['type']])){
+            $TYPE[$pay['type']]+= $pay['sum'];
+            $TYPE_COUNT[$pay['type']]++;
+        } else {
+            $TYPE['undefined']=isset($TYPE['undefined'])?$TYPE['undefined']+$pay['sum']:0;
+            $TYPE_COUNT['undefined']=isset($TYPE_COUNT['undefined'])?$TYPE_COUNT['undefined']+1:1;
+        }
+    }
+    $INSCR = isset($TYPE['INSCR']) ? $TYPE['INSCR'] : 0;
+    $REINS = isset($TYPE['REINS']) ? $TYPE['REINS'] : 0;
+    $FRST1 = isset($TYPE['FRST1']) ? $TYPE['FRST1'] : 0;
+    $FRST2 = isset($TYPE['FRST2']) ? $TYPE['FRST2'] : 0;
+    $FRST3 = isset($TYPE['FRST3']) ? $TYPE['FRST3'] : 0;
+    $ENRO1 = isset($TYPE['ENRO1']) ? $TYPE['ENRO1'] : 0;
+    $ENRO2 = isset($TYPE['ENRO2']) ? $TYPE['ENRO2'] : 0;
+    $ENRO3 = isset($TYPE['ENRO3']) ? $TYPE['ENRO3'] : 0;
+    $TOTAL_FR = $FRST1+$FRST2+$FRST3;
+    $TOTAL_EN = $ENRO1+$ENRO2+$ENRO3;
+    $TOTAL_FC = $TOTAL_FR +$TOTAL_EN;
+    $TOTAL_DO = $INSCR+$REINS;
+?>
+
+<div class="row">
+    <div class="col-sm-6 col-12">
+        <div class="dashboard-summery-one">
+            <div class="row">
+                <div class="col-6">
+                    <div class="item-icon bg-light-green3">
+                        <i class="flaticon-money text-light"></i>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="item-content">
+                        <div class="item-title">Totale Generale</div>
+                        <div class="item-number">
+                            <span class="counter" data-num="<?= $TOTAL_FC ?>"><?= $TOTAL_FC ?></span><span> Fc</span>
+                            | <span class="counter" data-num="<?= $TOTAL_DO ?>"><?= $TOTAL_DO ?></span><span> $</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-3 col-sm-6 col-12">
+        <div class="dashboard-summery-one">
+            <div class="row">
+                <div class="col-6">
+                    <div class="item-icon bg-light-magenta">
+                        <i class="flaticon-money text-magenta"></i>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="item-content">
+                        <div class="item-title">Inscription</div>
+                        <span class="counter" data-num="<?= $INSCR ?>"><?= $INSCR ?></span><span> $</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-3 col-sm-6 col-12">
+        <div class="dashboard-summery-one">
+            <div class="row">
+                <div class="col-6">
+                    <div class="item-icon bg-light-magenta">
+                        <i class="flaticon-money text-magenta"></i>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="item-content">
+                        <div class="item-title">Réinscription</div>
+                        <span class="counter" data-num="<?= $REINS ?>"><?= $REINS ?></span><span> $</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-3 col-sm-6 col-12">
+        <div class="dashboard-summery-one">
+            <div class="row">
+                <div class="col-6">
+                    <div class="item-icon bg-light-blue">
+                        <i class="flaticon-money text-blue"></i>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="item-content">
+                        <div class="item-title">Première Tranche</div>
+                            <span class="counter" data-num="<?= $FRST1  ?>"><?= $FRST1 ?></span><span> Fc</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-3 col-sm-6 col-12">
+        <div class="dashboard-summery-one">
+            <div class="row">
+                <div class="col-6">
+                    <div class="item-icon bg-light-blue">
+                        <i class="flaticon-money text-blue"></i>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="item-content">
+                        <div class="item-title">Deuxième Tranche</div>
+                            <span class="counter" data-num="<?= $FRST2 ?>"><?= $FRST2 ?></span><span> Fc</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-3 col-sm-6 col-12">
+        <div class="dashboard-summery-one">
+            <div class="row">
+                <div class="col-6">
+                    <div class="item-icon bg-light-blue">
+                        <i class="flaticon-money text-blue"></i>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="item-content">
+                        <div class="item-title">Troisième Tranche</div>
+                        <span class="counter" data-num="<?= $FRST3 ?>"><?= $FRST3 ?></span><span> Fc</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-3 col-sm-6 col-12">
+        <div class="dashboard-summery-one">
+            <div class="row">
+                <div class="col-6">
+                    <div class="item-icon bg-light-green">
+                        <i class="flaticon-money text-green"></i>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="item-content">
+                        <div class="item-title">Total Frais d'Etude</div>
+                        <div class="item-number">
+                            <span class="counter" data-num="<?= $TOTAL_FR ?>"><?= $TOTAL_FR ?></span> <span>Fc</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-3 col-sm-6 col-12">
+        <div class="dashboard-summery-one">
+            <div class="row">
+                <div class="col-6">
+                    <div class="item-icon bg-light-yellow">
+                        <i class="flaticon-money text-yellow"></i>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="item-content">
+                        <div class="item-title">Premier Enrolement</div>
+                        <span class="counter" data-num="<?= $ENRO1 ?>"><?= $ENRO1 ?></span><span> $</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-3 col-sm-6 col-12">
+        <div class="dashboard-summery-one">
+            <div class="row">
+                <div class="col-6">
+                    <div class="item-icon bg-light-yellow">
+                        <i class="flaticon-money text-yellow"></i>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="item-content">
+                        <div class="item-title">Deuxime Enrolement</div>
+                        <span class="counter" data-num="<?= $ENRO2 ?>"><?= $ENRO2 ?></span><span> $</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-3 col-sm-6 col-12">
+        <div class="dashboard-summery-one">
+            <div class="row">
+                <div class="col-6">
+                    <div class="item-icon bg-light-yellow">
+                        <i class="flaticon-money text-yellow"></i>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="item-content">
+                        <div class="item-title">Enrolement Rattrapages</div>
+                        <span class="counter" data-num="<?= $ENRO3 ?>"><?= $ENRO3 ?></span><span> $</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-3 col-sm-6 col-12">
+        <div class="dashboard-summery-one">
+            <div class="row">
+                <div class="col-6">
+                    <div class="item-icon bg-light-green">
+                        <i class="flaticon-money text-green"></i>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="item-content">
+                        <div class="item-title">Total Enrolements</div>
+                        <div class="item-number"><span class="counter" data-num="<?= $TOTAL_EN ?>"><?= $TOTAL_EN ?></span> <span>Fc</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card height-auto">
+    <div class="card-body">
+        <div class="heading-layout1">
+            <div class="item-title">
+                <h3>Statistique de transactions</h3>
+            </div>
+            <div class="dropdown">
+                <a class="dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-expanded="false">...</a>
+
+                <div class="dropdown-menu dropdown-menu-right">
+                    
+                    <a class="dropdown-item" href="#" data-action="print"><i class="fas fa-print"></i>print</a>
+                    
+                    <a class="dropdown-item" href="#" data-action="reload"><i class="fas fa-redo-alt text-orange-peel"></i>Actualiser</a>
+                </div>
+            </div>
+        </div>
+        <form class="mg-b-20" method="POST" id="formSearchClassOfSection">
+            <div class="row gutters-8">
+                <div class="col-lg-6 col-12 form-group">
+                    <label>Niveau</label>
+                    <select class="select2" name="level">
+                        <option selected value="*">Tous les niveaux</option>
+                        <?php $rqt = mysqli_query($db, "SELECT * FROM level WHERE active = 1") or die(debug(mysqli_error($db)));
+                            while ($ROW = mysqli_fetch_array($rqt)){ $row = (object) $ROW; ?>
+                                <option value="<?= $row->id ?>"><?= $row->name ?></option>
+                        <?php } ?>
+                    </select>
+                </div>
+                <div class="col-lg-6 col-12 form-group">
+                    <label>Promotion *</label>
+                    <select class="select2" name="promotion">
+                        <option selected value="*">Année Académique </option>
+                        <?php $year = 2023;
+                            while ($year > 2021){ ?>
+                                <option value="<?= --$year ?>"><?= $year." - ".($year+1); ?></option>
+                        <?php } ?>
+                    </select>
+                </div>
+            </div>
+        </form>
+        <button type="submit" form="formSearchClassOfSection" class="fw-btn-fill btn-gradient-yellow">RECHERCHE</button>
+        <div class="table-responsive">
+            <table class="table data-table text-nowrap">
+                <thead>
+                    <tr>
+                        <th>
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input checkAll" id="assosLabel">
+                                <label for="assosLabel" class="form-check-label">Id</label>
+                            </div>
+                        </th>
+                        <th>Type de frais</th>
+                        <th>Niveau</th>
+                        <th>Promotion</th>
+                        <td>Montant Unitaire</td>
+                        <td>Devise</td>
+                        <td>Payements</td>
+                        <td>Solde Totale</td>
+                        <td>Devise</td>
+                        <td></td>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($FRAIS as $key => $row) {$frai_ = (object) $row ; ?>
+                    <tr id="Element-<?= $frai_->id ?>">
+                        <td>
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input">
+                                <label class="form-check-label">#<?=$frai_->id?></label>
+                            </div>
+                        </td>
+                        <td><?=$frai_->name?></td>
+                        <td><?=$frai_->level_name?></td>
+                        <td><?=($frai_->year++)." - $frai_->year"?></td>
+                        <td><?=$frai_->solde?></td>
+                        <td><?=$frai_->devise?></td>
+                        <td><?=$count = $TYPE_COUNT[$frai_->type]?></td>
+                        <td><?=$frai_->solde * $count?></td>
+                        <td><?=$frai_->devise?></td>
+                        <td></td>
+                    </tr>
+                    <?php } ?>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

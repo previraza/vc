@@ -1,0 +1,62 @@
+let $count = 0, 
+gv = (v) => (isNaN(v) || v <= 0? false : v),
+updateCote = (e, nc = true) => {
+    let tr = $(nc?e.currentTarget:e).parents('tr.editable')[0],
+        ipts = tr.querySelectorAll('input[pattern]'),
+        tds = tr.querySelectorAll('td');
+        tds[7].innerText = parseFloat(gv(tds[6].innerText)||gv(tds[5].innerText)||gv(ipts[0].value)||gv(tds[3].innerText)||0);
+}, editAll = () => {
+    $('input[pattern], input[type="submit"]', $('tr.editable td.text-center.writable.activity-oin.wrt-op').addClass('active')).removeAttr('disabled');
+    $('input[pattern]').on('change keyup click', e => updateCote(e));
+}, saveAll = () => document.querySelectorAll('input[type=submit]').forEach((e) => e.click());
+
+class TrLine {
+    constructor(d) {
+            $count++;
+            let $RRC = d.RRC||0, $RMC = d.RMC||0, $RATR = d.RATR||0, $TOT = d.TOT||0, $tr = document.createElement('tr'), $RES=gv($RRC)||gv($RATR)||gv($RMC)||gv($TOT)||0,
+                $tds = `<td>
+                <form class="Former_edit_cote" method="post" id="Form_x_cote_${$count}" name="Form_x_cote_${$count}" data-id="${$count}">
+                    <label class="form-check-label">${$count}</label>
+                    <input type="hidden" name="cote" value="${(d.cote_id)?d.cote_id:0}">
+                    <input type="hidden" name="current_element" value="${$count}">
+                    <input type="hidden" name="student" value="${d.id}">
+                    <input type="hidden" name="course" value="${d.course_id}">
+                    <input type="hidden" name="CON_47">
+                </form>
+            </td>
+            <td class="text-center"><img src="/layouts/default/img/figure/student2.webp" alt="student"></td>
+            <td>${d.firstname+' '+d.lastname}</td>
+            <td class="text-center static account-stable activity-oin wrt-op">${$TOT}</td>
+            <td class="text-center static account-stable activity-oin wrt-op">${$RMC}</td>
+            <td class="text-center static account-stable activity-oin wrt-op">${$RATR}</td>
+            <td class="text-center static account-stable activity-oin wrt-op">${$RRC}</td> 
+            <td class="text-center static account-stable activity-oin wrt-op">${$RES}</td>
+            `;
+        $tr.innerHTML = $tds;
+        $tr.id = 'editing_'+$count;
+        $tr.dataset.coteOf = $.trim(d.firstname+' '+d.lastname).replace(/[\s]{2,}/g,' ')
+        if (d.finished==0&&d.delib==1) $tr.className = 'editable';
+        return <?= !isset($rcc)||($rcc!='se'&&$rcc!='ae')?"\$tr":($rcc == 'se'?"\$RES >= 10 ? '' : \$tr":"\$RES <= 10 ? '' : \$tr") ?>;
+    }
+}; $('tbody.dataTable-dyn-body').append(<?= json_encode($db_pdo->query("SELECT DISTINCT students.*, classes.delib, classes.finished, cotes.recours AS recours, cotes.id AS cote_id, courses.id AS course_id, courses.name AS course_name, ROUND((cotes.`TP1`+cotes.`TP2`+cotes.`TP3`)/12+(cotes.`INT1`+cotes.`INT2`)/8+cotes.`EXAM`/2,2) AS TOT, cotes.RATR , cotes.RMC, cotes.RRC FROM students JOIN classes ON classes.id = students.class JOIN courses ON courses.class = students.class JOIN teachers ON teachers.id = courses.titular LEFT JOIN cotes ON (cotes.student = students.id AND cotes.course = courses.id) WHERE students.active = 1 AND courses.delete = 0 AND courses.active = 1 AND teachers.user_id = $user->id AND courses.id = ".(isset($_POST['course']) ? $_POST['course'] : (isset($links[2]) ? $links[2] : 0))." ORDER BY firstname")->fetchAll(PDO::FETCH_OBJ));?>.map(i=>new TrLine(i)));
+$('table.dataTable-dyn-table').DataTable({
+    paging: false,
+    retrieve: true,
+    stateSave: true,
+    info: false,
+    lengthChange: false,
+    lengthMenu: [20, 50, 75, 100, 250, 500, 1000],
+    columnDefs: [{
+        targets: [0, -1],
+        orderable: false 
+    }], dom: 'Bfrtip',
+    buttons: [{
+        text: 'Actualiser',
+        action: ()=>location.reload(),
+    },{
+        extend: 'collection',
+        text: 'Exporter',
+        buttons: ['copy', 'csv', 'excel', 'pdf', 'print']
+    }]
+});
+    

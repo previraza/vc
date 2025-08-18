@@ -1,0 +1,158 @@
+<?php 
+    $allTable = [
+        ['accounts', 'copy'],
+        ['agents', 'copy'],
+        ['classes', 'copy'],
+        ['config', 'move'],
+        ['cotes', 'move'],
+        ['courses', 'copy'],
+        ['deliberation', 'move'],
+        ['frais', 'move'],
+        ['level', 'copy'],
+        ['libraries', 'copy'],
+        ['notifications', 'move'],
+        ['options', 'copy'],
+        ['palmares', 'move'],
+        ['parents', 'move'],
+        ['payments', 'move'],
+        ['publications', 'move'],
+        ['register', 'move'],
+        ['register_log', 'move'],
+        ['sections', 'copy'],
+        ['settings', 'move'],
+        ['students', 'move'],
+        ['students_', 'move'],
+        ['teachers', 'copy'],
+        ['ue', 'copy'],
+        ['users_financy', 'copy'],
+        ['financy_fee', 'copy'],
+        ['financy_expenses', 'move'],
+        ['financy_payment', 'move'],
+        ['financy_slip', 'move'],
+    ]; $countTr = 1;
+    $app_year = $db_poo->query('SELECT * FROM config')->fetch_object()->app_year??date('Y');
+?>
+<style>
+    table * {white-space: pre-wrap;}
+    #DataTables_Table_0 > tbody > tr.error {
+        background: ##dc3545!important;
+        color: aliceblue;
+    }
+
+    #DataTables_Table_0 > tbody > tr.success {
+        background: #28a745!important;
+        color: aliceblue;
+    }
+</style>
+<div class="card height-auto">
+    <div class="card-body">
+        <div class="heading-layout1">
+            <div class="item-title">
+                <h3>Configuration de la transition</h3>
+            </div>
+            <div class="dropdown">
+                <a class="dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-expanded="false">...</a>
+                <div class="dropdown-menu dropdown-menu-right">
+                    <a class="dropdown-item" href="#" data-action="print"><i class="fas fa-print"></i>print</a>
+                    <a class="dropdown-item" href="#" data-action="reload"><i class="fas fa-redo-alt text-orange-peel"></i>Actualiser</a>
+                </div>
+            </div>
+        </div>
+        <form class="mg-b-20" method="POST" id="formTransitionConfig">
+            <div class="row gutters-8">
+                <div class="col-xl-3 col-lg-6 col-12 form-group">
+                    <?= HTML::formSelect([
+                        'name'=> 'from',
+                        'props' => [
+                            'id' => 'transi_academy_year'
+                        ], 'data' => [
+                            ['id'=>$app_year-1, 'name'=>($app_year-1)."-".$app_year]
+                        ]
+                    ]) ?>
+                </div>
+                <div class="col-xl-3 col-lg-6 col-12 form-group"> 
+                    <?= HTML::formSelect([
+                        'name'=> 'to',
+                        'data'=> [
+                            ['id'=>$app_year, 'name'=>($app_year)."-".($app_year+1)]
+                        ]
+                    ]) ?>
+                </div>
+                <div class="col-xl-3 col-lg-6 col-12 form-group"> 
+                    <?= HTML::formSelect([
+                        'name'=> 'mode',
+                        'data'=> [
+                            ['id'=>'json', 'name'=>"SERVER JSON"],
+                            ['id'=>'local', 'name'=>"SERVER LOCAL"],
+                            ['id'=>'less', 'name'=>"SERVER LESS"],
+                            ['id'=>'cluster', 'name'=>"SERVER CLUSTER"],
+                        ]
+                    ]) ?>
+                </div>
+                <div class="col-xl-3 col-lg-6 col-12 form-group"> 
+                    <label>Admin Key *</label> 
+                    <input type="text" class=form-control name="key" id="admin_key" placeholder="ADM-BMB-3939-3939">
+                </div>
+                <div class="col-12 form-group"> <label></label> 
+                <button type="submit" class="fw-btn-fill btn-gradient-yellow">Config</button> </div>
+            </div>
+        </form>
+        <div class="table-responsive" id=transitionConfig style="display: none;">
+            <table class="table display data-table-x text-nowrap">
+                <thead>
+                    <tr>
+                        <th>N*</th>
+                        <th>Mode</th>
+                        <th>Type</th>
+                        <th>Description</th>
+                        <th>Action</th>
+                        <th>State</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <th><?=$countTr++?></th>
+                        <th>Creation</th>
+                        <th>Indexation</th>
+                        <th>
+                            Generation d'un index pour l'archive de l'annee <?=$app_year-1?>-<?=$app_year?>, sur le lien <a href="/app/archive/<?=$app_year?>">/app/archive/<?=$app_year?></a> 
+                            et telechargement de la base de donnee correspondant sur le lien <a download href="/app/archive/<?=$app_year?>/database.sql">/app/archive/<?=$app_year?>/database.sql</a> 
+                        </th>
+                        <th><?= HTML::formSelect(['name'=>'config_indexation', 'label'=>false, 'data'=>[['name'=>'create']]]) ?></th>
+                        <th>wait</th>
+                    </tr>
+                    <tr>
+                        <th><?=$countTr++?></th>
+                        <th>Migration</th>
+                        <th>Database</th>
+                        <th>Creation de la base de donnees de l'archive suffixee _<?=$app_year-1?></th>
+                        <th><?= HTML::formSelect(['name'=>'config_migration_database', 'label'=>false, 'data'=>[['name'=>'create']]]) ?></th>
+                        <th>wait</th>
+                    </tr>
+                    <?php foreach($allTable AS $table) echo TrsConfigTable(['table'=>$table[0], 'action'=>$table[1], 'year'=>$app_year-1, 'count'=>$countTr++]); ?>
+                    <tr>
+                        <th><?=$countTr++?></th>
+                        <th>Update</th>
+                        <th>Students</th>
+                        <th>Passation des classes des etudiants dans les classes montantes.</th>
+                        <th><?= HTML::formSelect(['name'=>'config_update_students', 'label'=>false, 'data'=>[['name'=>'update']]]) ?></th>
+                        <th>wait</th>
+                    </tr>
+                    <tr>
+                        <th><?=$countTr++?></th>
+                        <th>Update</th>
+                        <th>Config</th>
+                        <th>Mise a jour de la configuration vers la nouvelle anneee de transition</th>
+                        <th><?= HTML::formSelect(['name'=>'config_update_config', 'label'=>false, 'data'=>[['name'=>'update']]]) ?></th>
+                        <th>wait</th>
+                    </tr>
+                </tbody>
+            </table>
+            <br />
+            <div class="col-12 form-group">
+                <label></label> 
+                <a href=#transitionConfig data-action=null class="fw-btn-fill btn-gradient-yellow text-capitalize text-center" id=startTransitionConfig>Commencer</a>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,65 @@
+<?php class ClassroomModel extends database {
+    public static $db;
+    public $base = 'snem';
+    public $table = 'classes';
+    
+    public function all() {
+        return $this->get_result(
+            "SELECT 
+                c.id, s.name AS `section`, o.name AS `option`, l.name AS `level`, c.name AS `class`, COUNT(std.id) AS students, 11 AS fs, 26 AS fe, 37 AS ft, '21.3 %' AS ratio
+            FROM $this->base.$this->table   AS c
+                JOIN $this->base.sections   AS s 
+                    ON c.section = s.id 
+                JOIN $this->base.options    AS o 
+                    ON c.option = o.id
+                JOIN $this->base.level      AS l 
+                    ON c.level = l.id
+                JOIN students               AS std
+                    ON c.id = std.class
+            WHERE c.delete = 0 AND c.active = 1
+            GROUP BY c.id ORDER BY c.id"
+        );
+    }
+
+    public function detail(int $id) {
+        return $this->get_result(
+            "SELECT 
+                c.id, s.name AS `section`, o.name AS `option`, l.name AS `level`, c.name AS `class`, 
+                ff.id AS fee_id, ff.name AS fee_name, ff.value AS fee_value, ff.devise AS fee_devise, ff.transh AS fee_transh
+            FROM $this->base.$this->table   AS c
+                JOIN $this->base.sections   AS s 
+                    ON c.section = s.id 
+                JOIN $this->base.options    AS o 
+                    ON c.option = o.id
+                JOIN $this->base.level      AS l 
+                    ON c.level = l.id
+                LEFT JOIN financy_fee AS ff
+                    ON (l.id = ff.level OR ff.level IS NULL)
+            WHERE c.delete = 0 AND c.active = 1 AND c.id = $id ORDER BY ff.id"
+        );
+    }
+
+    public function payment($class, $fee, $pye_id, $transh = null)
+    {
+        if($transh && $transh != 'full'){
+            $fp_transis = $fs_transis = " AND fp.transhis = '$transh'";
+            $fs_transis = $fs_transis = " AND fs.transhis = '$transh'";
+        } else {
+            $fp_transis = $fs_transis = " AND (fp.transhis IS NULL OR fp.transhis = 'full')";
+            $fs_transis = $fs_transis = " AND (fs.transhis IS NULL OR fs.transhis = 'full')";
+        } 
+        return $this->get_result(
+            "SELECT 
+                s.id, CONCAT(s.firstname, ' ', s.lastname) AS student,
+                CASE WHEN (fp.id > 0 OR fs.id > 0) THEN 'OK' ELSE '-' END AS '$pye_id'
+            FROM $this->base.students AS s
+                LEFT JOIN financy_fee AS ff
+                    ON ff.id = $fee
+                LEFT JOIN financy_payment AS fp
+                    ON (s.id = fp.student AND fp.fee = ff.id$fp_transis)
+                LEFT JOIN financy_slip           AS fs
+                    ON (s.id = fs.student AND fs.fee = ff.id$fs_transis)
+            WHERE s.delete = 0 AND s.active = 1 AND s.class = $class ORDER BY student"
+        );
+    }
+}

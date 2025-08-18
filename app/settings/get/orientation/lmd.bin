@@ -1,0 +1,49 @@
+<?php
+   $sems = [];
+   $COURSES = $_db->query(
+      "SELECT 
+         courses.name AS ec_name, courses.credit AS ec_credit, courses.id, courses.part,
+         ue.ue AS ue_credit, ue.code AS ue_code, ue.name AS ue_name,
+         ROUND(CASE WHEN `cotes`.`RMC` != 0 THEN `cotes`.`RMC` ELSE ((`cotes`.`TP1`+`cotes`.`TP2`+`cotes`.`TP3`)/12+(`cotes`.`INT1`+`cotes`.`INT2`)/8+`cotes`.`EXAM`/2) END,2) AS cote_total, 
+         CASE WHEN `cotes`.`RRC` != 0 THEN `cotes`.`RRC` ELSE `cotes`.`RATR` END AS `cote_ratr`,
+         cotes.JURY AS cote_jury
+      FROM courses
+         LEFT JOIN ue
+            ON ue.id = courses.ue
+         LEFT JOIN cotes
+            ON (cotes.course = courses.id AND cotes.student = $std->id)
+      WHERE 
+         courses.class = $std->class  
+         AND courses.active = 1 AND courses.delete = 0
+      ORDER BY courses.part, courses.id
+      "
+   ); while ($course = $COURSES->fetch_object()) {
+      if(!isset($sems[$course->part]))$sems[$course->part]=['order'=>[],'ue'=>[], 'ec' => []];
+      if(!isset($sems[$course->part]['ue'][$course->ue_code]))$sems[$course->part]['ue'][$course->ue_code]=[];
+      if(!in_array($course->ue_code, $sems[$course->part]['order'])){
+         $sems[$course->part]['order'][] = $course->ue_code;
+      } $sems[$course->part]['ue'][$course->ue_code][] = $course;
+   } $_SERVER['SCRIPT_URI'] = isset($_SERVER['SCRIPT_URI'])?$_SERVER['SCRIPT_URI']:'http://'.$_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
+$all_res_mults = $final_res= $final_credit= $final_credit_valide=0; foreach ($sems as $part => $sem) {
+   $sem['credit'] = $sem['credit_valide'] = $res_mults = 0;
+      foreach ($sem['order'] as $ue) {
+      $ue_writed = false; 
+      foreach ($sem['ue'][$ue] as $ec) {
+         $cote_final = $ec->cote_ratr>$ec->cote_total?$ec->cote_ratr:$ec->cote_total;
+         $res = (isset($ec->cote_jury)&&($ec->cote_jury>$cote_final||$ec->cote_jury>10)?$ec->cote_jury:$cote_final);
+         $final_res += $res*$ec->ec_credit;
+         $sem['credit'] += $ec->ec_credit;
+         $sem['credit_valide'] += $res>=10?$ec->ec_credit:0;
+         $ue_writed = true;$res_mults+=($res*$ec->ec_credit);
+      } 
+   } $final_credit+=$sem['credit']; $final_credit_valide+=$sem['credit_valide']; $all_res_mults += $res_mults; } 
+   $final_res_=number_format($final_res/60,2);
+   json([
+      'status'=>'success',
+      'system'=>'LMD',
+      'student'=>$std,
+      'success'=> ($final_res_>=10 && $final_credit_valide >= 45),
+      'cote' => $final_res_,
+      'credit' => $final_credit_valide
+   ])
+?>

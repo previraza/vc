@@ -1,0 +1,118 @@
+<?php $pageTitle = "Tableau de Bord Agent";
+    $std = $db_poo->query("SELECT * FROM students WHERE active AND !students.delete AND valide")->num_rows;
+    $sign = $db_poo->query("SELECT * FROM register")->num_rows;
+    $frais_USD = $db_poo->query("SELECT SUM(payments.sum) AS sum FROM payments WHERE user_id = $user->id AND devise = 'USD' AND valide = 1 AND valide = 1 AND `delete` = 0")->fetch_object()->sum;
+    $frais_CFD = $db_poo->query("SELECT SUM(payments.sum) AS sum FROM payments WHERE user_id = $user->id AND devise = 'FC' AND valide = 1 AND valide = 1 AND `delete` = 0")->fetch_object()->sum;
+    $frais_USD_ = $db_poo->query("SELECT SUM(payments.sum) AS sum FROM payments WHERE user_id = $user->id AND devise = 'USD' AND valide = 1 AND valide = 1 AND `delete` = 0 AND DATE(date) = CURRENT_DATE")->fetch_object()->sum;
+    $frais_CFD_ = $db_poo->query("SELECT SUM(payments.sum) AS sum FROM payments WHERE user_id = $user->id AND devise = 'FC' AND valide = 1 AND valide = 1 AND `delete` = 0 AND DATE(date) = CURRENT_DATE")->fetch_object()->sum;
+?>
+<div class="row">
+    <!-- Dashboard summery Start Here -->
+    <div class="col-12 col-4-xxxl">
+        <div class="row">
+            <div class="col-6-xxxl col-lg-3 col-sm-6 col-12">
+                <div class="dashboard-summery-two">
+                    <div class="item-icon bg-light-magenta">
+                        <i class="flaticon-money text-magenta"></i>
+                    </div>
+                    <div class="item-content">
+                        <div class="item-number"><span class="counter" data-num="<?=$frais_CFD_?>"><?=$frais_CFD_?></span> Fc</div>
+                        <div class="item-title">Somme Journaliere (FC)</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6-xxxl col-lg-3 col-sm-6 col-12">
+                <div class="dashboard-summery-two">
+                    <div class="item-icon bg-light-blue">
+                        <i class="flaticon-money text-blue"></i>
+                    </div>
+                    <div class="item-content">
+                        <div class="item-number"><span>$</span><span class="counter" data-num="<?=$frais_USD_?>"><?=$frais_USD_?></span></div>
+                        <div class="item-title">Somme Journalière (USD)</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6-xxxl col-lg-3 col-sm-6 col-12">
+                <div class="dashboard-summery-two">
+                    <div class="item-icon bg-light-yellow">
+                        <i class="flaticon-money text-orange"></i>
+                    </div>
+                    <div class="item-content">
+                        <div class="item-number"><span class="counter" data-num="<?=$frais_CFD?>"><?=$frais_CFD?></span> Fc</div>
+                        <div class="item-title">Somme Mensuelle (FC)</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6-xxxl col-lg-3 col-sm-6 col-12">
+                <div class="dashboard-summery-two">
+                    <div class="item-icon bg-light-red">
+                        <i class="flaticon-money text-red"></i>
+                    </div>
+                    <div class="item-content">
+                        <div class="item-number"><span>$</span><span class="counter" data-num="<?=$frais_USD?>"><?=$frais_USD?></span></div>
+                        <div class="item-title">Somme Mensuelle (USD)</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Dashboard summery End Here -->
+    <!-- Students Chart End Here -->
+    <div class="col-lg-6 col-4-xxxl col-xl-6">
+        <div class="card dashboard-card-three">
+            <div class="card-body">
+                <div class="heading-layout1">
+                    <div class="item-title">
+                        <h3>Students</h3>
+                    </div>
+                    <div class="dropdown">
+                        <a class="dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-expanded="false">...</a>
+
+                        <div class="dropdown-menu dropdown-menu-right">
+                            <a class="dropdown-item" href="#" data-action="print"><i class="fas fa-print"></i>print</a>
+
+                            <a class="dropdown-item" href="#" data-action="reload"><i class="fas fa-redo-alt text-orange-peel"></i>Actualiser</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="doughnut-chart-wrap">
+                    <canvas id="student-doughnut-chart" width="100" height="270"></canvas>
+                </div>
+                <div class="student-report">
+                    <div class="student-count pseudo-bg-blue">
+                        <h4 class="item-title">Féminin Students</h4>
+                        <div class="item-number">0</div>
+                    </div>
+                    <div class="student-count pseudo-bg-yellow">
+                        <h4 class="item-title">Masculin</h4>
+                        <div class="item-number">0</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Students Chart End Here -->
+    <!-- Notice Board Start Here -->
+    <div class="col-lg-6 col-4-xxxl col-xl-6">
+        <div class="card dashboard-card-six">
+            <div class="card-body">
+                <div class="heading-layout1 mg-b-17 py-3">
+                    <div class="item-title">
+                        <h3>Notifications</h3>
+                    </div>
+                </div>
+                <div class="notice-board-wrap" style="max-height:370px;">
+                    <?php $to_class = array( 'all' => 'bg-primary', 'sec' => 'bg-dark-pastel-green', 'opt' => 'bg-skyblue', 'lev' => 'bg-pink', 'cla' => 'bg-yellow', 'pmt' => 'bg-orange', 'std' => 'bg-secondary', 'ens' => 'bg-green', 'agn' => 'bg-dark', 'adm' => 'bg-blue-dark', ); $rqt = mysqli_query($db, "SELECT * FROM notifications WHERE notifications.active = 1 AND notifications.delete = 0" .((isset($_POST['posted_on']) && $_POST['posted_on']) ? " AND posted_on = '$_POST[posted_on]'" : NULL ) .((isset($_POST['posted_to']) && $_POST['posted_to']) ? " AND posted_to = $_POST[posted_to]" : NULL ) .' ORDER BY posted_date DESC' ) ; while ($row = mysqli_fetch_array($rqt)) { ?>
+                    <div class="notice-list">
+                        <div class="post-date text-title-specimen <?= $to_class[$row['posted_on']] ?>">
+                            <?= $row['title'] ?> </div>
+                        <h6 class="notice-title"> <a href="#"> <?= $row['content'] ?> </a> </h6>
+                        <div class="entry-meta"> <?= $row['posted_by'] ?> / <span><?= $row['posted_date'] ?></span>
+                        </div>
+                    </div> <?php } ?> 
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Notice Board End Here -->
+</div>

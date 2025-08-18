@@ -1,0 +1,49 @@
+<?php session_start();
+class Session {
+    public static $instance;
+    public $me;
+
+    public function __construct() {
+        $this->connectMe();
+    }
+
+    public function __get($name) {
+        return $this->get($name);
+    }
+
+    public function __set($name, $value) {
+        $this->set($name, $value);
+    }
+
+    public static function init() {
+        if (is_null(self::$instance)) self::$instance = new SELF();
+        return self::$instance;
+    }
+
+    public function set($key, $value) {
+        return ($_SESSION[$key] = $value)?true:false;
+    }
+
+    public function get($key) {
+        return $_SESSION[$key]??null;
+    }
+
+    public function destroy($key){
+        unset($_SESSION[$key]);
+    }
+
+    public function getAndDestroy($key) {
+        $r = $this->get($key);
+             $this->destroy($key);
+        return $r;
+    }
+
+    public function connectMe(){
+        return isset($_SESSION['FINANCY::ME']) && !empty(($_SESSION['FINANCY::ME']??[]))?true:false;
+    }
+
+    public function refreshAuth(Controller $ctrl) : bool {
+        $User = $ctrl->loadModel('users');
+        return $this->set('FINANCY::ME', $User->parseAuth($User->find(Auth()->id)));
+    }
+}

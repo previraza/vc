@@ -1,0 +1,34 @@
+$(function() {
+    function initDynamicLink(contenair) {
+        $(document).dynamicLink({
+            contenair: contenair || "#content",
+            before: (element) => {
+                $("#contain > div.dashboard-content-one.position-relative").addClass('showLoader');
+            },
+            after: (element, response) => {
+                $("#contain > div.dashboard-content-one.position-relative").removeClass('showLoader');
+                $.getScript("/layouts/default/js/mainDynamic.js");
+                var r = JSON.parse(response),
+                    breadcrumbs = $('#breadcrumbs'),
+                    href = "?b557c222c8ddcdf87e033706aad08e4ef7cf90d3=";
+                $('#breadcrumbs').html('<li><a href="/app/?">Home</a></li>');
+                for (let i = 0; i < r.links.length; i++) {
+                    var li = document.createElement('li'),
+                        a = document.createElement('a');
+                    if (i + 1 !== r.links.length) a.href = href += r.links[i];
+                    a.innerText = r.links[i];
+                    li.appendChild(a);
+                    breadcrumbs.append(li)
+                    href += "--"
+                }
+                $("#breadcrumbs-h").text(r.title);
+            }
+        });
+    }
+    initDynamicLink('#content');
+
+    $('div#content .card.height-auto .heading-layout1 .dropdown .dropdown-menu.dropdown-menu-right a:nth-child(3)').click((e) => {
+        console.log(e.target.innerText);
+        if (e.target.innerText = 'Refresh') location.reload();
+    })
+})

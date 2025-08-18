@@ -1,0 +1,162 @@
+<!doctype html>
+<html class="no-js" lang="fr-Fr">
+<head>
+    <title>Institut Supérieur de Techniques Appliquées | <?=$content->title?> | ISTA-Kinshasa</title>
+    <meta name=description content="L'Institut supérieur de techniques appliquées (ou ISTA) est une institution publique de la République démocratique du Congo située à Kinshasa dans la commune de Barumbu et née de la fusion en 1971 de trois instituts : le centre de formation Météorologique (C.F.M.) l'Institut d’Aviation Civile (I.A.C.) et l'École Nationale des Postes et Télécommunications (E.N.P.T.). Initialement appelé Institut de Météorologie, d’Aviation Civile et de Télécommunication, l'institut prendra le nom actuel en 19731.">
+    
+    <meta name="theme-color" content="#222222" />
+    <meta name="background-color" content="#f7c243" />
+    <meta name="keywords" content="institut, technique, application, université, kinshasa, industrie, informatique, aviation, mecanique, telecommunication, electronique, electricite, maintenance materiaux medicales, preparatoire, apprentissage, technologie, universtic">
+    <meta name="author" content="VIRAZA">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="shortcut icon" href="/layouts/default/icon/favicon.webp" type="image/x-icon">
+    <link rel="apple-touch-icon" href="/layouts/default/icon/favicon.webp" type="image/x-icon">
+    <link rel="image_src" href="/layouts/default/images/portfolio/12.webp"> 
+    <link rel="search" type="application/opensearchdescription+xml" title="Snen Viraza" href="services/ista.xml">
+    <link rel="canonical" href="https://viraza.net"/>
+
+    <meta property="og:type" content= "website" />
+    <meta property="og:url" content="https://www.ista.ac.cd"/>
+    <meta property="og:site_name" content="Institut Supérieur de Techniques Appliquées | ISTA-Kinshasa" />
+    <meta property="og:image" itemprop="image primaryImageOfPage" content="/layouts/default/icon/favicon.webp" />
+    <meta name="twitter:card" content="summary"/>
+    <meta name="twitter:domain" content="www.ista.ac.cd"/>
+    <meta name="twitter:title" property="og:title" itemprop="name" content="Site officiel de l'Institut Supérieur de Techniques Appliquées (ISTA en sigle)" />
+    <meta name="twitter:description" property="og:description" itemprop="description" content="L'Institut supérieur de techniques appliquées (ou ISTA) est une institution publique de la République démocratique du Congo située à Kinshasa dans la commune de Barumbu et née de la fusion en 1971 de trois instituts : le centre de formation Météorologique (C.F.M.) l'Institut d’Aviation Civile (I.A.C.) et l'École Nationale des Postes et Télécommunications (E.N.P.T.). Initialement appelé Institut de Météorologie, d’Aviation Civile et de Télécommunication, l'institut prendra le nom actuel en 19731." />
+    
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="apple-mobile-web-app-status-bar" content="#2784ce">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta http-equiv="X-UA-Compatible" content="IE=7">
+    
+    <meta name="robots" content="noindex">
+    <meta name="googlebot" content="noindex">
+    <meta name="theme-color" content="#f0f1f3">
+    <meta name="author" content="Mci Mangala">
+    <meta name="theme-color" content="Light">
+
+    <meta charset="utf-8">
+    <link rel="shortcut icon" type="image/x-icon" href="/layouts/default/icon/viraza.webp">
+    <link rel="apple-touch-icon" href="/layouts/default/icon/viraza.webp">
+    <link rel="stylesheet" href="/layouts/default/css/normalize.css">
+    <link rel="stylesheet" href="/layouts/default/fonts/remixicon.css">
+    <link rel="stylesheet" href="/layouts/default/css/main.css">
+    <link rel="stylesheet" href="/layouts/default/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/layouts/default/css/all.min.css">
+    <link rel="stylesheet" href="/layouts/default/fonts/flaticon.css">
+    <link rel="stylesheet" href="/layouts/default/css/animate.min.css">
+    <link rel="stylesheet" href="/layouts/default/css/datepicker.min.css">
+    <link rel="stylesheet" href="/layouts/default/css/fullcalendar.min.css">
+    <link rel="stylesheet" href="/layouts/default/css/select2.min.css">
+    <link rel="stylesheet" href="/layouts/default/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" href="/layouts/default/css/buttons.dataTables.min.css">
+    <link rel="stylesheet" href="/layouts/default/css/style.css">
+    <link rel="stylesheet" href="/layouts/default/css/paluku.css">
+    <link rel="manifest" href="/services/pwa.json">
+    <script src="/services/pwa.js"></script>
+    <script src="/layouts/default/js/jquery-3.5.1.js"></script>
+    <script src="/layouts/default/js/mcisme.dynamicLoad.script"></script>
+    <script src="/layouts/default/js/popper.min.js"></script>
+</head>
+<body>
+    <div id="preloader"></div>
+    <div id="wrapper" class="wrapper bg-ash">
+        <div id="header" class="navbar navbar-expand-md header-menu-one bg-light">
+            <div class="nav-bar-header-one">
+                <div class="header-logo">
+                    <a href="/" data-action="null" onclick="location.href='/'"><h2 class="text-white mt-4">REVENIR AU SITE</h2></a>
+                </div>
+                <div class="toggle-button sidebar-toggle">
+                    <button type="button" class="item-link" id="btnGeneralMenu" aria-label="Menu" name="btnGeneralMenu">
+                        <span class="btn-icon-wrap">
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                        </span>
+                    </button>
+                </div>
+            </div>
+            <div class="header-main-menu collapse navbar-collapse" id="mobile-navbar">
+                <ul class="navbar-nav">
+                    <li class="navbar-item header-search-bar">
+                        <h4 class="item-title mb-0 uppercase"><?=isset($guest_state)?strtoupper($guest_state):'CARTE / GUEST USER'?></h4>
+                    </li>
+                </ul>
+                <ul class="navbar-nav">
+                    <li class="navbar-item dropdown header-admin">
+                        <a class="navbar-nav-link" href="<?=isset($_GET['registrations'])?'?home':'?registrations'?>">
+                            <div class="admin-title">
+                                <h5 class="item-title"><?=isset($_GET['registrations'])?'FORMULAIRE':'MES ENREGISTREMENTS'?></h5>
+                            </div>
+                        </a>
+                    </li>
+                    <li class="navbar-item dropdown header-language"><a class="navbar-nav-link dropdown-toggle" href="#"
+                            role="button" data-toggle="dropdown" aria-expanded="false"><i
+                                class="fas fa-globe-americas"></i>FR</a>
+                        <div class="dropdown-menu dropdown-menu-right"><a class="dropdown-item" href="#">Français</a>
+                        </div>
+                    </li>
+                    <li id="switchTheme">
+                        &nbsp;<div class='toggle-switch'>
+                            <label class=position-absolute>
+                                <input type='checkbox' class=d-none id="toggleTheme">
+                                <span class='slider position-absolute'></span>
+                            </label>
+                        </div>&nbsp;
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div id="contain" class="dashboard-page-one">
+            <div class="dashboard-content-one position-relative">
+                <div class="breadcrumbs-area">
+                    <h3 id="breadcrumbs-h"><?=$content->title?></h3>
+                    <ul id="breadcrumbs">
+                        <li><a href="/app">Accueil</a></li>
+                        <?php $href ="?b557c222c8ddcdf87e033706aad08e4ef7cf90d3="; foreach ($content->links as $link) { echo '<li><a'.($link !==end($links) ? ' class="text-dark"' : null).'>'.$link.'</a></li>'; $href.='--'; }?>
+                    </ul>
+                </div>
+                <div id="content"><?=$content->page?></div>
+                <footer class="footer-wrap-layout1">
+                    <div class="copyright">© Copyrights <a href="#">Viraza</a> 2022. All rights reserved. Designed by <a href="#">AutomateX</a></div>
+                </footer>
+            </div>
+        </div>
+    </div>
+    <div style="display:none;visibility:hidden;opacity:0;" id="hideSettings">
+        <div id="downloadHide"></div>
+        <div id="permanantyConnect"></div>
+    </div>
+    <script src="/layouts/default/js/modernizr-3.6.0.min.js"></script>
+    <script src="/layouts/default/js/main.script"></script>
+    <script src="/layouts/default/js/plugins.js"></script>
+    <script src="/layouts/default/js/bootstrap.min.js"></script>
+    <script src="/layouts/default/js/jquery.counterup.min.js"></script>
+    <script src="/layouts/default/js/moment.min.js"></script>
+    <script src="/layouts/default/js/jquery.waypoints.min.js"></script>
+    <script src="/layouts/default/js/select2.min.js"></script>
+    <script src="/layouts/default/js/datepicker.min.js"></script>
+    <script src="/layouts/default/js/jquery.scrollUp.min.js"></script>
+    <script src="/layouts/default/js/fullcalendar.min.js"></script>
+    <script src="/layouts/default/js/Chart.min.js"></script>
+
+    <script src="/layouts/default/js/jquery.dataTables.min.js"></script>
+    <script src="/layouts/default/js/dataTables.buttons.min.js"></script>
+    <script src="/layouts/default/js/jszip.min.js"></script>
+    <script src="/layouts/default/js/pdfmake.min.js"></script>
+    <script src="/layouts/default/js/vfs_fonts.js"></script>
+    <script src="/layouts/default/js/buttons.html5.min.js"></script>
+    <script src="/layouts/default/js/buttons.print.min.js"></script>
+    
+    <script src="/layouts/default/js/download-content.js"></script>
+    <script src="/layouts/default/js/paluku.script"></script>
+    <script src="/layouts/default/js/main.js?v=<?=time()?>"></script>
+    <script>
+    window.addEventListener('load', e => {
+        <?php file_exists($file = ''.str_replace(DS.'pages'.DS,DS.'scripts'.DS,$FLink)) ? require_once $file : null;?>
+    });
+    </script>
+</body>
+</html>

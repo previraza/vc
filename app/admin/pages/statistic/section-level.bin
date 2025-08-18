@@ -1,0 +1,105 @@
+<?php $pageTitle = "Niveau par section" ?>
+
+
+<div class="card height-auto">
+    <div class="card-body">
+        <div class="heading-layout1">
+            <div class="item-title">
+                <h3>Liste d' option</h3>
+            </div>
+            <div class="dropdown">
+                <a class="dropdown-toggle" href="#" role="button" data-toggle="dropdown"
+                    aria-expanded="false">...</a>
+
+                <div class="dropdown-menu dropdown-menu-right">
+                    <a class="dropdown-item" href="?fa69951bc733eb82713e936be33597e1=DATA_CRYPTING_ON:fa69951bc733eb82713e936be33597e1=WABTECHS_CRYPTING_ON: e91497f38407364c8e86ade9098950d978814190&MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3VIRAZA_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3&MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3&WABTECHS_CRYPTING_ON_LAVINGOL&MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3&b557c222c8ddcdf87e033706aad08e4ef7cf90d3=option--add"><i
+                            class="fas fa-plus text-dark-pastel-green"></i>Add</a>
+                    <a class="dropdown-item" href="#" data-action="print"><i class="fas fa-print"></i>print</a>
+                    
+                    <a class="dropdown-item" href="#" data-action="reload"><i class="fas fa-redo-alt text-orange-peel"></i>Actualiser</a>
+                </div>
+            </div>
+        </div>
+        <form class="mg-b-20" method="POST">
+            <div class="row gutters-8">
+                <div class="col-xl-4 col-lg-6 col-12 form-group">
+                    <label><?=$mci?></label>
+                    <select class="select2" name="section">
+                        <option selected value="*">les <?=$mci?></option>
+                        <?php $rqt = mysqli_query($db, "SELECT * FROM sections WHERE active = 1") or die(debug(mysqli_error($db)));
+                            while ($ROW = mysqli_fetch_array($rqt)){ $row = (object) $ROW; ?>
+                                <option value="<?= $row->id ?>" <?=($_POST['section']??0)==$row->id?'selected':''?>><?= $row->name ?></option>
+                        <?php } ?>
+                        <input type="hidden" name="CON_47" value="true">
+                    </select>
+                </div>
+                <div class="col-xl-4 col-lg-6 col-12 form-group">
+                    <label>Promotion</label>
+                    <select class="select2" name="level">
+                        <option selected value="*">Toutes les promotions</option>
+                        <?php $rqt = mysqli_query($db, "SELECT * FROM level WHERE active = 1") or die(debug(mysqli_error($db)));
+                            while ($ROW = mysqli_fetch_array($rqt)){ $row = (object) $ROW; ?>
+                                <option value="<?= $row->id ?>" <?=($_POST['level']??0)==$row->id?'selected':''?>><?= $row->name ?></option>
+                        <?php } ?>
+                        <input type="hidden" name="CON_47" value="true">
+                    </select>
+                </div>
+                <div class="col-xl-4 col-lg-6 col-12 form-group">
+                    <label>Annee Academiques</label>
+                    <select class="select2" name="year">
+                        <option selected value="*">2021-2022</option>
+                        <option value="2022" <?=($_POST['year']??0)=='2022'?'selected':''?>>En cours (2022-2023)</option>
+                    </select>
+                </div>
+                <div class="col-xl-12 col-lg-6 col-12 form-group">
+                    <label></label>
+                    <button type="submit" class="fw-btn-fill btn-gradient-yellow">RECHERCHE</button>
+                </div>
+            </div>
+        </form>
+        <div class="table-responsive">
+            <table class="table display data-table text-nowrap">
+                <thead>
+                    <tr>
+                        <th>
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input checkAll" id="assosLabel">
+                                <label for="assosLabel" class="form-check-label">Id</label>
+                            </div>
+                        </th>
+                        <th><?=$mci?></th>
+                        <th>Promotion</th>
+                        <th>Effectifs</th>  
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php $count = 0; $rqt = mysqli_query($db, 
+                        "SELECT 
+                            s.name AS section, l.name AS level, COUNT(std.id) as students 
+                        FROM classes c
+                            LEFT JOIN students AS std ON (std.class = c.id AND std.active = 1 AND std.delete = 0)
+                            LEFT JOIN sections AS s ON (s.id = c.section AND s.active = 1 AND s.delete = 0)
+                            LEFT JOIN level AS l ON (l.id = c.level AND l.active = 1 AND l.delete = 0)
+                        WHERE
+                            c.active = 1 AND c.delete = 0 ".
+                                ((isset($_POST['section']) && $_POST['section'] != "*") ? "AND c.section = $_POST[section] ":'').
+                                ((isset($_POST['level']) && $_POST['level'] != "*") ? "AND c.level = $_POST[level] ":'').
+                        "GROUP BY c.section, c.level; -- HAVING COUNT(std.id) > 0;") or die(debug(mysqli_error($db)));
+                        while ($ROW = mysqli_fetch_array($rqt)){ $row = (object) $ROW; ?>
+                            <tr id="Element-<?= $count ?>">
+                                <td>
+                                    <div class="form-check">
+                                        <input type="checkbox" class="form-check-input">
+                                        <label class="form-check-label">#<?= $count++ ?></label>
+                                    </div>
+                                </td>
+                                <td><?= $row->section ?></td>
+                                <td><?= $row->level ?></td>
+                                <td><?= $row->students ?></td>
+                            </tr>
+                    <?php } ?>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

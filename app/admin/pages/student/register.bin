@@ -1,0 +1,368 @@
+<?php $pageTitle = "Etudiants";
+    $std_sex = (object) ['male'=>0,'female'=>0,'other'=>0];
+    $percentage = $age = 0;
+    $action_title = ['valide'=>'valider', 'suspend'=>'suspendre', 'delete'=>'supprimer'];
+
+    // debug();
+
+    if(!empty($_POST) && isset($_POST['action'], $_POST['id']) && is_numeric($_POST['id'])){
+        extract(array_trait_string($_POST));
+        $action = $_POST['action']; $key = $action === "delete" ? "delete" : "valide";
+        $query = "UPDATE `students_` SET `$key` = ".($action == 'suspend' ? 0 : 1 )." WHERE id = $id"; 
+        if (mysqli_query($db, $query)){ ?>
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                    <span class="sr-only">Close</span>
+                </button>
+                <strong>Succes : </strong>Le Profile a été <strong>"<?= $action_title[$action] ?>"</strong> avec succès.
+            </div>
+        <?php }else{ ?>
+            <div class="alert alert-danger alert-dismissible fade show" role="alert"> 
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                    <span class="sr-only">Close</span>
+                </button>
+                <strong>Echec : </strong>Le Profile choisit est introuvable. 
+            </div>
+        <?php }
+    }
+
+    $checkPayment = "((financy_payment.student = std.id OR financy_payment.code = std.pcode) AND financy_payment.fee in (9, 34, 35, 36))";
+
+    $all_std  = $db_pdo->query("SELECT std.gender, std.percentage, DATE_FORMAT(FROM_DAYS(DATEDIFF(NOW(), std.date_of_birth)), '%Y') + 0 AS age FROM students_ as std JOIN financy_payment ON $checkPayment WHERE std.delete = 0");
+    $tot_valid_insc_qrt = $db_pdo->query("SELECT std.id FROM students_ as std JOIN financy_payment ON $checkPayment WHERE std.delete = 0 AND std.valide = 1");
+    $all_dayly = $db_pdo->query("SELECT std.id FROM students_ as std JOIN financy_payment ON $checkPayment WHERE std.delete = 0 AND DATE(std.joining_date) = DATE(CURRENT_TIMESTAMP)");
+
+    try {
+        $tot_std  = $all_std->rowCount();
+        $tot_valid_insc = $tot_valid_insc_qrt->rowCount();
+        $tot_std3 = $all_dayly->rowCount();
+    } catch (\Throwable $th) {
+        die("PAGE - ERROR : 500 - ".$th->getMessage());
+    }
+
+    foreach ($all_std->fetchAll(PDO::FETCH_OBJ) as $std) {
+        $percentage+=$std->percentage;
+        $age+=$std->age;
+        if ($std->gender == 'F') $std_sex->female++; else if ($std->gender == 'M') $std_sex->male++; else $std_sex->other++; 
+    } $percentage/=($tot_std?$tot_std:1); $age/=($tot_std?$tot_std:1);
+?>
+<div class="row">
+    <div class="col-12 col-8-xxxl">
+        <div class="row">
+            <div class="col-12-xxxl col-lg-12 col-sm-12 col-12">
+                <div class="dashboard-summery-two">
+                    <div class="item-icon bg-light-magenta"> <i class="flaticon-classmates text-magenta"></i> </div>
+                    <div class="item-content">
+                        <div class="item-number"><span class="counter"
+                                data-num="<?=$tot_std?>"><?=$tot_std?></span></div>
+                        <div class="item-title">Total général des inscriptions</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-3-xxxl col-lg-3 col-sm-6 col-12">
+                <div class="dashboard-summery-two">
+                    <div class="item-icon bg-light-green"> <i class="flaticon-shopping-list text-green"></i> </div>
+                    <div class="item-content">
+                        <div class="item-number"><span class="counter"
+                                data-num="<?=$tot_valid_insc?>"><?=$tot_valid_insc?></span></div>
+                        <div class="item-title">inscriptions validées</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-3-xxxl col-lg-3 col-sm-6 col-12">
+                <div class="dashboard-summery-two">
+                    <div class="item-icon bg-light-blue"> <i class="flaticon-multiple-users-silhouette text-blue"></i> </div>
+                    <div class="item-content">
+                        <div class="item-number">
+                            <span class="counter" data-num="<?=floor($age)?>"><?=floor($age)?></span> +
+                            <span class="counter" data-num="<?=floor(($age-floor($age))*12)?>"><?=floor(($age-floor($age))*12)?></span> M
+                        </div>
+                        <div class="item-title">Age Moyenne</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-3-xxxl col-lg-3 col-sm-6 col-12">
+                <div class="dashboard-summery-two">
+                    <div class="item-icon bg-light-red"> <i class="flaticon-mortarboard text-red"></i> </div>
+                    <div class="item-content">
+                        <div class="item-number"><span class="counter"
+                                data-num="<?=number_format($percentage,2)?>"><?=number_format($percentage,2)?></span> %</div>
+                        <div class="item-title">Poucentage Moyenne</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-3-xxxl col-lg-3 col-sm-6 col-12">
+                <div class="dashboard-summery-two">
+                    <div class="item-icon bg-light-green"> <i
+                            class="flaticon-calendar text-green"></i> </div>
+                    <div class="item-content">
+                        <div class="item-number"><span class="counter"
+                                data-num="<?=$tot_std3?>"><?=$tot_std3?></span></div>
+                        <div class="item-title">Inscriptions du jour</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-6 col-4-xxxl col-xl-6">
+        <div class="card dashboard-card-three pd-b-20">
+            <div class="card-body">
+                <div class="heading-layout1">
+                    <div class="item-title">
+                        <h3>Etudiants</h3>
+                    </div>
+                    <div class="dropdown"> <a class="dropdown-toggle" href="#" role="button" data-toggle="dropdown"
+                            aria-expanded="false">...</a>
+                        <div class="dropdown-menu dropdown-menu-right"> <a class="dropdown-item" href="#"
+                                data-action="print"><i class="fas fa-print"></i>print</a> <a class="dropdown-item"
+                                href="#" data-action="reload"><i
+                                    class="fas fa-redo-alt text-orange-peel"></i>Actualiser</a> </div>
+                    </div>
+                </div>
+                <div class="doughnut-chart-wrap">
+                    <div class="chartjs-size-monitor"
+                        style="position: absolute; inset: 0px; overflow: hidden; pointer-events: none; visibility: hidden; z-index: -1;">
+                        <div class="chartjs-size-monitor-expand"
+                            style="position:absolute;left:0;top:0;right:0;bottom:0;overflow:hidden;pointer-events:none;visibility:hidden;z-index:-1;">
+                            <div style="position:absolute;width:1000000px;height:1000000px;left:0;top:0"></div>
+                        </div>
+                        <div class="chartjs-size-monitor-shrink"
+                            style="position:absolute;left:0;top:0;right:0;bottom:0;overflow:hidden;pointer-events:none;visibility:hidden;z-index:-1;">
+                            <div style="position:absolute;width:200%;height:200%;left:0; top:0"></div>
+                        </div>
+                    </div> <canvas chart-values="<?= "$std_sex->female|$std_sex->other|$std_sex->male" ?>"
+                        chart-bgColor="#304ffe|#d8dfe5|#ffa601"
+                        chart-labels="Etudiantes Féminin|Autres|Etudiants Madculin" chart-label="Totale des Etudiants"
+                        id="student-doughnut-chart" width="612" height="300"
+                        style="display: block; width: 612px; height: 300px;" class="chartjs-render-monitor"></canvas>
+                </div>
+                <div class="student-report">
+                    <div class="student-count pseudo-bg-blue">
+                        <h4 class="item-title">Féminin</h4>
+                        <div class="item-number"><?= $std_sex->female ?></div>
+                    </div>
+                    <div class="student-count pseudo-bg-default">
+                        <h4 class="item-title">Autres</h4>
+                        <div class="item-number"><?= $std_sex->other ?></div>
+                    </div>
+                    <div class="student-count pseudo-bg-yellow">
+                        <h4 class="item-title">Masculin</h4>
+                        <div class="item-number"><?= $std_sex->male ?></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="card height-auto">
+    <div class="card-body">
+        <div class="heading-layout1">
+            <div class="item-title">
+                <h3>Orientation des étudiants</h3>
+            </div>
+            <div class="dropdown">
+                <a class="dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-expanded="false">...</a>
+                <div class="dropdown-menu dropdown-menu-right">
+                    <a class="dropdown-item" href="#" data-action="print"><i class="fas fa-print"></i>print</a>
+                    <a class="dropdown-item" href="#" data-action="reload"><i class="fas fa-redo-alt text-orange-peel"></i>Actualiser</a>
+                </div>
+            </div>
+        </div>
+        <div class="table-responsive">
+            <table class="table display data-table text-nowrap" id="table_croops--">
+                <thead>
+                    <tr>
+                        <th>
+                            <div class="form-check"> 
+                                <input type="checkbox" class="form-check-input checkAll" id="assosLabel"> <label for="assosLabel" class="form-check-label">Id</label> 
+                            </div>
+                        </th>
+                        <th>Photo</th>
+                        <th>Nom</th>
+                        <th>PostNom</th>
+                        <th>Prenom</th>
+                        <th>Genre</th>
+                        <th>Naissance</th>
+                        <th>Frais</th>
+                        <th>Ecole Provenance</th>
+                        <th>Section</th>
+                        <th>%</th>
+                        <th>Date D'inscription</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php
+                        $count = 1; $rqt = mysqli_query($db, "SELECT std.*, YEAR(current_timestamp())-YEAR(std.date_of_birth) AS age, financy_payment.fee AS fee FROM students_ AS std JOIN financy_payment ON $checkPayment WHERE std.active = 1 AND std.delete = 0 ORDER BY Joining_date"); 
+                        while($row = mysqli_fetch_array($rqt)){ $res = (object) $row;
+                        
+                    ?> <tr>
+                            <td>
+                                <div class="form-check"> 
+                                    <input type="checkbox" class="form-check-input" id="assosLabelSS">
+                                    <label for="assosLabelSS" class="form-check-label"><?=$count++?></label> 
+                                </div>
+                            </td>
+                            <td class="text-center"><img src="/<?=$res->profile??"layouts/default/img/figure/student.webp"?>" alt="student"></td>
+                            <td><?= $res->firstname ?></td>
+                            <td><?= $res->lastname ?></td>
+                            <td><?= $res->homename ?></td>
+                            <td><?= $res->gender ?></td>
+                            <td><?= $res->date_of_birth ?></td>
+                            <td><?= $res->fee ?></td>
+                            <td><?= $res->secondary_school_name ?></td>
+                            <td><?= $res->humanities_monitoring_section ?></td>
+                            <td><?= $res->percentage ?></td>
+                            <td><?= $res->joining_date ?></td>
+                            <td>
+                                <div class="dropdown"> 
+                                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false"> 
+                                        <span class="flaticon-more-button-of-three-dots"></span> 
+                                    </a>
+                                    <div class="dropdown-menu dropdown-menu-right"> 
+                                        <a class="dropdown-item" data-exec="open('/app/admin/pages/actions/print-register.php?id=<?= $res->id ?>')">
+                                            <i class="fas fa-redo-alt text-blue"></i>Profile
+                                        </a> 
+                                        <a class="dropdown-item" href="?fa69951bc733eb82713e936be33597e1=DATA_CRYPTING_ON:fa69951bc733eb82713e936be33597e1=WABTECHS_CRYPTING_ON: e91497f38407364c8e86ade9098950d978814190&MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3VIRAZA_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3&MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3&WABTECHS_CRYPTING_ON_LAVINGOL&MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3&b557c222c8ddcdf87e033706aad08e4ef7cf90d3=student--edit--<?= $res->id ?>">
+                                            <i class="fas fa-edit text-dark-pastel-green"></i>Modifier
+                                        </a> 
+                                        <a 
+                                            class="dropdown-item" data-action-type="delete" href="#"
+                                            onclick="document.querySelector('#state_form<?= $res->id ?>').submit()">
+                                            <i class="fas fa-redo-alt text-orange-peel"></i>
+                                            <form action="" id="state_form<?= $res->id ?>" method="POST" class="d-none">
+                                                <input type="hidden" name="id" value="<?= $res->id ?>">
+                                                <input type="hidden" name="action" value="<?= $res->valide == 1 ? 'suspend' : 'valide' ?>">
+                                            </form>
+                                            <?= $res->valide == 1 ? 'Suspendre' : 'Valider' ?>
+                                        </a>
+                                        <?php if($res->valide == 1 && $profile['role'] == "ADMIN") { ?>
+                                            <a 
+                                                class="dropdown-item" data-action-type="delete" href="#"
+                                                onclick="document.querySelector('#delete_form<?= $res->id ?>').submit()">
+                                                <i class="fas fa-times text-orange-red"></i>
+                                                <form action="" id="delete_form<?= $res->id ?>" method="POST" class="d-none">
+                                                    <input type="hidden" name="id" value="<?= $res->id ?>">
+                                                    <input type="hidden" name="action" value="delete">
+                                                </form>
+                                                Supprimer
+                                            </a>
+                                        <?php } ?>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr> 
+                    <?php } ?> 
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="agreatedStd" tabindex="-1" role="dialog" aria-labelledby="modelTitleId" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalTitle">Orientation de classe</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            </div>
+            <div class="modal-body">
+                <h3 class="header-soon"></h3>
+                <div class="container-fluid">
+                    <form class="#" method="post" id="agreatedStdForm" enctype="multipart/form-data">
+                        <div class="row">
+                            <div class="col-12 form-group">
+                                <label>Orientation *</label>
+                                <select class="select2" name="class">
+                                    <option value="0">Teste Preparatoire</option>
+                                    <option value="1">Tronc Commun de l'Ingenieur</option>
+                                    <input type="hidden" name="CON_47" value="true">
+                                    <input type="hidden" name="raison" value=0>
+                                    <input type="hidden" name="state" value=0>
+                                    <input type="hidden" name="message" value=''>
+                                </select>
+                            </div>
+                            <div class="mx-4 alert hidden alert-danger alert-dismissible fade show" role="alert" id="errorRapport">
+                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                    <span class="sr-only">Close</span>
+                                </button>
+                                <strong>Erreur : </strong>Une erreur s'est produit pendant l'ajout.<br>Si celà persiste veuillez contacter votre administrateur système.
+                            </div>
+                            <div class="col-12 form-group mg-t-8">
+                                <div class="errorRapportRegister"></div>
+                                <input type="hidden" name="user_id" id="_user_id" class="FormDataUser_id" value="0">
+                                <input type="hidden" name="user_enc" class="FormDataUser_enc" value="0x64_BASE">
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="reset" form="agreatedStdForm" type="reset" class="mr-3 btn-fill-lg bg-gradient-twitter btn-hover-yellow" data-dismiss="modal">Fermer</button>
+                <button type="submit" form="agreatedStdForm" class="mr-3 btn-fill-lg bg-blue-dark btn-hover-yellow">Envoyer</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="notagreatedStd" tabindex="-1" role="dialog" aria-labelledby="modelTitleId" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalTitle">Objet de la demande</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            </div>
+            <div class="modal-body">
+                <h3 class="header-soon"></h3>
+                <div class="container-fluid">
+                    <form class="#" method="post" id="notagreatedStdForm" enctype="multipart/form-data">
+                        <div class="row">
+                            <div class="col-12 form-group">
+                                <label>Etat *</label>
+                                <select class="select2" name="state">
+                                    <option value=1>Réfus</option>
+                                    <option value=2>En attente</option>
+                                    <option value=3>En examen</option>
+                                </select>
+                            </div>
+                            <div class="col-12 form-group">
+                                <label>Raison *</label>
+                                <select class="select2" name="raison">
+                                    <option value=1>Non éligible</option>
+                                    <option value=2>Document incomplet</option>
+                                    <option value=3>En attente de payement</option>
+                                    <option value=4>Document déjà enregistrer</option>
+                                    <option value=5>Presence requise</option>
+                                </select>
+                            </div>
+                            <div class="col-12 form-group">
+                                <label>Observation *</label>
+                                <input type="hidden" name="CON_47" value="true">
+                                <textarea name="message" class="form-control" rows="3" required="required"></textarea>
+                            </div>
+                            <div class="mx-4 alert hidden alert-danger alert-dismissible fade show" role="alert" id="errorRapport">
+                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                    <span class="sr-only">Close</span>
+                                </button>
+                                <strong>Erreur : </strong>Une erreur s'est produit pendant l'ajout.<br>Si celà persiste veuillez contacter votre administrateur système.
+                            </div>
+                            <div class="col-12 form-group mg-t-8">
+                                <div class="errorRapportRegister"></div>
+                                <input type="hidden" name="user_id" class="FormDataUser_id" value="0">
+                                <input type="hidden" name="user_enc" class="FormDataUser_enc" value="0x64_BASE">
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="reset" form="notagreatedStdForm" type="reset" class="mr-3 btn-fill-lg bg-gradient-twitter btn-hover-yellow" data-dismiss="modal">Fermer</button>
+                <button type="submit" form="notagreatedStdForm" class="mr-3 btn-fill-lg bg-blue-dark btn-hover-yellow">Envoyer</button>
+            </div>
+        </div>
+    </div>
+</div>

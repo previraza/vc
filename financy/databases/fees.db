@@ -1,0 +1,44 @@
+<?php class FeesModel extends database
+{
+    public static $db;
+    public $table = 'financy_fee';
+
+    public function allMine($me = null) {
+        $me = $me ?? auth()->id;
+        return $this->select("SELECT $this->table.*, 
+            (SELECT COUNT(financy_payment.id) FROM financy_payment WHERE financy_payment.fee = $this->table.id ".($me != "*" ? "AND financy_payment.created_by = $me":null)." AND financy_payment.deleted_at IS NULL AND (financy_payment.transhis = 'full' OR financy_payment.transhis IS NULL)) AS payment,
+            (SELECT COUNT(financy_payment.id) FROM financy_payment WHERE financy_payment.fee = $this->table.id ".($me != "*" ? "AND financy_payment.created_by = $me":null)." AND financy_payment.deleted_at IS NULL AND financy_payment.transhis = 'first') AS payment_first,
+            (SELECT COUNT(financy_payment.id) FROM financy_payment WHERE financy_payment.fee = $this->table.id ".($me != "*" ? "AND financy_payment.created_by = $me":null)." AND financy_payment.deleted_at IS NULL AND financy_payment.transhis = 'second') AS payment_second,
+            (SELECT COUNT(financy_slip.id) FROM financy_slip WHERE financy_slip.fee = $this->table.id ".($me != "*" ? "AND financy_slip.created_by = $me":null)." AND financy_slip.deleted_at IS NULL AND (financy_slip.transhis = 'full' OR financy_slip.transhis IS NULL)) AS slip,
+            (SELECT COUNT(financy_slip.id) FROM financy_slip WHERE financy_slip.fee = $this->table.id ".($me != "*" ? "AND financy_slip.created_by = $me":null)." AND financy_slip.deleted_at IS NULL AND financy_slip.transhis = 'first') AS slip_first,
+            (SELECT COUNT(financy_slip.id) FROM financy_slip WHERE financy_slip.fee = $this->table.id ".($me != "*" ? "AND financy_slip.created_by = $me":null)." AND financy_slip.deleted_at IS NULL AND financy_slip.transhis = 'second') AS slip_second
+            FROM $this->table WHERE $this->table.deleted_at IS NULL ORDER BY $this->table.id");
+    }
+
+    public function allMine_($me = null) {
+        $me = $me ?? auth()->id;
+        return $this->select(
+            "SELECT $this->table.*, 
+                (
+                    SELECT COUNT(*)
+                        FROM (
+                            SELECT fee, created_at, deleted_at FROM financy_payment
+                            UNION
+                            SELECT fee, created_at, deleted_at FROM financy_slip 
+                        ) AS payments
+                     WHERE payments.fee = $this->table.id ".
+                        ($me != "*" ? "AND payments.created_by = $me":null)." AND payments.deleted_at IS NULL
+                ) AS payment
+            FROM $this->table 
+            WHERE $this->table.deleted_at IS NULL ORDER BY $this->table.id"
+        );
+    }
+
+    public function allMineExpense() {
+        return $this->select("SELECT $this->table.*, (SELECT COUNT(financy_payment.id) FROM financy_payment WHERE financy_payment.fee = $this->table.id AND financy_payment.created_by = ".auth()->id." AND financy_payment.deleted_at IS NULL) AS payment FROM $this->table WHERE $this->table.deleted_at IS NULL ORDER BY $this->table.id");
+    }
+
+    public function inscription() {
+        return $this->select("SELECT $this->table.*, (SELECT COUNT(financy_payment.id) FROM financy_payment WHERE financy_payment.fee = $this->table.id AND financy_payment.created_by = ".auth()->id." AND financy_payment.deleted_at IS NULL) AS payment FROM $this->table WHERE $this->table.deleted_at IS NULL ORDER BY $this->table.id");
+    }
+}

@@ -1,0 +1,119 @@
+<script type=text/javascript src=https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.15.3/xlsx.full.min.js></script>
+<?php viewOnlyBy('ADMIN'); $pageTitle = "Inscription étudiant" ?>
+
+<form class="new-added-form" id="addMultipleStudent">
+<div class="card height-auto">
+    <div class="card-body">
+        <div class="heading-layout1">
+            <div class="item-title">
+                <h3>Formulaire d'inscription étudiant</h3>
+            </div>
+           <div class="dropdown">
+                <a class="dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-expanded="false">...</a>
+                <div class="dropdown-menu dropdown-menu-right">
+                    <a class="dropdown-item" href="#" data-action="print"><i class="fas fa-print"></i>print</a>
+                    <a class="dropdown-item" href="#" data-action="reload"><i class="fas fa-redo-alt text-orange-peel"></i>Actualiser</a>
+                </div>
+            </div>
+        </div>
+        <div class="new-added-form">
+            <div class="row">
+                <div class="col-xl-3 col-lg-6 col-12 form-group">
+                    <label>Département *</label>
+                    <select class="select2" name="section" id="s_sec">
+                        <?php $rqt = mysqli_query($db, "SELECT * FROM sections WHERE active = 1") or die(debug(mysqli_error($db)));
+                            while ($ROW = mysqli_fetch_array($rqt)){ $row = (object) $ROW; $_fs = isset($_fs) ? $_fs : $ROW['id']?>
+                                <option value="<?= $row->id ?>"><?= $row->name ?></option>
+                        <?php } ?>
+                        <option value="*">Toutes les <?=$mci?>s</option>
+                        <input type="hidden" name="CON_47" value="true">
+                    </select>
+                </div>
+                <div class="col-xl-3 col-lg-6 col-12 form-group">
+                    <label>Option *</label>
+                    <select class="select2" name="option" id="s_opt">
+                        <?php $rqt = mysqli_query($db, "SELECT * FROM options WHERE active = 1 AND ".($_fs=='*'?'1':'section = '.$_fs)) or die(debug(mysqli_error($db)));
+                            while ($ROW = mysqli_fetch_array($rqt)){ $row = (object) $ROW; ?>
+                                <option value="<?= $row->id ?>"><?= $row->name ?></option>
+                            <?php } ?>
+                            <option value="*">Toutes les options</option>
+                    </select>
+                </div>
+                <div class="col-xl-3 col-lg-6 col-12 form-group">
+                    <label>Niveau *</label>
+                    <select class="select2" name="level" id="s_level">
+                        <?php $rqt = mysqli_query($db, "SELECT * FROM level WHERE active = 1") or die(debug(mysqli_error($db)));
+                            while ($ROW = mysqli_fetch_array($rqt)){ $row = (object) $ROW; ?>
+                                <option value="<?= $row->id ?>"><?= $row->name ?></option>
+                        <?php } ?>
+                    </select>
+                </div>
+                <div class="col-xl-3 col-lg-6 col-12 form-group">
+                    <label>Promotion *</label>
+                    <select class="select2" name="promotion" id="s_promo">
+                        <?php for ($i = $year; $i > 2021; $i--) { ?>
+                            <option <?= $anacad == $i ? 'selected' : null ?> value="<?= $i ?>">
+                                <?= ($i-1) . " - " . $i ?>
+                            </option>
+                        <?php } ?>
+                    </select>
+                </div>
+                <div class="col-xl-6 col-lg-6 col-12 form-group">
+                    <label>Classe *</label>
+                    <select class="select2" name="titular" id="s_cla">
+                        <option value="0">Aucune classe trouvé...</option>
+                    </select>
+                </div>
+                <div class="col-xl-4 col-lg-6 col-12 form-group">
+                    <label>Data Encrypted *</label>
+                    <input type="text" name="dte" placeholder="" class="form-control">
+                </div>
+                <div class="col-xl-2 col-lg-12 col-12 form-group">
+                    <label for="upXlsx" class="mt-5 btn-fill-lg btn-gradient-yellow btn-hover-bluedark">Excel</label>
+                    <input type="file" class="d-none form-control-file" id="upXlsx" placeholder="" aria-describedby="fileHelpId" accept=".xls, .xlsx">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="card height-auto">
+    <div class="card-body">
+        <div class="data-content">
+            <div class="table-responsive">
+                <table class="table display text-nowrap no-footer" id="listMineTable">
+                    <thead>
+                        <tr>
+                            <th>N°</th>
+                            <th>Nom</th>
+                            <th>Postnom</th>
+                            <th>Genre</th>
+                            <th>Matricul</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>1</td>
+                            <td class="writable"></td>
+                            <td class="writable"></td>
+                            <td class="writable"></td>
+                            <td class="writable"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+        </div>
+    </div>
+</div>
+<div class="card height-auto">
+    <div class="card-body">
+        <div class="row">
+            <div class="mx-4 alert hidden alert-danger alert-dismissible fade show" role="alert" id="errorRapport"></div>
+            <div class="col-12 form-group mg-t-8 d-flex justify-content-between">
+                <button type="submit" class="btn-fill-lg btn-gradient-yellow btn-hover-bluedark">Save</button>
+                <button type="button" id="addRow" class="btn-fill-lg btn-gradient-yellow btn-hover-bluedark">+</button>
+            </div>
+        </div>
+    </div>
+</div>
+</form>

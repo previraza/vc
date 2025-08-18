@@ -1,0 +1,7 @@
+<?php 
+    if(!$profile) require_once dirname(__FILE__).DS.'undefined.bin';
+    else if($profile['valide'] == '0') require_once dirname(__FILE__).DS.'waitting-valide.bin';
+    else if($profile['active'] == '0') require_once dirname(__FILE__).DS.'waitting-active.bin';
+    else if(isset($profile['suspend']) && $profile['suspend'] == '1') require_once dirname(__FILE__).DS.'waitting-suspend.bin';
+    else require_once dirname(__FILE__).DS.$user->role.'.bin';
+?>  

@@ -1,0 +1,67 @@
+<?php viewOnlyBy('ADMIN'); $pageTitle = "Option" ?>
+
+<div class="card height-auto">
+    <div class="card-body">
+        <div class="heading-layout1">
+            <div class="item-title">
+                <h3>Nouvelle Option</h3>
+            </div>
+            <div class="dropdown">
+                <a class="dropdown-toggle" href="#" role="button" 
+                data-toggle="dropdown" aria-expanded="false">...</a>
+
+                <div class="dropdown-menu dropdown-menu-right">
+                    <a class="dropdown-item" href="#"><i class="fas fa-times text-orange-red"></i>Close</a>
+                    <a class="dropdown-item" href="#"><i class="fas fa-redo-alt text-orange-peel"></i>Refresh</a>
+                </div>
+            </div>
+        </div>
+        <form class="new-added-form" id="addOption">
+            <div class="row">
+                <div class="col-12 form-group">
+                    <label>Nom complet de l' option *</label>
+                    <input type="text" name="name" placeholder="" class="form-control">
+                </div>
+                <div class="col-xl-8 col-lg-6 col-12 form-group">
+                    <label>Département *</label>
+                    <select class="select2" name="section">
+                        <?php $rqt = mysqli_query($db, "SELECT * FROM sections WHERE active = 1") or die(debug(mysqli_error($db)));
+                            while ($ROW = mysqli_fetch_array($rqt)){ $row = (object) $ROW; ?>
+                            <option value="<?= $row->id ?>"><?= $row->name ?></option>
+                        <?php } ?>
+                        <input type="hidden" name="CON_47" value="true">
+                    </select>
+                </div>
+                <div class="col-xl-4 col-lg-6 col-12 form-group">
+                    <label>Nom court *</label>
+                    <input type="text" name="short" placeholder="" class="form-control">
+                </div>
+                <div class="col-xl-8 col-lg-6 col-12 form-group">
+                    <label>Enseignant titulaire *</label>
+                    <select class="select2" name="titular">
+                        <?php $rqt = mysqli_query($db, "SELECT * FROM teachers WHERE active = 1 ORDER BY title DESC, firstname") or die(debug(mysqli_error($db)));
+                            while ($ROW = mysqli_fetch_array($rqt)){ $row = (object) $ROW; ?>
+                                <option value="<?= $row->id ?>"><?= "$row->firstname $row->lastname" ?></option>
+                        <?php } ?>
+                        <input type="hidden" name="CON_47" value="true">
+                    </select>
+                </div>
+                <div class="col-xl-4 col-lg-6 col-12 form-group">
+                    <label>Code option *</label>
+                    <input type="text" name="code" placeholder="" class="form-control">
+                </div>
+                <div class="mx-4 alert hidden alert-danger alert-dismissible fade show" role="alert" id="errorRapport">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                        <span class="sr-only">Close</span>
+                    </button>
+                    <strong>Erreur : </strong>Une erreur s'est produit pendant l'ajout.<br>Si celà persiste veuillez contacter votre administrateur système.
+                </div>
+                <div class="col-12 form-group mg-t-8">
+                    <button type="submit" class="btn-fill-lg btn-gradient-yellow btn-hover-bluedark">Save</button>
+                    <button type="reset" class="btn-fill-lg bg-blue-dark btn-hover-yellow">Reset</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

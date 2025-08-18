@@ -1,0 +1,3 @@
+delData = (link) => {
+    if(confirm(`L'élément sélectionné sera définitivement supprimé de la base de données et aucune récupération ne sera possible après cette action...\n\nEn etez-vous sûr ?`)) location.href = link;
+}

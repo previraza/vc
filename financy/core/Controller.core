@@ -1,0 +1,43 @@
+<?php
+class Controller
+{
+    public function __construct()
+    {
+        $this->directory = $this->directory ?? strtolower(get_called_class());
+        $this->params = Request::init()->params;
+        $this->app = app();
+    }
+
+    public function view($route = ['dashboard', 'index'], bool $header = true, bool $footer = true, bool $special = true): array
+    {
+        return [ROOT . DS . 'views' . DS . implode(DS, $route) . '.v', $header, $footer, $special];
+    }
+
+    public function loadModel(string $model)
+    {
+        $tableName = ucfirst($model) . 'Model';
+        if (isset($GLOBALS[$tableName]))
+            return $GLOBALS[$tableName];
+        elseif (file_exists(ROOT . '/databases/' . $model . '.db')) {
+            require_once ROOT . '/config/app.php';
+            getAllDBFunction();
+            require_once ROOT . '/databases/' . $model . '.db';
+            return $GLOBALS[$tableName] = new $tableName();
+        }
+    }
+
+    public function __call($name, $arguments = null): array
+    {
+        return is_numeric($name)?$this->show($name):$this->render($name);
+    }
+
+    public function compact(string $key, $value): void
+    {
+        Application::init()->vars[$key] = $value;
+    }
+
+    public function render(string $action = 'index'): array
+    {
+        return $this->view([$this->app->request->space??strtolower(get_called_class()), $action], true, true, true);
+    }
+}

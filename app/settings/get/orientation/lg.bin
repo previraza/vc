@@ -1,0 +1,54 @@
+<?php
+    $sems = [];
+    $stageAndMem = 0;
+    $staggest = 1;
+    $COURSES = $_db->query(
+        "SELECT             
+            courses.name AS ec_name, courses.credit AS ec_credit, courses.id, courses.part,         
+            ROUND(CASE WHEN `cotes`.`RMC` != 0 THEN `cotes`.`RMC` ELSE ((`cotes`.`TP1`+`cotes`.`TP2`+`cotes`.`TP3`)/12+(`cotes`.`INT1`+`cotes`.`INT2`)/8+`cotes`.`EXAM`/2) END,2) AS cote_total, 
+            CASE WHEN `cotes`.`RRC` != 0 THEN `cotes`.`RRC` ELSE `cotes`.`RATR` END AS `cote_ratr`,
+            cotes.JURY AS cote_jury 
+        FROM courses
+            LEFT JOIN cotes
+                ON (cotes.course = courses.id AND cotes.student = $std->id)
+        WHERE  courses.class = $std->class  
+            AND courses.active = 1 AND courses.delete = 0
+        ORDER BY courses.part, courses.id
+        "
+    ) ; while ($course = $COURSES->fetch_object()) {
+      if($course->ec_name === 'Stage') $stage = $course = (isset($course->cote_jury)?$course->cote_jury:($course->cote_total<10&&$course->cote_ratr?$course->cote_ratr:$course->cote_total)??0);
+      elseif($course->ec_name === 'Mémoire') $memoire = $course = (isset($course->cote_jury)?$course->cote_jury:($course->cote_total<10&&$course->cote_ratr?$course->cote_ratr:$course->cote_total)??0);
+      else {
+         if(!isset($sems[$course->part??1])) $sems[$course->part??1] = [];
+         $sems[$course->part??1][] = $course;
+      } 
+   } $_SERVER['SCRIPT_URI'] = isset($_SERVER['SCRIPT_URI'])?$_SERVER['SCRIPT_URI']:'http://'.$_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
+   $all_res_mults = $echec_leg = $echec_gra = $nbr_vide = $final_res =$final_res_all= $final_credit = $final_credit_valide=0; foreach (
+      $sems as $part => $sem) { $sem_credit = $sem_credit_valide = $res_mults = 0;?>
+
+      <?php foreach ($sem as $ec) {
+         $res = (isset($ec->cote_jury)&&$ec->cote_jury!=0?$ec->cote_jury:($ec->cote_ratr>$ec->cote_total?$ec->cote_ratr:$ec->cote_total)??0);
+         $res_mults += $res*$ec->ec_credit;
+            if ($res < 10) {
+               if ($res == 0) $nbr_vide++; 
+               else if ($res < 8) $echec_gra++; 
+               else $echec_leg++;
+            }
+         $final_res_all+= 20*$ec->ec_credit;
+      } $final_res+=$res_mults ; $final_credit+=$sem_credit; $final_credit_valide+=$sem_credit_valide; $all_res_mults += $res_mults; }
+      if(isset($stage, $memoire)){ 
+         $staggest++; $stageAndMem+=$stage; 
+         $stageAndMem+=$memoire;
+         $resSAndM=$stageAndMem*$final_res_all/50;
+         $final_res+=$resSAndM;
+      } $res_ = number_format(($final_res*100)/($final_res_all*$staggest),2);
+       $mention = $res_<40&&!$nbr_vide?'-':($nbr_vide == 0 && $res_ < 50 ? 'A' : (($echec_gra || $echec_leg > 3 || ($echec_leg == 3 && $res_ < 60) || ($echec_leg == 2 && $res_ < 55) || ($echec_leg == 1 && $res_ < 50)) ? 'AA' : (($res_ >= 85) ? 'G-D' : (($res_ >= 70) ? 'DIS' : (($res_ >= 50) ? 'SAT' : 'A')))));
+       json([
+         'status'=>'success',
+         'system'=>'LG',
+         'student'=>$std,
+         'success'=> ($mention != 'A' && $mention != '-' && $mention != 'NAF' && $mention != 'AMD') && $res_ > 50,
+         'cote' => $res_,
+         'mention' => $mention
+      ])
+?>

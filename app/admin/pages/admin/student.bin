@@ -1,0 +1,434 @@
+<link src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.2/css/all.min.css" rel="stylesheet">
+<?php $pageTitle = "Tableau de Bord Etudiant" ;$rqtCotes = mysqli_query($db, "SELECT DISTINCT courses.id, courses.name, classes.finished, classes.delib, courses.credit, cotes.*, classes.id AS class FROM courses JOIN classes ON classes.id = courses.class JOIN students ON students.user_id = $user->id LEFT JOIN cotes ON (cotes.course = courses.id AND cotes.student = students.id AND cotes.active = 1) WHERE courses.active = 1 AND classes.active = 1 AND courses.delete = 0 AND classes.delete = 0 AND students.class = classes.id" ); $CREDIT_VALIDE = $TOTAL_COTES = $TOTAL_CREDIT = 0; $NBR_COURS = mysqli_num_rows($rqtCotes); $COURSES = []; while ($row = mysqli_fetch_array($rqtCotes)) { $COURSES[] = $row; extract($row); $TOTAL_COTES += (($COTE = $JURY?$JURY:((($RES = ((($TP1+$TP2+$TP3+$INT1+$INT2)/5) + $EXAM)/2) > 10 || !$RATR) ? $RES : $RATR)) * $credit) ; $CREDIT_VALIDE += ($COTE < 10) ? 0 : $credit; $TOTAL_CREDIT += $credit; $deliberation = $delib; $ended = $finished; } ; if(!$deliberation && !$ended) $CREDIT_VALIDE = $TOTAL_COTES = false; $COTES_FINALE = $TOTAL_COTES ? ($TOTAL_COTES * 5) / $TOTAL_CREDIT : 0 ; $std = (object) mysqli_fetch_array(mysqli_query($db, "SELECT students.*, sections.name AS section_name, options.name AS option_name, level.name AS level_name, promotion FROM students JOIN classes ON classes.id = students.class JOIN sections ON sections.id = classes.section JOIN options ON options.id = classes.option JOIN level ON level.id = classes.level WHERE students.active = 1 AND students.valide = 1 AND students.user_id = $user->id ORDER BY firstname")); $frais_scholar = $frais_scholar_ = 0; $rqtFinancy = mysqli_query($connection, "SELECT * FROM frais JOIN classes ON (classes.id = $std->class AND classes.level = frais.level AND classes.promotion = frais.year) WHERE frais.active = 1"); $rqtFinancy_ = mysqli_query($connection, "SELECT * FROM payments WHERE student = $user->id"); while($row = mysqli_fetch_array($rqtFinancy)) $frais_scholar+= ($row['type'] == 'FRST1' || $row['type'] == 'FRST2' || $row['type'] == 'FRST3') ? $row['solde'] : 0; while($row = mysqli_fetch_array($rqtFinancy_)) $frais_scholar_+= ($row['type'] == 'FRST1' || $row['type'] == 'FRST2' || $row['type'] == 'FRST3') ? $row['solde'] : 0; $deliberable = ($rqtFinancy > $rqtFinancy_) ? true : false ;?>
+<div class="row">
+    <div class="col-lg-8 col-12">
+        <div class="row">
+            <div class="col-6-xxxl col-lg-6 col-sm-6 col-12">
+                <div class="dashboard-summery-one">
+                    <div class="row">
+                        <div class="col-6">
+                            <div class="item-icon bg-light-red"> <i class="flaticon-money text-red"></i> </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="item-content">
+                                <div class="item-title">Frait Payé</div>
+                                <div class="item-number"><span class="counter"
+                                        data-num="<?= $frais_scholar_ ?>"><?= $frais_scholar_ ?></span> <span>Fc</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6-xxxl col-lg-6 col-sm-6 col-12">
+                <div class="dashboard-summery-one">
+                    <div class="row">
+                        <div class="col-6">
+                            <div class="item-icon bg-light-blue"> <i class="flaticon-money text-blue"></i> </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="item-content">
+                                <div class="item-title">Faits Total</div>
+                                <div class="item-number"><span class="counter"
+                                        data-num="<?= $frais_scholar ?>"><?= $frais_scholar ?></span> <span>Fc</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6-xxxl col-lg-6 col-sm-6 col-12">
+                <div class="dashboard-summery-one">
+                    <div class="row">
+                        <div class="col-6">
+                            <div class="item-icon bg-light-yellow"> <i
+                                    class="flaticon-percentage-discount text-orange"></i> </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="item-content">
+                                <div class="item-title">Taux de réussite</div>
+                                <div class="item-number"><span class="counter"
+                                        data-num="<?= number_format($COTES_FINALE, 2) ?>"><?= number_format($COTES_FINALE, 2) ?></span><span>
+                                        %</span></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6-xxxl col-lg-6 col-sm-6 col-12">
+                <div class="dashboard-summery-one">
+                    <div class="row">
+                        <div class="col-6">
+                            <div class="item-icon bg-light-magenta"> <i class="flaticon-shopping-list text-magenta"></i>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="item-content">
+                                <div class="item-title">Total Crédits</div>
+                                <div class="item-number"><span class="counter"
+                                        data-num="<?= $CREDIT_VALIDE ?>"><?= $CREDIT_VALIDE ?></span>/<span
+                                        class="counter" data-num="<?= $TOTAL_CREDIT ?>"><?= $TOTAL_CREDIT ?></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6-xxxl col-lg-12 col-sm-6 col-12">
+                <div class="dashboard-summery-one">
+                    <div class="row">
+                        <div class="col-6">
+                            <div class="item-icon bg-light-blue"> <i class="flaticon-calendar text-blue"></i> </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="item-content">
+                                <div class="item-title">Total Cours</div>
+                                <div class="item-number"><span class="counter"
+                                        data-num="<?= $NBR_COURS ?>"><?= $NBR_COURS ?></span></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-4 col-12">
+        <div class="dashboard-summery-one">
+            <div class="row p-5">
+                <div class="card-alert w-100">
+                    <div class="alert alert-primary text-center" role="alert"> <strong>Bienvenue dans le Système de
+                            Numérisation de l'Education Nationale</strong> </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-6">
+                    <div class="item-icon bg-light-blue"> <i class="flaticon-calendar text-blue"></i> </div>
+                </div>
+                <div class="col-6">
+                    <div class="item-content">
+                        <div class="item-title">Heure & Date</div>
+                        <div class="item-number"><span class="current_datetime">0000-00-00 00:00</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-12">
+        <div class="card height-auto" id='contentBlock'>
+            <div class="card-body">
+                <div class="heading-layout1 p-3">
+                    <div class="item-title">
+                        <h3>À-propos de Moi</h3>
+                    </div>
+                </div>
+                <div class="single-info-details">
+                    <div class="item-content">
+                        <div class="header-inline item-header">
+                            <h3 class="text-dark-medium font-medium"> <?=$user->username?> </h3>
+                            <div class="header-elements">
+                                <ul>
+                                    <li><a href="#"><i class="far fa-edit"></i></a></li>
+                                    <li><a href="#" data-action="print" onclick="printer()"><i
+                                                class="fas fa-print"></i></a></li>
+                                    <li><a href="#" data-action="null" download-block="contentBlock"
+                                            download-btn="btn"><i class="fas fa-download"></i></a></li>
+                                </ul>
+                            </div>
+                        </div>
+                        <p> <?=$std->biographie?> </p>
+                        <div class="info-table table-responsive p-1">
+                            <table class="table text-nowrap">
+                                <tbody>
+                                    <tr>
+                                        <td>Name:</td>
+                                        <td class="font-medium text-dark-medium"> <?="$std->firstname $std->lastname"?>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Matricule:</td>
+                                        <td class="font-medium text-dark-medium"><?=$std->matricul?></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Gender:</td>
+                                        <td class="font-medium text-dark-medium"> <?=$std->gender?> </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Father Name:</td>
+                                        <td class="font-medium text-dark-medium"> <?=$std->father?> </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Mother Name:</td>
+                                        <td class="font-medium text-dark-medium"> <?=$std->mother?> </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Date Of Birth:</td>
+                                        <td class="font-medium text-dark-medium"> <?=$std->birthday?> </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Religion:</td>
+                                        <td class="font-medium text-dark-medium"> <?=$std->religion?> </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Father Occupation:</td>
+                                        <td class="font-medium text-dark-medium"> <?=$std->parent_work?> </td>
+                                    </tr>
+                                    <tr>
+                                        <td>E-mail:</td>
+                                        <td class="font-medium text-dark-medium"><a href="mail:<?=$std->email?>"
+                                                class="__cf_email__"
+                                                data-cfemail="b4ded1c7c7ddd5c6dbc7d1f4d3d9d5ddd89ad7dbd9">[email&#160;protected]</a>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Admission Date:</td>
+                                        <td class="font-medium text-dark-medium"> <?=$std->joining_date?> </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Section:</td>
+                                        <td class="font-medium text-dark-medium"> <?=$std->section_name?> </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Option:</td>
+                                        <td class="font-medium text-dark-medium"> <?=$std->option_name?> </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Level:</td>
+                                        <td class="font-medium text-dark-medium"> <?=$std->level_name?> </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Address:</td>
+                                        <td class="font-medium text-dark-medium"> <?=$std->address?> </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Phone:</td>
+                                        <td class="font-medium text-dark-medium"> <?=$std->phone?> </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-12">
+        <div class="card dashboard-card-eleven">
+            <div class="card-alert w-100">
+                <div class="alert alert-primary text-center text-light <?= ($deliberable === true) ? 'bg-success' : 'bg-danger' ?>"
+                    role="alert"> <strong>Résultats de délibération</strong> </div>
+            </div>
+            <div class="card-body">
+                <div class="heading-layout1">
+                    <div class="item-title">
+                        <h3>Mes Résults</h3>
+                    </div>
+                    <div class="dropdown">
+                        <a class="dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-expanded="false">...</a>
+                        <div class="dropdown-menu dropdown-menu-right">
+                            <div>
+                                <a class=dropdown-item data-action="print" href="#"><i class="fas fa-print text-dark-pastel-green"></i>Imprimer</a>
+                                <a class=dropdown-item target=_blank data-link=external href=/public/profile?id=<?=$std->id?>><i class="fas fa-redo-alt text-orange-peel"></i>Bulletin</a>
+                            <div>
+                            </div>
+                                <a class=dropdown-item data-action='null' data-sLink="http://<?=$_SERVER['SERVER_NAME']?>/public/profile?id=<?=$std->id?>" data-sShare=wa href="#"><i class="fas fa-whatsapp text-blue fa-share-alt"></i>Whatsapp</a>
+                                <a class=dropdown-item data-action='null' data-sLink="http://<?=$_SERVER['SERVER_NAME']?>/public/profile?id=<?=$std->id?>" data-sShare=fb href="#"><i class="fas fa-facebook text-blue fa-share-alt"></i>Facebook</a>
+                                <a class=dropdown-item data-action='null' data-sLink="http://<?=$_SERVER['SERVER_NAME']?>/public/profile?id=<?=$std->id?>" data-sShare=te href="#"><i class="fas fa-telegram text-blue fa-share-alt"></i>Telegram</a>
+                                <a class=dropdown-item data-action='null' data-sLink="http://<?=$_SERVER['SERVER_NAME']?>/public/profile?id=<?=$std->id?>" data-sShare=tw href="#"><i class="fas fa-facebook text-blue fa-share-alt"></i>Twitter</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="table-box-wrap">
+                    <div class="table-responsive p-1 result-table-box">
+                        <table class="table display data-table text-nowrap">
+                            <thead>
+                                <tr>
+                                    <th>N°</th>
+                                    <th>cours</th>
+                                    <th>Crédits</th>
+                                    <th>Cotes</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php if($deliberation || $ended) { $count = 1; $TOTAL_COTES = $CREDIT_VALIDE = $TOTAL_CREDIT = 0; foreach ($COURSES as $course) { extract($course); $TOTAL_COTES += (($COTE = $JURY?$JURY:((($RES = ((($TP1+$TP2+$TP3+$INT1+$INT2)/5) + $EXAM)/2) > 10 || !$RATR) ? $RES : $RATR)) * $credit) ; $CREDIT_VALIDE += ($COTE < 10) ? 0 : $credit; $TOTAL_CREDIT += $credit; ?>
+                                <tr id="editing_<?= $id ?>" class="<?= ($recours) ? 'bg-info text-white' : null ?>">
+                                    <td class="text-center <?= $COTE > 10 ? 'bg-success' : 'bg-danger' ?> text-light">
+                                        <?= $count++ ?> </td>
+                                    <td> <?= $name?> </td>
+                                    <td class="text-center"> <?= $credit ?> </td>
+                                    <td class="text-center"> <?= $COTE ?> </td>
+                                    <td>
+                                        <div class="dropdown"> <a href="#" class="dropdown-toggle hide-after d-flex"
+                                                data-toggle="dropdown" aria-expanded="false">
+                                                <div class="flaticon-more-button-of-three-dots rotate-90"></div>
+                                            </a>
+                                            <div class="dropdown-menu dropdown-menu-right"> <a class=dropdown-item
+                                                    href="#"><i class="fas fa-info text-green"></i>Plus d'infos</a>
+                                                <?php if(isset($id) && $deliberation && $COTE < 10) { ?> <a
+                                                    class=dropdown-item data-action="null" href="#"
+                                                    onclick='sendingRecours(<?= $id ?>)'><i
+                                                        class="fas fa-redo-alt text-orange-peel"></i>Recours</a>
+                                                <?php } ?> </div>
+                                        </div>
+                                    </td>
+                                </tr> <?php }} else { ?> <h4>En attente de délibération...</h4> <?php } ?> </tbody>
+                            <tfoot>
+                                <tr>
+                                    <td colspan="2" class="center aligned pt-3">
+                                        <h4>Total</h4>
+                                    </td>
+                                    <td class="center aligned pt-3">
+                                        <?= $CREDIT_VALIDE ? ($CREDIT_VALIDE / $TOTAL_CREDIT) : 0 ?> </td>
+                                    <td class="center aligned pt-3">
+                                        <?= number_format($TOTAL_COTES ? $TOTAL_COTES/$TOTAL_CREDIT : 0, 2) ?> </td>
+                                    <th></th>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="d-none col-4-xxxl col-xl-6 col-12">
+        <div class="card dashboard-card-six">
+            <div class="card-body">
+                <div class="heading-layout1 mg-b-17">
+                    <div class="item-title">
+                        <h3>Programmes</h3>
+                    </div>
+                </div>
+                <div class="notice-box-wrap">
+                    <div class="col-xl-10">
+                        <div class="timeline">
+                            <div class="timeline-container">
+                                <div class="timeline-end">
+                                    <p>Début</p>
+                                </div>
+                                <div class="timeline-continue">
+                                    <div class="row timeline-right">
+                                        <div class="col-md-6 w-auto">
+                                            <div class="timeline-icon"> <i
+                                                    class="bx bx-user-pin text-primary h2 mb-0"></i> </div>
+                                        </div>
+                                        <div class="col">
+                                            <div class="timeline-box">
+                                                <div class="timeline-date bg-primary text-center rounded">
+                                                    <h3 class="text-white mb-0">07</h3>
+                                                    <p class="mb-0 text-white-50">30</p>
+                                                </div>
+                                                <div class="event-content">
+                                                    <div class="timeline-text">
+                                                        <h3 class="font-size-18">Cours</h3>
+                                                        <p class="mb-0 mt-2 pt-1 text-muted">Anglais : Prof. Thsinuishi
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row timeline-right">
+                                        <div class="col-md-6 w-auto">
+                                            <div class="timeline-icon"> <i
+                                                    class="bx bx-user-pin text-primary h2 mb-0"></i> </div>
+                                        </div>
+                                        <div class="col">
+                                            <div class="timeline-box">
+                                                <div class="timeline-date bg-primary text-center rounded">
+                                                    <h3 class="text-white mb-0">10</h3>
+                                                    <p class="mb-0 text-white-50">20</p>
+                                                </div>
+                                                <div class="event-content">
+                                                    <div class="timeline-text">
+                                                        <h3 class="font-size-18">Cours</h3>
+                                                        <p class="mb-0 mt-2 pt-1 text-muted">Anglais : Prof. Thsinuishi
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row timeline-right">
+                                        <div class="col-md-6 w-auto">
+                                            <div class="timeline-icon"> <i
+                                                    class="bx bx-user-pin text-primary h2 mb-0"></i> </div>
+                                        </div>
+                                        <div class="col">
+                                            <div class="timeline-box">
+                                                <div class="timeline-date bg-primary text-center rounded">
+                                                    <h3 class="text-white mb-0">11</h3>
+                                                    <p class="mb-0 text-white-50">50</p>
+                                                </div>
+                                                <div class="event-content">
+                                                    <div class="timeline-text">
+                                                        <h3 class="font-size-18">Cours</h3>
+                                                        <p class="mb-0 mt-2 pt-1 text-muted">Mathématiques : Prof. JP
+                                                            Kabangu</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="timeline-start">
+                                    <p>Fin</p>
+                                </div>
+                                <div class="timeline-launch">
+                                    <div class="timeline-box">
+                                        <div class="timeline-text">
+                                            <h3 class="font-size-18">Programme de la journée</h3>
+                                            <p class="text-muted mb-0"> <?= date('d M Y');?> | par Viraza</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="d-none col-4-xxxl col-xl-6 col-12">
+        <div class="card dashboard-card-thirteen">
+            <div class="card-body">
+                <div class="heading-layout1 py-3">
+                    <div class="item-title">
+                        <h3>Event Calender</h3>
+                    </div>
+                </div>
+                <div class="calender-wrap">
+                    <div id="fc-calender" class="fc-calender"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="d-none col-4-xxxl col-12">
+        <div class="card dashboard-card-six">
+            <div class="card-body">
+                <div class="heading-layout1 mg-b-17 py-3">
+                    <div class="item-title">
+                        <h3>Notifications</h3>
+                    </div>
+                    <div class="dropdown"> <a class="dropdown-toggle" href="#" role="button" data-toggle="dropdown"
+                            aria-expanded="false">...</a>
+                        <div class="dropdown-menu dropdown-menu-right"> <a class=dropdown-item
+                                href="?link=notification--all"><i
+                                    class="fas fa-redo-alt text-orange-peel"></i>Ouvrir</a> <a class=dropdown-item
+                                href="?link=notification"><i class="fas fa-cogs text-dark-pastel-green"></i>Ecrire</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="notice-board-wrap" style="max-height:370px;">
+                    <?php $to_class = array( 'all' => 'bg-primary', 'sec' => 'bg-dark-pastel-green', 'opt' => 'bg-skyblue', 'lev' => 'bg-pink', 'cla' => 'bg-yellow', 'pmt' => 'bg-orange', 'std' => 'bg-secondary', 'ens' => 'bg-green', 'agn' => 'bg-dark', 'adm' => 'bg-blue-dark', ); $rqt = mysqli_query($db, "SELECT * FROM notifications WHERE notifications.active = 1 AND notifications.delete = 0" .((isset($_POST['posted_on']) && $_POST['posted_on']) ? " AND posted_on = '$_POST[posted_on]'" : NULL ) .((isset($_POST['posted_to']) && $_POST['posted_to']) ? " AND posted_to = $_POST[posted_to]" : NULL ) .' ORDER BY posted_date DESC' ) ; while ($row = mysqli_fetch_array($rqt)) { ?>
+                    <div class="notice-list">
+                        <div class="post-date text-title-specimen <?= $to_class[$row['posted_on']] ?>">
+                            <?= $row['title'] ?> </div>
+                        <h6 class="notice-title"> <a href="#"> <?= $row['content'] ?> </a> </h6>
+                        <div class="entry-meta"> <?= $row['posted_by'] ?> / <span><?= $row['posted_date'] ?></span>
+                        </div>
+                    </div> <?php } ?> </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,51 @@
+randomize = (length = 12, prefix = "MCI", separator = "-") => {
+    let res = pre_res = '';
+    for (let i = 0; i < length; i++) {
+        pre_res = parseInt(Math.random() * 35).toString(35)
+        res += ((!(i % 4) ? separator : '') + ((Math.random() * 2) > 1 ? pre_res.toUpperCase() : pre_res));
+    }
+    return prefix + separator + res;
+}
+
+mci_generator_enc = (id = 0, name = "Undefined") => {
+    $('#contentKEY').val(randomize(16, 'enc_', ''));
+    $('#contentSSID').val(randomize());
+    $('#modalTitle').text(name);
+    $('#contentID').val(id);
+    $('#submitFormulary')[0].dataset.id = id;
+    $('#modelId').modal();
+};
+
+
+$('#submitFormulary').on('submit', e => {
+    e.preventDefault();
+    updateProfile(e)
+})
+
+updateProfile = e => {
+    var data = new FormData(e.currentTarget);
+    $.ajax({
+        url: "/app/settings/edit/updateProfile.php?sending_by=mcisme",
+        data: data,
+        type: "POST",
+        contentType: false,
+        cache: false,
+        processData: false,
+        success: function(response) {
+            try {
+                let res = JSON.parse(response),
+                    res_show = document.getElementById('shodan_res_' + e.target.dataset.id);
+                if (res.status == 'succes') {
+                    $('#submitPreBtn').fadeOut();
+                    $('.modalMessageTextFooter').text('Succès !')
+                    res_show.className = 'bg-info text-white';
+                } else {
+                    $('.modalMessageTextFooter').text('Echèc !')
+                    res_show.className = 'bg-danger text-white';
+                }
+            } catch (error) {
+                console.error(response);
+            }
+        }
+    })
+}

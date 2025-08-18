@@ -1,0 +1,181 @@
+let $count = 0, 
+gv = (v) => (isNaN(v) || v <= 0? false : v),
+updateCote = (e, nc = true) => {
+    let tr = $(nc?e.currentTarget:e).parents('tr.editable')[0],
+        ipts = tr.querySelectorAll('input[pattern]'),
+        tds = tr.querySelectorAll('td');
+        tds[7].innerText = parseFloat(gv(tds[6].innerText)||gv(tds[5].innerText)||gv(ipts[0].value)||gv(tds[3].innerText)||0);
+}, editAll = () => {
+    $('input[pattern], input[type="submit"]', $('tr.editable td.text-center.writable.activity-oin.wrt-op').addClass('active')).removeAttr('disabled');
+    $('input[pattern]').on('change keyup click', e => updateCote(e));
+}, saveAll = () => document.querySelectorAll('input[type=submit]').forEach((e) => e.click());
+
+class TrLine {
+    constructor(d) {
+            $count++;
+            let $RRC = d.RRC||0, $RMC = d.RMC||0, $RATR = d.RATR||0, $TOT = d.TOT||0, $tr = document.createElement('tr'), $RES=gv($RRC)||gv($RATR)||gv($RMC)||gv($TOT)||0,
+                $tds = `<td>
+                <form class="Former_edit_cote" method="post" id="Form_x_cote_${$count}" name="Form_x_cote_${$count}" data-id="${$count}">
+                    <label class="form-check-label">${$count}</label>
+                    <input type="hidden" name="cote" value="${(d.cote_id)?d.cote_id:0}">
+                    <input type="hidden" name="current_element" value="${$count}">
+                    <input type="hidden" name="student" value="${d.id}">
+                    <input type="hidden" name="course" value="${d.course_id}">
+                    <input type="hidden" name="CON_47">
+                </form>
+            </td>
+            <td class="text-center"><img src="/layouts/default/img/figure/student2.webp" alt="student"></td>
+            <td>${d.firstname+' '+d.lastname}</td>
+            <td class="text-center static account-stable activity-oin wrt-op">${$TOT}</td>
+            <td class="text-center writable activity-oin wrt-op">
+                <input form="Form_x_cote_${ $count }" disabled class="text-center" pattern type=number step=0.1 max=30 min=0 name="RRC" max="20" min="0" value="${$RRC}">
+            </td>
+            <td>
+                <input type="submit" class="d-none" form="Form_x_cote_${$count}" id="Form_x_cote_${$count}_submit">
+                <div class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false" aria-label="Plus d'option">
+                        <span class="flaticon-more-button-of-three-dots"></span>
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-right">
+                        ${(d.finished==0&&d.delib==1)?'<a class="dropdown-item editing_cote" data-action="null" data-id="editing_'+$count+'"><i class="fas fa-cogs text-dark-pastel-green"></i>Edit</a><a class="dropdown-item" data-action="null" onclick="document.getElementById(`Form_x_cote_'+$count+'_submit`).click()"><i class="fas fa-save text-blue"></i>Save</a>':''}
+                        <a class="dropdown-item" data-js data-location="reload"><i class="fas fa-redo-alt text-orange-peel"></i>Refresh</a>
+                    </div>
+                </div>
+            </td>`;
+        $tr.innerHTML = $tds;
+        $tr.id = 'editing_'+$count;
+        $tr.dataset.coteOf = $.trim(d.firstname+' '+d.lastname).replace(/[\s]{2,}/g,' ')
+        if (d.finished==0&&d.delib==1) $tr.className = 'editable';
+        return <?= !isset($rcc)||($rcc!='se'&&$rcc!='ae')?"\$tr":($rcc == 'se'?"\$RES >= 10 ? '' : \$tr":"\$RES <= 10 ? '' : \$tr") ?>;
+    }
+}; $('tbody.dataTable-dyn-body').append(<?= json_encode($db_pdo->query("SELECT DISTINCT students.*, classes.delib, classes.finished, cotes.recours AS recours, cotes.id AS cote_id, courses.id AS course_id, courses.name AS course_name, ROUND((cotes.`TP1`+cotes.`TP2`+cotes.`TP3`)/12+(cotes.`INT1`+cotes.`INT2`)/8+cotes.`EXAM`/2,2) AS TOT, cotes.RATR , cotes.RMC, cotes.RRC FROM students JOIN classes ON classes.id = students.class JOIN courses ON courses.class = students.class JOIN teachers ON teachers.id = courses.titular LEFT JOIN cotes ON (cotes.student = students.id AND cotes.course = courses.id) WHERE students.active = 1 AND courses.delete = 0 AND courses.active = 1 AND teachers.user_id = $user->id AND courses.id = ".(isset($_POST['course']) ? $_POST['course'] : (isset($links[2]) ? $links[2] : 0))." ORDER BY firstname")->fetchAll(PDO::FETCH_OBJ));?>.map(i=>new TrLine(i)));
+$('table.dataTable-dyn-table').DataTable({
+    paging: false,
+    retrieve: true,
+    stateSave: true,
+    info: false,
+    lengthChange: false,
+    lengthMenu: [20, 50, 75, 100, 250, 500, 1000],
+    columnDefs: [{
+        targets: [0, -1],
+        orderable: false 
+    }], dom: 'Bfrtip',
+    buttons: [{
+        text: 'Actualiser',
+        action: ()=>location.reload(),
+    }, {
+        text: 'Importer',
+        action: ()=>$('#upXlsx')[0].click(),
+    }, {
+        text: 'Encoder',
+        action: editAll
+    }, {
+        text: 'Enregistrer',
+        action: saveAll
+    }, {
+        extend: 'collection',
+        text: 'Exporter',
+        buttons: ['copy', 'csv', 'excel', 'pdf', 'print']
+    }]
+});
+    
+$('#editing').on('click', editAll);
+
+$('.dropdown-item.editing_cote').on('click', e => {
+    $('input[pattern]').on('change keyup click', e => { e.preventDefault(); updateCote(e) });
+    $('input[pattern], input[type="submit"]', $('#' + e.target.dataset.id + ' td.text-center.writable.activity-oin.wrt-op').addClass('active')).removeAttr('disabled');
+});
+
+$('form.Former_edit_cote').on('submit', (e) => {
+    e.preventDefault();
+    var data = new FormData(e.currentTarget);
+    $.ajax({
+        url: "/app/settings/set/cotes--recours.php?sending_by=mcisme",
+        data: data,
+        type: "POST",
+        contentType: false,
+        cache: false,
+        processData: false,
+        success: function(response) {
+            try {
+                var res = JSON.parse(response);
+                if (res.status == 'succes') $('#editing_' + e.target.dataset.id).removeClass('bg-warning').changeClass('bg-danger', 'bg-success text-white');
+                else if (res.status == 'error') {
+                    $('#editing_' + e.target.dataset.id).changeClass('bg-success text-white', 'bg-danger')
+                    console.log(response);
+                }
+            } catch (error) {
+                $('#editing_' + e.target.dataset.id).changeClass('bg-success text-white', 'bg-danger')
+                console.log(response, error);
+            }
+        }
+    });
+    window.r = data;
+});
+
+$("a[data-js][data-location]").on('clink', (e) => location[e.target.dataset.location]());
+window.submitAll = saveAll;
+
+$('table.dataTable tbody').on('change', () => {
+    $('.dropdown-item.editing_cote').on('click', (e) => {
+        $('input[pattern]').on('change keyup click', e => {e.preventDefault(); updateCote(e)});
+        $('input[pattern], input[type="submit"]', $('#' + e.target.dataset.id + ' td.text-center.writable.activity-oin.wrt-op').addClass('active')).removeAttr('disabled')
+    });
+    $('form.Former_edit_cote').on('submit', (e) => {
+        e.preventDefault();
+        var data = new FormData(e.currentTarget);
+        $.ajax({
+            url: "/app/settings/set/cotes--recours.php?sending_by=mcisme",
+            data: data,
+            type: "POST",
+            contentType: false,
+            cache: false,
+            processData: false,
+            success: function(response) {
+                try {
+                    var res = JSON.parse(response);
+                    if (res.status == 'succes') $('#editing_' + e.target.dataset.id).removeClass('bg-warning').changeClass('bg-danger', 'bg-success text-white');
+                    else if (res.status == 'error') {
+                        $('#editing_' + e.target.dataset.id).changeClass('bg-success text-white', 'bg-danger')
+                        console.log(response);
+                    }
+                } catch (error) {
+                    $('#editing_' + e.target.dataset.id).changeClass('bg-success text-white', 'bg-danger')
+                    console.log(response, error);
+                }
+            }
+        });
+    });
+    $("a[data-js][data-location]").on('clink', (e) => location[e.target.dataset.location]());
+    window.submitAll = function() {
+        document.querySelectorAll('input[type=submit]').forEach((e) => e.click());
+    }; 
+});
+
+$('#upXlsx').on('change', e=>{
+    $('#content > div > div > div.heading-layout1 > div.item-title  > div').html((()=>{
+        let div = document.createElement('div');
+        div.className = 'alert alert-warning';
+        div.innerText = 'Importation du fichier : '+e.currentTarget.files[0].name;
+        return div;
+    })());
+    let f = new FileReader();
+    f.onload=e=>{
+        let a = XLSX.read(e.target.result,{type:"binary"});
+        a.SheetNames.forEach(s=>XLSX.utils.sheet_to_row_object_array(a.Sheets[s]).forEach((l,t) => {
+            if((t = $(`tr[data-cote-of="${$.trim(l.FN?l.FN:(l.NOMS?l.NOMS:(l.NOM?l.NOM:'')+' '+(l.POSTNOM?l.POSTNOM:''))).replace(/[\s]{2,}/g,' ')}"]>td.text-center.writable.activity-oin.wrt-op`))[0]){
+                $('input[pattern]').on('change keyup click', e => {e.preventDefault();
+                    updateCote(e);
+                }); t.parent()[0].querySelectorAll('input[pattern]')[0].value = l.RATR ? l.RATR : 0;
+                $('input[pattern], input[type="submit"]', t.addClass('active')).removeAttr('disabled');
+            }
+        }));
+        $('input[pattern]').each((i,e)=>updateCote(e, false));
+    }; f.readAsBinaryString(e.currentTarget.files[0]);
+});
+
+
+// $('#DataTables_Table_0').dataExtractor('Excel', 'PDF');
+setInterval(() => $('permanantyConnect').load('/app/login/online.pp'), 5000);
+document.title += " | <?= $_GET['H_title']??'' ?>";
+$('#fiche-title').text($('#fiche-title').text()+" | <?= $_GET['H_title']??'' ?>");

@@ -1,0 +1,18 @@
+<?php $pageTitle = "Demande En Attente" ?>
+
+<div class="card height-auto">
+    <div class="card-body">
+        <div class="heading-layout1 mg-b-15">
+            <div class="item-title p-5 text-center w-100">
+                <h1 class="text-danger bg-blue-dark py-xl-5">Demande En Attente</h1>
+                <h3>
+                    Votre demande a bien été envoyer et est maintenat en attente de validation <br>
+                    Pendant ce temps, vous pouvez profiter de plus des fonctionalité <a data-link="external" href="http://viraza.net" target="_blank" rel="noopener noreferrer">viraza</a>...
+                </h3>
+                <br>
+                <p>Si votre requette prend anormalement trop de temps, veuillez directement contacter votre établissement pour plus d'info.</p>
+            </div>
+        </div>
+    </div>
+</div>
+<?php $hide_menu = true;

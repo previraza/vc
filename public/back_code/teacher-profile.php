@@ -1,0 +1,158 @@
+<!-- Start of Breadcrumb section
+============================================= -->
+<section id="ft-breadcrumb" class="ft-breadcrumb-section position-relative" data-background="/layouts/default/images/portfolio/12.webp">
+    <span class="background_overlay"></span>
+    <span class="design-shape position-absolute"><img src="/public/assets/img/shape/tmd-sh.webp" alt=""></span>
+    <div class="container">
+        <div class="ft-breadcrumb-content headline text-center position-relative">
+            <h2>ILUNGA MBUYAMBA Elisée </h2>
+            <div class="ft-breadcrumb-list ul-li">
+                <ul>
+                    <li><a href="#">Profile</a></li>
+                    <li>Enseignants</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- End of Breadcrumb section
+============================================= -->
+
+<!-- Start of Team Details section
+============================================= -->
+<section id="ft-team-details" class="ft-team-details-section page-padding">
+    <div class="container">
+        <div class="ft-team-details-content position-relative">
+            <span class="design-shape position-absolute"><img src="/public/assets/img/shape/tmd-sh.webp" alt=""></span>
+            <div class="row">
+                <div class="col-lg-5">
+                    <div class="ft-team-details-img position-relative">
+                        <img src="/layouts/default/images/team/02 270x330.webp" alt="">
+                    </div>
+                </div>
+                <div class="col-lg-7">
+                    <div class="ft-team-details-text-wrapper headline pera-content">
+                        <div class="ft-team-details-text">
+                            <h3>ILUNGA MBUYAMBA Elisée </h3>
+                            <span>Secrétaire Général Académique</span>
+                            <span>|</span>
+                            <span>Professeur Associé</span>
+                            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Quis ipsum suspendisse ultrices gravida. Risus commodo viverra maecenas accumsan lacus vel facilisis.
+                            </p>
+                        </div>
+                        <div class="ft-team-details-info ul-li-block">
+                            <ul>
+                                <li><span>Experience :</span> 14 ans</li>
+                                <li><span>Email :</span> adresse@mail.com</li>
+                                <li><span>Phone :</span> (+243) 987 654 321</li>
+                                <li><span>Phone :</span> (+243) 123 456 789</li>
+                            </ul>
+                        </div>
+                        <div class="coming-soon-social d-flex">
+                            <a href="#"><i class="fab fa-facebook-f"></i></a>
+                            <a href="#"><i class="fab fa-twitter"></i></a>
+                            <a href="#"><i class="fab fa-instagram"></i></a>
+                            <a href="#"><i class="fab fa-pinterest-p"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="ft-team-personal-form-cta-wrapper">
+            <div class="row">
+                <div class="col-lg-9">
+                    <div class="ft-team-personal headline pera-content">
+                        <h2 class="title" style="background: #f7c243; padding: 10px; border-radius: 10px;">Experience Personnel</h2>
+                        <p>Docteur Ingénieur en Génie Electrique, expert en Systèmes Artificiels Intelligents à l'Université de Guanajuato du Mexique. Actuellement Enseignant de plusieurs cours dont la Téléinformatique. The nearest district hospital from Rupen village is close to 105 km. The nearest mater. Alienum phaedrum torquatos nec eu, detraxit periculis ex, nihil expetendis in mei. Mei an pericula euripidis, hinc partem ei est. Eos ei
+                            of nisl graecis, vix aperiri consequat an. Eius lorem tincidunt vix at, vel pertinax sensibus id, epicurei mea et. Mea facilisis urbanitas moderatius id. Vis ei rationibus definiebas, eu qui purto zril laoreet. Ex error
+                            omnium interpretaris pro, alia illum ea vim. Lorem ipsum dolor sit amet, eu per legimus referrentur.</p>
+                        <div class="ft-team-personal-skill">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="ft-team-skill-inner align-items-center d-flex">
+                                        <div class="counter-boxed  headline position-relative">
+                                            <div class="graph-outer">
+                                                <input type="text" class="dial" data-fgColor="#f22728" data-bgColor="#fff" data-width="65" data-height="65" data-linecap="round" value="95">
+                                                <div class="inner-text count-box"><span class="count-text" data-stop="95" data-speed="3500"></span>%</div>
+                                            </div>
+                                        </div>
+                                        <div class="ft-team-skill-text">
+                                            <h3>Communication</h3>
+                                            <p>Mod tempor incididunt magna aliqua. </p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="ft-team-skill-inner align-items-center d-flex">
+                                        <div class="counter-boxed  headline position-relative">
+                                            <div class="graph-outer">
+                                                <input type="text" class="dial" data-fgColor="#f22728" data-bgColor="#fff" data-width="65" data-height="65" data-linecap="round" value="90">
+                                                <div class="inner-text count-box"><span class="count-text" data-stop="90" data-speed="3500"></span>%</div>
+                                            </div>
+                                        </div>
+                                        <div class="ft-team-skill-text">
+                                            <h3>Consultation</h3>
+                                            <p>Mod tempor incididunt magna aliqua. </p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="ft-team-skill-inner align-items-center d-flex">
+                                        <div class="counter-boxed  headline position-relative">
+                                            <div class="graph-outer">
+                                                <input type="text" class="dial" data-fgColor="#f22728" data-bgColor="#fff" data-width="65" data-height="65" data-linecap="round" value="85">
+                                                <div class="inner-text count-box"><span class="count-text" data-stop="85" data-speed="3500"></span>%</div>
+                                            </div>
+                                        </div>
+                                        <div class="ft-team-skill-text">
+                                            <h3>Management</h3>
+                                            <p>Mod tempor incididunt magna aliqua. </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="ft-team-contact-form-wrapper">
+                            <div class="ft-team-contact-form">
+                                <h3>Contact Me</h3>
+                                <form action="#">
+                                    <div class="row">
+                                        <div class="col-lg-6">
+                                            <input type="text" placeholder="Your Name">
+                                        </div>
+                                        <div class="col-lg-6">
+                                            <input type="email" placeholder="Your Email">
+                                        </div>
+                                        <div class="col-lg-12">
+                                            <input type="text" placeholder="Your Website">
+                                        </div>
+                                        <div class="col-lg-12">
+                                            <textarea name="#" placeholder="Your Question"></textarea>
+                                        </div>
+                                        <div class="col-lg-12">
+                                            <button class="ft-submit-btn">Post Comment <i class="flaticon-right-arrow"></i></button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3">
+                    <div class="ft-team-personal-cta text-center" data-background="/public/assets/img/bg/td-bg.webp">
+                        <div class="ft-team-personal-cta-icon d-flex justify-content-center align-items-center">
+                            <i class="fal fa-phone-rotary"></i>
+                        </div>
+                        <div class="ft-team-personal-cta-text headline">
+                            <h3>Contact Info :</h3>
+                            <span>Phone : (+243) 987 654 321</span>
+                            <span>Email : Contact@email.com</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- End of Team Details section
+============================================= -->

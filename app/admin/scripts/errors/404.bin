@@ -1,0 +1,1 @@
+console.error("Error 404 :", "Page not Found")

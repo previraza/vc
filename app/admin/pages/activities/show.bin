@@ -1,0 +1,60 @@
+<link rel="stylesheet" href="/dist/leaflet.css"/>
+<?php
+  viewOnlyBy('ADMIN'); $pageTitle = "Détails de l'activité"; 
+  $id = (int)($links[2] ?? null);
+  $activity = $logger->getActivityById($id);
+
+  $maxCard = ["data", "page", "review", "latitude" => "col-lg-8 row-lg-6"]; 
+  $hideCard = ["longitude"];
+  $startGroup = ['page' => '<div class="col-md-6 col-lg-4">'];
+  $endGroup = ['review' => '</div>'];
+?>
+<div class="py-5">
+    <?php if (!$activity): ?>
+        <div class="alert alert-warning">Activité non trouvée.</div>
+    <?php else: ?>
+        <h1 class="mb-4">Activité #<?= htmlspecialchars($activity['id']) ?></h1>
+        <div class="row g-3">
+            <?php foreach ($activity as $key => $value):
+                if (in_array($key, $hideCard)) continue;
+                // détermine la classe de la colonne
+                $colClass = $maxCard[$key] ?? 'col-md-6 col-lg-4';
+                if (is_int(array_search($key, $maxCard, true))) $colClass = 'col-12';
+                echo $startGroup[$key] ?? '';
+            ?>
+                <div class="col-12 <?= $colClass ?>">
+                    <div class="card h-100 shadow-sm">
+                        <div class="card-header text-capitalize bg-white">
+                            <?= htmlspecialchars(str_replace('_', ' ', $key)) ?>
+                        </div>
+                        <div class="card-body">
+                            <?php if ($key === 'latitude'): ?>
+                                <!-- Carte Leaflet -->
+                                <div id="map" style="height: 300px; border-radius: .5rem; box-shadow: 0 .5rem 1rem rgba(0,0,0,.15);"></div>
+                            <?php elseif (is_array($value) || is_object($value)): ?>
+                                <pre class="mb-0"><?= htmlspecialchars(json_encode($value, JSON_PRETTY_PRINT)) ?></pre>
+                            <?php else: ?>
+                                <p class="mb-0"><?= htmlspecialchars($value) ?></p>
+                            <?php endif; ?>
+                        </div>
+                    </div>
+                </div>
+            <?php
+            echo $endGroup[$key] ?? '';
+            endforeach; ?>
+        </div>
+    <?php endif; ?>
+</div>
+
+<script src="/dist/leaflet.js"></script>
+<script>
+    <?php if (!empty($activity['latitude']) && !empty($activity['longitude'])): ?>
+    var lat = <?= htmlspecialchars($activity['latitude'], ENT_QUOTES) ?>;
+    var lon = <?= htmlspecialchars($activity['longitude'], ENT_QUOTES) ?>;
+    var map = L.map('map').setView([lat, lon], 13);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap contributors'
+    }).addTo(map);
+    L.marker([lat, lon]).addTo(map);
+    <?php endif; ?>
+</script>

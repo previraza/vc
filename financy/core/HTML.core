@@ -1,0 +1,88 @@
+<?php class HTML {
+    public static $sub_th = [];
+    public static $sub_th_ = [];
+
+    public static function createTable($header, $body, $title, $footer = null, array $extras = null, $linkIn = null)
+    {
+        $header_tr = $footer_tr = $html_body = '';
+        $rowspan = self::rowspan($header);
+        foreach ($header as $key => $value) $header_tr.= self::th($key, $value, $rowspan);
+        foreach ($body as $tr_id => $tr) {
+            $e = (array) $tr;
+            $tmp_body_tr = '<tr id=tr_' . $tr_id . ' data-id=' . $tr_id . '>';
+            foreach ($title as $td) {
+                if (is_array($td)) {
+                    if($name = array_key_first($td))
+                        $tmp_body_tr .= str_replace('${data}', $e[$name]??$name, $td[$name]);
+                    else if(strpos($td[0], '#') === 0){
+                        $args = array();
+                        foreach ($td[1] as $value)
+                            $args[] = $e[$value];
+                        $tmp_body_tr .= '<td data-td="'.$td[0].'">' . str_replace('#', '', $td[0])(...$args) . '</td>';
+                    }
+                } else
+                    $tmp_body_tr .= '<td data-td="'.$td.'">' . ($e[$td]??$td) . '</td>';
+            }
+            if (count($header)+$rowspan-1 > count($title)) {
+                $tmp_body_tr .= '<td><div class="flex align-items-center list-user-action">';
+                if (in_array('explore', $extras))
+                    $tmp_body_tr .= '<a class="btn btn-icon btn-success" href="' . root(app()->request->space . '/' . $e['id']) . '"><span class="btn btn-primary"><i class="fa fa-print"></i> Explore</span></a><i class=p-1></i>';
+                if (in_array('print', $extras))
+                    $tmp_body_tr .= '<a class="btn btn-icon '.(($e['printed']??'0')=='1'?'btn-dark':'btn-success').'" data-bs-toggle="tooltip"btn-type=action btn-title=PrintLink data-bs-placement="top" title="Printer" data-original-title="Printer" btn-link="' . root('../printer/'.($e[$linkIn]??$linkIn??'all').'/' . $e['id']) . '" href="#"><span class="btn-inner"><i class="fa fa-print"> P</i></span></a><i class=p-1></i>';
+                if (in_array('delete', $extras) || in_array('singale', $extras))
+                    $tmp_body_tr .= '<a class="btn btn-icon btn-danger" data-bs-toggle="tooltip" btn-type=action btn-title=Delete data-bs-placement="top" title="Signaler"href="' . root(app()->request->space . '/delete/' . $e['id']) . '"><span class="btn-inner"><i class="fa fa-trash"> S</i></span></a><i class=p-1></i>';
+                if (in_array('restore', $extras))
+                    $tmp_body_tr .= '<a class="btn btn-icon btn-info" data-bs-toggle="tooltip" btn-type=action btn-title=Restore data-bs-placement="top" title="Restore" href="' . root(app()->request->space . '/restore/' . $e['id']) . '"><span class="btn-inner"><i class="fa fa-trash"> R</i></span></a><i class=p-1></i>';
+                if (in_array('resetPassword', $extras))
+                    $tmp_body_tr .= '<a class="btn btn-text btn-warning" href="#staticBackdrop" data-bs-toggle="modal" data-bs-target="#resetPassword" data-toggle="modal" data-target="#resetPassword"><span class="btn-inner" data-bs-toggle="tooltip" data-bs-placement="top" title="Reset Password" onclick="document.getElementById(\'data_id\').value=' . $e['id'] . '; document.getElementById(\'resetPasswordUserName\').innerText=\'' . $e['fullname'] . '\'"><i class="fa fa-edit"> ***</i></span></a><i class=p-1></i>';
+                if (in_array('form-delete', $extras) || in_array('singale', $extras)){
+                    $tmp_body_tr .= '<a class="btn btn-icon btn-danger" data-bs-toggle="tooltip" btn-type=action btn-action-type=form btn-title=Delete data-bs-placement="top" title="Signaler" href="#"><span class="btn-inner"><i class="fa fa-trash"> S</i></span><form action="' . root(app()->request->space . '/delete/' . $e['id']) . '" id="delete_form_'.$e['id'].'" method="POST" class="d-none"><input type="hidden" name="entity" value="'.($e[$linkIn]??$linkIn).'"><input type="hidden" name="id" value="'.$e['id'].'"><input type="hidden" name="action" value="delete"></form></a><i class=p-1></i>'; 
+                }$tmp_body_tr .= '</div></td>';
+            }
+            $html_body .= $tmp_body_tr . '</tr>';
+        }
+
+        $sub_th = implode('</tr>', self::$sub_th).'</tr>';
+        $sub_tr = ($sub_th != '</th>' ? $sub_th : '');
+        
+        if (is_null($footer))
+            $footer_tr = "<tr>$header_tr</tr>";
+        else
+            foreach ($footer as $value)
+                $footer_tr .= '<th title="' . $value . '">' . $value . '</th>';
+        return '<div class="table-responsive"><div class="mb-3 px-4">Toggle column: ' . implode('', self::$sub_th_) . ' |</div>
+                <table id="column-hidden-datatable" class="table table-striped py-3" data-table="default">
+                    <thead>'.$footer_tr.$sub_tr.'</thead><tbody>'.$html_body.'</tbody><tfoot>'.$footer_tr.$sub_tr.'</tfoot>
+                </table>
+            </div>';
+    }
+
+    public static function rowspan($th) : int {
+        $max = max($th);
+        return (is_array($max)) ? (1 + self::rowspan($max)) : 1 ;
+    }
+
+    public static function th($key, $value, $rowspan) {
+        if(is_array($value)){
+            $level = $value['_level']??1; unset($value['_level']); $colspan = count($value);
+            foreach ($value as $k => $v) self::sub_th($k, $v, $rowspan, $level);
+            return "<th ".($level!=1?"rowspan='$level'":null)." ".($colspan!=1?"colspan='$colspan'":null)." title=\"$key\">$key</th>";
+        } 
+        self::$sub_th_[] = ' | <a class="toggle-vis btn btn-outline-primary" data-column="' . count(self::$sub_th_) . '">' . $value . '</a>';
+        return "<th ".($rowspan!=1?"rowspan='$rowspan'":null)." title=\"$value\">$value</th>";
+        
+    }
+
+    public static function sub_th($key, $value, $rowspan, $level) {
+        $rowspan -= $level;
+        self::$sub_th[$level] = self::$sub_th[$level] ?? '<tr>';
+        if(is_array($value)){
+            $_rowspan = $value['_level']??1; unset($value['_level']); $colspan = count($value);
+            foreach ($value as $k => $v) self::sub_th($key, $value, $rowspan, $_rowspan);
+            self::$sub_th[$level].= "<th ".($level!=1?"rowspan='$level'":null)." ".($colspan!=1?"colspan='$colspan'":null)." title=\"$key\">$key</th>";
+        } else {
+            self::$sub_th[$level].= "<th ".($rowspan!=1?"rowspan='$rowspan'":null)." title=\"$value\">$value</th>";
+            self::$sub_th_[] = ' | <a class="toggle-vis btn btn-outline-primary" data-column="' . count(self::$sub_th_) . '">' . $value . '</a>';
+        }
+    }
+}

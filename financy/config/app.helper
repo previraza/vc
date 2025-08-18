@@ -1,0 +1,202 @@
+<?php
+
+function print_a(...$value)
+{
+    echo '<pre>';
+    var_dump($value);
+    echo '</pre>';
+}
+function debug(...$value)
+{
+    die(print_a($value));
+}
+
+function setJSON($arr)
+{
+    die(json_encode($arr));
+}
+
+function getModel($models)
+{
+    require_once ROOT . '/config/app.php';
+    if (is_array($models)) {
+        $r = [];
+        foreach ($models as $model) {
+            if (isset($GLOBALS[$model]))
+                $r[] = $GLOBALS[$model];
+            elseif (file_exists("ROOT/models/$model.db")) {
+                require_once ROOT . "/models/$model.db";
+                $tableName = ucfirst($model) . 'Model';
+                $r[] = $GLOBALS[$tableName] = new $tableName();
+            }
+        }
+        return $r;
+    } elseif (file_exists(ROOT . "/models/$models.db")) {
+        if (isset($GLOBALS[$models]))
+            return $GLOBALS[$model];
+        require_once ROOT . "/models/$models.db";
+        $tableName = ucfirst($models) . 'Model';
+        return $GLOBALS[$tableName] = new $tableName();
+    }
+}
+
+function loadModel(string $model){
+    $tableName = ucfirst($model) . 'Model';
+    if (isset($GLOBALS[$tableName]))
+        return $GLOBALS[$tableName];
+    elseif (file_exists(ROOT . '/databases/' . $model . '.db')) {
+        require_once ROOT . '/config/app.php';
+        require_once ROOT . '/databases/' . $model . '.db';
+        return $GLOBALS[$tableName] = new $tableName();
+    }
+}
+
+function getAllCores()
+{
+    $files = glob(ROOT . DS . 'core' . DS . '*.core');
+    foreach ($files as $file)
+        require_once $file;
+}
+function getAllDBFunction()
+{
+        $files = glob(ROOT . DS . 'databases' . DS . '*.ctrl');
+            foreach ($files as $file)
+                require_once $file;
+}
+
+function getAllModels()
+{
+    require_once ROOT . '/config/app.php';
+    $files = glob(ROOT . DS . 'models' . DS . '*.db');
+    foreach ($files as $file) {
+        require_once $file;
+        $class = str_replace('.db', 'Model', ucfirst(basename($file)));
+        $GLOBALS[ucfirst($class)] = new $class();
+    }
+}
+
+function Auth(): stdClass
+{
+    return (object) Session::init()->get('FINANCY::ME');
+}
+function Post(): stdClass
+{
+    return (object) $_POST;
+}
+
+function _compact($value)
+{
+    Application::init()->vars[$value[0]] = $value[1];
+}
+
+function App(): Application
+{
+    return Application::init();
+}
+
+function varName(mixed $variable): string
+{
+    preg_match("#\\$(\w+)#", file(__FILE__)[debug_backtrace()[0]['line'] - 1], $match);
+    return $match[1];
+}
+
+function ctrlFilter(string $ctrl)
+{
+    return ctrl_escape[$ctrl] ?? $ctrl;
+}
+
+function root(string $link = ''): string
+{
+    return str_replace('public/index.php', '', $_SERVER['SCRIPT_NAME']) . $link . '#';
+}
+
+function url(string $url = ''): string
+{
+    return $_SERVER['REQUEST_URI'] . '/' . $url . '#';
+    ;
+}
+
+function json(int $code): void
+{
+    http_response_code($code);
+
+    // Messages pour les codes connus
+    $messages = [
+        200 => "Requête réussie.",
+        201 => "Ressource créée avec succès.",
+        204 => "Aucun contenu à retourner.",
+        400 => "Requête invalide.",
+        401 => "Accès non autorisé.",
+        403 => "Accès interdit.",
+        404 => "Ressource non trouvée.",
+        500 => "Erreur serveur interne.",
+        501 => "Méthode non implémentée.",
+        502 => "Mauvaise passerelle.",
+        503 => "Service indisponible."
+    ];
+
+    // Déterminer le message par défaut
+    if (isset($messages[$code])) {
+        $message = $messages[$code];
+    } else {
+        if ($code >= 400 && $code < 500) {
+            $message = "Erreur côté client : " . $code;
+        } elseif ($code >= 500 && $code < 600) {
+            $message = "Erreur côté serveur : " . $code;
+        } else {
+            $message = "Code de réponse non spécifié : " . $code;
+        }
+    }
+
+    // Afficher le message
+    echo $message;
+
+    exit; // Terminer le script
+}
+
+function filterValue($transh, $transhis, $default = 0){
+    $sum_transh = explode('|', $transh);
+    return (int) (
+        is_null($transh) ? $default : (
+            count($sum_transh) === 1 ? $transh : (
+                $transhis == 'first' ? $sum_transh[0]
+                : (
+                    $transhis == 'second'
+                        ? $sum_transh[1]
+                        : (
+                            $transhis == 'full'
+                                ? array_sum($sum_transh)
+                                : 0
+                        )
+                )
+            )
+        )
+    );
+}
+
+function filterMonth(array $monthed) : array {
+    $filter = [];
+    foreach ($monthed as $month){
+        if(!isset($filter[$month->devise])) $filter[$month->devise] = [];
+        if(!isset($filter[$month->devise][$month->month])) $filter[$month->devise][$month->month] = 0;
+        $filter[$month->devise][$month->month] += (!($month->transh??false)||$month->transhis=='full') ? $month->value : filterValue($month->transh, $month->transhis);
+    }
+    return $filter;
+}
+
+function getDeviseSymb(string $devise) : string {
+    return ['USD' => ' $', 'CFD' => ' Fc'][$devise];
+}
+
+function toClassName($string) {
+    // Replace spaces and hyphens with underscores
+    $string = str_replace([' ', '-'], '_', $string);
+    
+    // Capitalize each word
+    $string = ucwords($string, '_');
+
+    // Remove leading or trailing underscores
+    $string = str_replace('_', '', $string);
+    
+    return $string;
+}

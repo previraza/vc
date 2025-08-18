@@ -1,0 +1,40 @@
+function mci_format_number(number = 0, limit = 8, plage = '0') {
+    n = number.toString();
+    while(n.length<limit) n=plage+n;
+    return n;
+}
+let $count = 0;
+class TrLine {
+    constructor(d) {
+            $count++;
+            let $TP1, $MOY, $INT1, $EXAM, $MG, $RATR, $TOT, $tr = document.createElement('tr'),
+                $tds = `<td>${$count}</td>
+                        <td>${d.firstname} ${d.lastname}</td>
+                        <td>${mci_format_number(d.id)}</td>
+                        <td>${d.section_name}</td>
+                        <td>${d.option_name}</td>
+                        <td>${d.level_name}</td>
+                        <td>${d.class_name}</td>
+                        <td>${d.promotion} - ${++d.promotion}</td>`;
+        $tr.innerHTML = $tds;
+        return $tr;
+    }
+}; $('tbody.dataTable-dyn-body').append(<?= json_encode($db_pdo->query("SELECT students.*, sections.name AS section_name, options.name AS option_name, level.name AS level_name, classes.name AS class_name, promotion FROM students JOIN classes  ON classes.id  = students.class JOIN sections ON sections.id = classes.section JOIN options  ON options.id  = classes.option JOIN level    ON level.id    = classes.level WHERE students.active = 1 AND students.valide = 1 AND students.delete = 0 AND (students.user_id != 0 AND students.user_id IS NOT NULL)".((isset($_POST['promotion']) && $_POST['promotion'] != "*") ? " AND classes.promotion = $_POST[promotion]":'').($_fs != "*" ? " AND sections.id = $_fs":'').($_fo != "*" ? " AND options.id = $_fo":'').((isset($_POST['level']) && $_POST['level'] != "*") ? " AND level.id = $_POST[level]":'')." ORDER BY firstname")->fetchAll(PDO::FETCH_OBJ));?>.map(i=>new TrLine(i)));
+$('table.dataTable-dyn-table').DataTable({
+    paging: false,
+    retrieve: true,
+    stateSave: true,
+    info: false,
+    lengthChange: false,
+    lengthMenu: [20, 50, 75, 100],
+    columnDefs: [{
+        targets: [0, -1],
+        orderable: false 
+    }],
+    dom: 'Bfrtip',
+    buttons: [{
+        extend: 'collection',
+        text: 'Exporter',
+        buttons: ['copy', 'csv', 'excel', 'pdf', 'print']
+    }]
+});

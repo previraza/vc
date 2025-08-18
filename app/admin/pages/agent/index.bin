@@ -1,0 +1,105 @@
+<?php viewOnlyBy('ADMIN', 'SG', 'DG'); $pageTitle = "Agents" ?>
+
+<div class="card height-auto">
+    <div class="card-body">
+        <div class="heading-layout1">
+            <div class="item-title">
+                <h3>Liste des Agents</h3>
+            </div>
+            <div class="dropdown">
+                <a class="dropdown-toggle" href="#" role="button" data-toggle="dropdown"
+                    aria-expanded="false">...</a>
+
+                <div class="dropdown-menu dropdown-menu-right">
+                    <a class="dropdown-item" href="#" data-action="print"><i class="fas fa-print"></i>print</a>
+                    
+                    <a class="dropdown-item" href="#" data-action="reload"><i class="fas fa-redo-alt text-orange-peel"></i>Actualiser</a>
+                </div>
+            </div>
+        </div>
+        <form class="mg-b-20" method="POST">
+            <div class="row gutters-8">
+                <div class="col-xl-3 col-lg-6 col-12 form-group">
+                    <label>Département</label>
+                    <select class="select2" name="department">
+                        <option selected value="*">Choisir un département</option>
+                        <option value="">Please Select Group *</option>
+                        <option value="1">Secretariat Académique</option>
+                        <option value="2">Police Universitaire</option>
+                        <option value="3">Secretariat de <?=$mci?></option>
+                        <option value="4">Imprimerie Universitaire</option>
+                        <option value="5">Commision de Controle</option>
+                        <option value="6">Autres</option>
+                        <input type="hidden" name="CON_47" value="true">
+                    </select>
+                </div>
+                <div class="col-xl-8 col-lg-6 col-12 form-group">
+                    <label></label>
+                    <input type="text" name="name" id="optName" class="form-control" placeholder="<?= isset($_POST['name']) ? $_POST['name'] : '*'?>">
+                </div>
+                <div class="col-1-xxxl col-xl-2 col-lg-3 col-12 form-group">
+                    <label></label>
+                    <button type="submit" class="fw-btn-fill btn-gradient-yellow">RECHERCHE</button>
+                </div>
+            </div>
+        </form>
+        <div class="table-responsive">
+            <table class="table display data-table text-nowrap">
+                <thead>
+                    <tr>
+                        <th>
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input checkAll" id="assosLabel">
+                                <label for="assosLabel" class="form-check-label">Id</label>
+                            </div>
+                        </th>
+                        <th>Photo</th>
+                        <th>Nom Complet</th>
+                        <th>Genre</th>
+                        <th>Département</th>
+                        <th>Grade</th>
+                        <th>Phone</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php $rqt = mysqli_query($db, 
+                                "SELECT * FROM agents WHERE active = 1 AND valide = 1 AND `delete` = 0"
+                                .((isset($_POST['department']) && $_POST['department'] != "*") ? " AND department = '$_POST[department]'":'')
+                                .((isset($_POST['name']) && $_POST['name'] != "*") ? " AND CONCAT(firstname, ' ', lastname) LIKE '%$_POST[name]%'":'')
+                            );
+                        while($row = mysqli_fetch_array($rqt)){ $res = (object) $row;?>
+                        <tr>
+                            <td <?= ($res->user_id == '0') ? 'class="bg-warning"' : null ?>>
+                                <div class="form-check">
+                                    <input type="checkbox" class="form-check-input" id="assosLabelSS">
+                                <label for="assosLabelSS" class="form-check-label">Id</label>
+                                </div>
+                            </td>
+                            <td class="text-center"><img src="/layouts/default/img/figure/student2.webp" alt="agent"></td>
+                            <td><?= "$res->firstname $res->lastname" ?></td>
+                            <td><?= $res->gender ?></td>
+                            <td><?= $res->department ?></td>
+                            <td><?= $res->role ?></td>
+                            <td><?= $res->phone ?></td>
+                            <td>
+                                <div class="dropdown">
+                                    <a href="#" class="dropdown-toggle" data-toggle="dropdown"
+                                        aria-expanded="false">
+                                        <span class="flaticon-more-button-of-three-dots"></span>
+                                    </a>
+                                    <div class="dropdown-menu dropdown-menu-right">
+                                        <a class="dropdown-item" href="?fa69951bc733eb82713e936be33597e1=DATA_CRYPTING_ON:fa69951bc733eb82713e936be33597e1=WABTECHS_CRYPTING_ON: e91497f38407364c8e86ade9098950d978814190&MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3VIRAZA_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3&MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3&WABTECHS_CRYPTING_ON_LAVINGOL&MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3&b557c222c8ddcdf87e033706aad08e4ef7cf90d3=agent--details--<?= $res->id ?>"><i class="fas fa-redo-alt text-blue"></i>Profile</a>
+                                        <a class="dropdown-item" href="?fa69951bc733eb82713e936be33597e1=DATA_CRYPTING_ON:fa69951bc733eb82713e936be33597e1=WABTECHS_CRYPTING_ON: e91497f38407364c8e86ade9098950d978814190&MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3VIRAZA_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3&MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3&WABTECHS_CRYPTING_ON_LAVINGOL&MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3&b557c222c8ddcdf87e033706aad08e4ef7cf90d3=agent--edit--<?= $res->id ?>"><i class="fas fa-edit text-dark-pastel-green"></i>Modifier</a>
+                                        <a class="dropdown-item" href="?fa69951bc733eb82713e936be33597e1=DATA_CRYPTING_ON:fa69951bc733eb82713e936be33597e1=WABTECHS_CRYPTING_ON: e91497f38407364c8e86ade9098950d978814190&MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3VIRAZA_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3&MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3&WABTECHS_CRYPTING_ON_LAVINGOL&MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3&b557c222c8ddcdf87e033706aad08e4ef7cf90d3=agent--disable--<?= $res->id ?>"><i class="fas fa-cogs text-orange-peel"></i>Desactiver</a>
+                                        <a class="dropdown-item" href="?fa69951bc733eb82713e936be33597e1=DATA_CRYPTING_ON:fa69951bc733eb82713e936be33597e1=WABTECHS_CRYPTING_ON: e91497f38407364c8e86ade9098950d978814190&MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3VIRAZA_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3&MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3&WABTECHS_CRYPTING_ON_LAVINGOL&MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3&b557c222c8ddcdf87e033706aad08e4ef7cf90d3=agent--delete.$--<?= $res->id ?>"><i class="fas fa-times text-orange-red"></i>Supprimer</a>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    <?php } ?>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

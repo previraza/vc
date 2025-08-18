@@ -1,0 +1,15 @@
+window.sactionize = function(student_id = 0, student_name = 'Undefined') {
+    $('#student_id').val(student_id);
+    $('#student_name').text(student_name);
+    $('#feedbackBtn').click();
+}
+
+$('#feedbackForm').on('submit', (e) => {
+    e.preventDefault();
+    var std_id = $('#student_id').val(),
+        std_name = $('#student_name').val(),
+        inf_order = $('#inf_order').val();
+    $('#std_credit_' + std_id).load("/settings/set/credit/?type=mcisme_rqt&std_id=" + std_id + "&std_name=" + std_name + "&inf_order=" + inf_order + "&and=banied&actu_order=" + $('#std_credit_' + std_id).text());
+    $('#closeModal').click();
+    console.log("/settings/set/credit/?type=mcisme_rqt&std_id=" + std_id + "&std_name=" + std_name + "&inf_order=" + inf_order + "&and=banied&actu_order=" + $('#std_credit_' + std_id).text());
+})

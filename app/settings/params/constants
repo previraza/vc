@@ -1,0 +1,150 @@
+<?php
+
+    define('DS', DIRECTORY_SEPARATOR);
+
+    $settings = array(
+        'db' => array(
+            'default' => array(
+                'host' => 'localhost',
+                'name' => 'landasrc',
+                'user' => 'root',
+                'pass' => '',
+            ),
+            'localhost' => array(
+                'host' => 'localhost',
+                'name' => 'landasrc',
+                'user' => 'root',
+                'pass' => '',
+            ),
+            'faseg.viraza.net' => array(
+                'host' => 'localhost',
+                'name' => 'u199665259_faseg',
+                'user' => 'u199665259_faseg',
+                'pass' => '8F1V641=Fr',
+            ),
+            'fseg.viraza.net' => array(
+                'host' => 'localhost',
+                'name' => 'u199665259_faseg',
+                'user' => 'u199665259_faseg',
+                'pass' => '8F1V641=Fr',
+            ),
+            'univ.viraza.net' => array(
+                'host' => 'localhost',
+                'name' => 'u199665259_univ',
+                'user' => 'u199665259_univ',
+                'pass' => '8NO@9kjx7kH/H2SDF>Hu@o6^9IsftE',
+            ),
+            'ista.viraza.net' => array(
+                'host' => 'localhost',
+                'name' => 'u199665259_ista',
+                'user' => 'u199665259_ista',
+                'pass' => 'cT?0d8x&Fn1g~Aq~7R;0Wlj|7xM&',
+            ),
+            'ista.ac.test' => array(
+                'host' => 'localhost',
+                'name' => 'ista.ac',
+                'user' => 'root',
+                'pass' => '',
+            ),
+            'www.ista.ac.cd' => array(
+                'host' => 'localhost',
+                'name' => $MINE_dbn??'snem',
+                'user' => 'root',
+                'pass' => '$%Tudent2022',
+            ),
+            'ISTA.viraza.net' => array(
+                'host' => 'localhost',
+                'name' => 'u199665259_ISTA_db',
+                'user' => 'u199665259_ISTA_nm',
+                'pass' => 'B1d+JgoaRicl@>7~0Uh^3o1ULGimN',
+            ),
+            'ISTA.ac.cd' => array(
+                'host' => 'localhost',
+                'name' => 'u199665259_ISTA_db',
+                'user' => 'u199665259_ISTA_nm',
+                'pass' => 'B1d+JgoaRicl@>7~0Uh^3o1ULGimN',
+            ),
+        )
+    );
+
+    $PAGES = array(
+        '404' => dirname(dirname(__DIR__)).DS.'admin'.DS.'pages'.DS.'errors'.DS.'404'
+    );
+
+    $univ_data = (object) array(
+        'name' => 'Institut supérieur de techniques appliquées',
+        'short_name' => 'ISTA',
+        'taux' => 2000,
+    );
+
+    $role = array(
+        'teacher' => 'Enseignant',
+        'student' => 'Etudiant',
+        'admin' => 'Administrateur',
+        'agent' => 'Agent'
+    );
+    
+    $_SNEN_role__ = array(
+        1 => 'Islamiste',
+        2 => 'Hindu',
+        3 => 'Chrétien',
+        4 => 'Buddiste',
+        "Others" => 'Autres',
+    );
+
+    // NEW FORMAT SNEM //
+    $__SNEN_role = array(
+        'teacher' => 'Enseignant',
+        'student' => 'Etudiant',
+        'admin' => 'Administrateur',
+        'agent' => 'Agent'
+    );
+    
+    $__SNEN_religion = array(
+        1 => 'Islamiste',
+        2 => 'Hindu',
+        3 => 'Chrétien',
+        4 => 'Buddiste',
+        "Others" => 'Autres',
+    );
+    
+    $__SNEN_etat_civil = array(
+        'M' => 'Marié (e)',
+        'C' => 'Célibataire',
+        'V' => 'Veuf (ve)',
+        'D' => 'Divorcé (e)',
+        'A' => 'Autre',
+    );
+    
+    $__SNEN_genre = array(
+        'F' => 'Féminin',
+        'M' => 'Masculin',
+        'H' => 'Masculin',
+        'A' => 'Autres',
+    );
+
+    $ANNE_ACAD_ = 2022;
+
+    $mci = 'Section';
+
+    $__part = [
+        1 => 'Premier',
+        2 => 'Deuxième',
+        3 => 'Troisième',
+        4 => 'Quatrième',
+        5 => 'Cinqième',
+        6 => 'Sixième'
+    ]; $__part_f = [
+        1 => 'Première',
+        2 => 'Deuxième',
+        3 => 'Troisième',
+        4 => 'Quatrième',
+        5 => 'Cinqième',
+        6 => 'Sixième'
+    ];
+
+    class Responser {
+        static function json($data): void{
+            die(json_encode(array('data' => $data)));
+        }
+    }

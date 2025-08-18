@@ -1,0 +1,107 @@
+<?php viewOnlyBy('ADMIN'); $pageTitle = "Modifier une classe";
+    hasCrrentAcad();
+?>
+
+<?php 
+    if (isset($links[2]) && is_numeric($links[2])){
+        $rqt = mysqli_query($db, "SELECT * FROM classes WHERE id = $links[2] AND active = 1");
+        if ($rqt) $row = mysqli_fetch_array($rqt);
+    }
+
+    if (isset($row) && $row){$cla = (object) $row; ?>
+        <div class="card height-auto">
+            <div class="card-body">
+                <div class="heading-layout1">
+                    <div class="item-title">
+                        <h3>Modifier une classe existante</h3>
+                    </div>
+                    <div class="dropdown">
+                        <a class="dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-expanded="false">...</a>
+                        <div class="dropdown-menu dropdown-menu-right">
+                            <a class="dropdown-item" href="#" data-action="print"><i class="fas fa-print"></i>print</a>
+                            <a class="dropdown-item" href="#" data-action="reload"><i class="fas fa-redo-alt text-orange-peel"></i>Actualiser</a>
+                        </div>
+                    </div>
+                </div>
+                <form class="new-added-form" id="editClass">
+                    <div class="row">
+                        <div class="col-xl-4 col-lg-6 col-12 form-group">
+                            <label>Département *</label>
+                            <select class="select2" disabled>
+                                <?php $rqt = mysqli_query($db, "SELECT * FROM sections WHERE active = 1") or die(debug(mysqli_error($db)));
+                                    while ($ROW = mysqli_fetch_array($rqt)){ $row = (object) $ROW; ?>
+                                        <option <?= ($row->id == $cla->section) ? "selected" : null ?> value="<?= $row->id ?>"><?= $row->name ?></option>
+                                <?php } ?>
+                                <input type="hidden" name="section" value="<?= $cla->section ?>">
+                            </select>
+                        </div>
+                        <div class="col-xl-4 col-lg-6 col-12 form-group">
+                            <label>Option *</label>
+                            <select class="select2" disabled>
+                                <?php $rqt = mysqli_query($db, "SELECT * FROM options WHERE active = 1") or die(debug(mysqli_error($db)));
+                                    while ($ROW = mysqli_fetch_array($rqt)){ $row = (object) $ROW; ?>
+                                        <option <?= ($row->id == $cla->option) ? "selected" : null ?> value="<?= $row->id ?>"><?= $row->name ?></option>
+                                <?php } ?>
+                                <input type="hidden" name="option" value="<?= $cla->option ?>">
+                            </select>
+                        </div>
+                        <div class="col-xl-4 col-lg-6 col-12 form-group">
+                            <label>Niveau *</label>
+                            <select class="select2">
+                                <?php $rqt = mysqli_query($db, "SELECT * FROM level WHERE active = 1") or die(debug(mysqli_error($db)));
+                                    while ($ROW = mysqli_fetch_array($rqt)){ $row = (object) $ROW; ?>
+                                        <option <?= ($row->id == $cla->level) ? "selected" : null ?> value="<?= $row->id ?>"><?= $row->name ?></option>
+                                <?php } ?>
+                                <input type="hidden" name="level" value="<?= $cla->level ?>">
+                            </select>
+                        </div>
+                        <div class="col-xl-4 col-lg-6 col-12 form-group">
+                            <label>Designation *</label>
+                            <input type="text" name="name" placeholder="" class="form-control" value="<?= $cla->name ?>">
+                        </div>
+                        <div class="col-xl-4 col-lg-6 col-12 form-group">
+                            <label>Enseignant titulaire *</label>
+                            <select class="select2" name="titular">
+                                <?php $rqt = mysqli_query($db, "SELECT * FROM teachers WHERE active = 1 ORDER BY title DESC, firstname") or die(debug(mysqli_error($db)));
+                                    while ($ROW = mysqli_fetch_array($rqt)){ $row = (object) $ROW; ?>
+                                        <option <?= ($row->id == $cla->titular) ? "selected" : null ?> value="<?= $row->id ?>"><?= "$row->title. $row->firstname $row->lastname" ?></option>
+                                <?php } ?>
+                                <input type="hidden" name="mine" value="<?= $cla->id ?>">
+                                <input type="hidden" name="CON_47" value="true">
+                            </select>
+                        </div>
+                        <div class="col-xl-2 col-lg-6 col-12 form-group">
+                            <label>Code de la classe *</label>
+                            <input type="text" name="code" placeholder="" class="form-control" value="<?= $cla->short ?>">
+                        </div>
+                        <div class="col-xl-2 col-lg-6 col-12 form-group">
+                            <label>Note Deliberable *</label>
+                            <input type="number" name="deliberable" placeholder="" class="form-control" value="<?= $cla->deliberable ?>">
+                        </div>
+                        <div class="mx-4 alert hidden alert-danger alert-dismissible fade show" role="alert" id="errorRapport">
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                                <span class="sr-only">Close</span>
+                            </button>
+                            <strong>Erreur : </strong>Une erreur s'est produit pendant l'ajout.<br>Si celà persiste veuillez contacter votre administrateur système.
+                        </div>
+                        <div class="col-12 form-group mg-t-8">
+                            <button type="submit" class="btn-fill-lg btn-gradient-yellow btn-hover-bluedark">Save</button>
+                            <button type="reset" class="btn-fill-lg bg-blue-dark btn-hover-yellow">Reset</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    <?php }else{ ?>
+        <div class="card height-auto">
+            <div class="card-body">
+                <div class="heading-layout1 mg-b-15">
+                    <div class="item-title p-5 text-center w-100">
+                        <h1 class="text-danger bg-blue-dark py-xl-5">Classe Introuvable : <?= isset($links[2]) && $links[2] ? $links[2] : NULL ?></h1>
+                        <h3>La classe dont vous essayer de voire est introuvable</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+    <?php } ?>

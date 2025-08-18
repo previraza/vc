@@ -1,0 +1,76 @@
+$('#addTeacher').on('submit', (e) => {
+    e.preventDefault();
+    var data = new FormData(e.currentTarget);
+    $.ajax({
+        url: "/app/settings/add/teachers.php?sending_by=mcisme",
+        data: data,
+        type: "POST",
+        contentType: false,
+        cache: false,
+        processData: false,
+        success: function(response) {
+            try {
+                var res = JSON.parse(response);
+                if (res.status == 'succes') { location.reload(); } else if (res.status == 'error') {
+                    console.log(res.content);
+                    $('#errorRapport').removeClass('hidden');
+                }
+            } catch (error) {
+                console.error(response);
+                $('#errorRapport').removeClass('hidden');
+            }
+        }
+    });
+})
+$('#addStudent').on('submit', (e) => {
+    e.preventDefault();
+    var data = new FormData(e.currentTarget);
+    $.ajax({
+        url: "/app/settings/add/students.php?sending_by=mcisme",
+        data: data,
+        type: "POST",
+        contentType: false,
+        cache: false,
+        processData: false,
+        success: function(response) {
+            try {
+                var res = JSON.parse(response);
+                if (res.status == 'succes') {
+                    location.reload();
+                } else if (res.status == 'error') {
+                    console.log(res.content);
+                    $('#errorRapport').removeClass('hidden');
+                }
+            } catch (error) {
+                console.error(response);
+                $('#errorRapport').removeClass('hidden');
+            }
+        }
+    });
+})
+$('#addAgent').on('submit', (e) => {
+    e.preventDefault();
+    var data = new FormData(e.currentTarget);
+    $.ajax({
+        url: "/app/settings/add/agents.php?sending_by=mcisme",
+        data: data,
+        type: "POST",
+        contentType: false,
+        cache: false,
+        processData: false,
+        success: function(response) {
+            try {
+                var res = JSON.parse(response);
+                if (res.status == 'succes') {
+                    location.reload();
+                } else if (res.status == 'error') {
+                    console.log(res.content);
+                    $('#errorRapport').removeClass('hidden');
+                }
+            } catch (error) {
+                console.error(response);
+                $('#errorRapport').removeClass('hidden');
+            }
+        }
+    });
+});

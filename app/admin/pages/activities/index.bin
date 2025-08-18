@@ -1,0 +1,89 @@
+
+<?php
+ viewOnlyBy('ADMIN'); 
+ $pageTitle = "activities globals ";
+
+  $user_id = isset($links[2]) ? $links[2] : NULL;
+?>
+<div class="card height-auto">
+    <div class="card-body">
+        <div class="heading-layout1">
+            <div class="item-title">
+                <h3>Personnelles</h3>
+            </div>
+           <div class="dropdown">
+                <a class="dropdown-toggle" href="#" role="button" 
+                data-toggle="dropdown" aria-expanded="false">...</a>
+
+                <div class="dropdown-menu dropdown-menu-right">
+                    <a class="dropdown-item" href="?fa69951bc733eb82713e936be33597e1=DATA_CRYPTING_ON:e91497f38407364c8e86ade9098950d978814190&MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3=personal--addMultiple"><i class="fas fa-print"></i>Ajouter</a>
+                    <a class="dropdown-item" href="#" data-action="reload"><i class="fas fa-redo-alt text-orange-peel"></i>Actualiser</a>
+                </div>
+            </div>
+        </div>
+        <div class="table-responsive">
+            <table class="table display text-nowrap data-table-activities-index" id="activities-list">
+                <thead>
+                    <tr>
+                        <th> 
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input checkAll" id="assosLabel">
+                                <label for="assosLabel" class="form-check-label">N.</label>
+                            </div>
+                        </th>
+                        <th>Username</th>
+                        <th>IP</th>
+                        <th>Country</th>
+                        <th>Device</th>
+                        <th>Action</th>
+                        <th>Params (GET/POST)</th>
+                        <th>Page</th>
+                        <th>method</th>
+                        <th>Review Count</th>
+                        <th>Date</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <script>
+                    $(document).ready(function() {
+                        $('.data-table-activities-index').DataTable({
+                            serverSide: true,
+                            processing: true,
+                            ajax: {
+                                url: '/app/admin/jsons/activities.php?route=fetch',
+                                type: 'GET'
+                            },
+                            columns: [
+                                { data: 'id' },
+                                { data: 'user_name' },
+                                { data: 'ip' },
+                                { data: 'country' },
+                                { data: 'device' },
+                                { data: 'action' },
+                                {
+                                    data: null,
+                                    render: function(row) {
+                                        var g = JSON.parse(row.get_params || '{}');
+                                        var p = JSON.parse(row.post_params || '{}');
+                                        return 'GET: ' + JSON.stringify(g) + '<br>POST: ' + JSON.stringify(p);
+                                    }
+                                },
+                                { data: 'page' },
+                                { data: 'method' },
+                                { data: 'review' },
+                                { data: 'created_at' },
+                                { data: null, 
+                                    render: function(data, type, row) {
+                                      return `
+                                        <a href="?fa69951bc733eb82713e936be33597e1=DATA_CRYPTING_ON:e91497f38407364c8e86ade9098950d978814190&MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3=activities--show--${row.id}" class="btn btn-primary btn-sm">Voir</a>
+                                      `
+                                    }
+                                },
+                            ]
+                        });
+                    });
+                  </script>
+            </table>
+        </div>
+    </div>
+</div>

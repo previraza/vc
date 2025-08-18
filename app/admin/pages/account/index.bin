@@ -1,0 +1,142 @@
+<?php viewOnlyBy('ADMIN', 'SG', 'DG','SR','AB','SA'); $pageTitle = "Liste des utilisateurs" ?>
+<div class="card height-auto">
+    <div class="card-body">
+        <div class="heading-layout1">
+            <div class="item-title">
+                <h3>Récherche Rapide</h3>
+            </div>
+            <div class="dropdown">
+                <a class="dropdown-toggle" href="#" role="button" 
+                data-toggle="dropdown" aria-expanded="false">...</a>
+
+                <div class="dropdown-menu dropdown-menu-right">
+                <a class="dropdown-item" href="#" data-action="print"><i class="fas fa-print"></i>print</a>
+                    
+                    <a class="dropdown-item" href="#" data-action="reload"><i class="fas fa-redo-alt text-orange-peel"></i>Actualiser</a>
+                </div>
+            </div>
+        </div>
+        <form class="new-added-form" method="POST">
+            <div class="row">
+                <div class="col-xl-3 col-lg-6 col-12 form-group">
+                    <label>Département *</label>
+                    <select class="select2" name="section">
+                        <option value="*"><?=$mci?></option>
+                        <?php $rqt = mysqli_query($db, "SELECT * FROM sections WHERE active = 1") or die(debug(mysqli_error($db)));
+                            while ($ROW = mysqli_fetch_array($rqt)){ $row = (object) $ROW; ?>
+                                <option <?= (isset($_POST['section']) && $_POST['section'] == $row->id) ? 'selected' : null ?> value="<?= $row->id ?>"><?= $row->name ?></option>
+                        <?php } ?>
+                        <input type="hidden" name="CON_47" value="true">
+                    </select>
+                </div>
+                <div class="col-xl-3 col-lg-6 col-12 form-group">
+                    <label>Option *</label>
+                    <select class="select2" name="option">
+                        <option value="*">Option</option>
+                        <?php $rqt = mysqli_query($db, "SELECT * FROM options WHERE active = 1") or die(debug(mysqli_error($db)));
+                            while ($ROW = mysqli_fetch_array($rqt)){ $row = (object) $ROW; ?>
+                                <option <?= (isset($_POST['option']) && $_POST['option'] == $row->id) ? 'selected' : null ?> value="<?= $row->id ?>"><?= $row->name ?></option>
+                        <?php } ?>
+                        <input type="hidden" name="CON_47" value="true">
+                    </select>
+                </div>
+                <div class="col-xl-3 col-lg-6 col-12 form-group">
+                    <label>Niveau *</label>
+                    <select class="select2" name="level">
+                        <option value="*">Niveau</option>
+                        <?php $rqt = mysqli_query($db, "SELECT * FROM level WHERE active = 1") or die(debug(mysqli_error($db)));
+                            while ($ROW = mysqli_fetch_array($rqt)){ $row = (object) $ROW; ?>
+                                <option <?= (isset($_POST['level']) && $_POST['level'] == $row->id) ? 'selected' : null ?> value="<?= $row->id ?>"><?= $row->name ?></option>
+                        <?php } ?>
+                        <input type="hidden" name="CON_47" value="true">
+                    </select>
+                </div>
+                <div class="col-xl-3 col-lg-6 col-12 form-group">
+                    <label>Promotion *</label>
+                    <select class="select2" name="promotion">
+                        <option value="*">Année Académique</option>
+                        <?php $year = 2023;
+                            while ($year > 2021){ ?>
+                                <option  <?= (isset($_POST['promotion']) && $_POST['promotion'] == ($year)) ? 'selected' : null ?>  value="<?= --$year ?>"><?= $year." - ".($year+1); ?></option>
+                        <?php } ?>
+                        <input type="hidden" name="CON_47" value="true">
+                    </select>
+                </div>
+                <div class="col-xl-9 col-lg-6 col-12 form-group">
+                    <label>Nom Complet *</label>
+                    <input type="search" placeholder="Entrer le nom complet..." class="form-control" name="username" arial-controls="DataTables_Table_0">
+                </div>
+                <div class="col-3-xxxl col-xl-2 col-lg-3 col-12 form-group">
+                    <label>&nbsp;</label>
+                    <button type="reset" id="btnReset" class="d-none hidden"></button>
+                    <button type="submit" class="fw-btn-fill btn-gradient-yellow">RECHERCHE</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<div class="row">
+    <div class="col-4-xxxl col-xl-5">
+        <div class="card account-settings-box height-auto">
+            <div class="card-body">
+                <div class="heading-layout1 mg-b-20">
+                    <div class="item-title">
+                        <h3>Liste des utilisateurs</h3>
+                    </div>
+                    <div class="dropdown">
+                        <a class="dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-expanded="false">...</a>
+                        <div class="dropdown-menu dropdown-menu-right">
+                        <a class="dropdown-item" href="#" data-action="print"><i class="fas fa-print"></i>print</a>
+                    
+                    <a class="dropdown-item" href="#" data-action="reload"><i class="fas fa-redo-alt text-orange-peel"></i>Actualiser</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="all-user-box">
+                    <?php $rqt = mysqli_query($db, "SELECT students.* FROM students 
+                                                    JOIN classes ON classes.id = students.class
+                                                    WHERE students.active = 1 AND students.valide = 1 AND classes.active = 1"
+                                                        .(isset($_POST['username']) && $_POST['username'] !="*" ? " AND CONCAT(students.firstname,' ',students.lastname) LIKE '%$_POST[username]%'":'')
+                                                        .(isset($_POST['promotion']) && $_POST['promotion'] !="*" ? " AND classes.promotion = $_POST[promotion]":'')
+                                                        .(isset($_POST['section']) && $_POST['section'] !="*" ? " AND classes.section = $_POST[section]":'')
+                                                        .(isset($_POST['option']) && $_POST['option'] !="*" ? " AND classes.option = $_POST[option]":'')
+                                                        .(isset($_POST['level']) && $_POST['level'] !="*" ? " AND classes.level = $_POST[level]":'')." ORDER BY firstname"
+                                            ); while($res = mysqli_fetch_array($rqt)) {$row = (object) $res ?>
+                        <a class="media media-none--xs" href="/?fa69951bc733eb82713e936be33597e1=DATA_CRYPTING_ON:fa69951bc733eb82713e936be33597e1=WABTECHS_CRYPTING_ON: e91497f38407364c8e86ade9098950d978814190&MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3VIRAZA_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3&MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3&WABTECHS_CRYPTING_ON_LAVINGOL&MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3&b557c222c8ddcdf87e033706aad08e4ef7cf90d3=student--profile--<?= $row->id ?>" link-content="#linkContent">
+                            <div class="item-img">
+                                <img src="layouts/default/img/figure/user2.webp" class="media-img-auto" alt="user">
+                            </div>
+                            <div class="media-body space-md">
+                                <h5 class="item-title"><?= "$row->firstname $row->lastname" ?></h5>
+                                <div class="item-subtitle"><?= $row->gender ?></div>
+                            </div>
+                        </a>
+                    <?php } ?>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-8-xxxl col-xl-7">
+        <div class="card account-settings-box">
+            <div class="card-body">
+                <div class="heading-layout1 mg-b-20">
+                    <div class="item-title">
+                        <h3>Detail de l'étudiant</h3>
+                    </div>
+                   <div class="dropdown">
+                        <a class="dropdown-toggle" href="#" role="button" 
+                        data-toggle="dropdown" aria-expanded="false">...</a>
+
+                        <div class="dropdown-menu dropdown-menu-right">
+                            <a class="dropdown-item" href="#" data-action="print"><i class="fas fa-print"></i>print</a>
+                            
+                            <a class="dropdown-item" href="#" data-action="reload"><i class="fas fa-redo-alt text-orange-peel"></i>Actualiser</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="user-details-box" id="linkContent">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

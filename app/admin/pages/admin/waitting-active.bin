@@ -1,0 +1,18 @@
+<?php $pageTitle = "Compte Désactiver" ?>
+
+<div class="card height-auto">
+    <div class="card-body">
+        <div class="heading-layout1 mg-b-15">
+            <div class="item-title p-5 text-center w-100">
+                <h1 class="text-danger bg-blue-dark py-xl-5">Compte Désactiver</h1>
+                <h3>
+                    Pour des raisons soit <span class="text-warning">Technique</span> ou <span class="text-warning">Académique</span> votre compte a été désactiver <br>
+                    Cela ne pourait vous empecher de profiter de plus des fonctionalité <a data-link="external" href="http://viraza.net" target="_blank" rel="noopener noreferrer">viraza</a>...
+                </h3>
+                <br>
+                <p>Si votre compte a injustement été désactiver, veuillez directement contacter votre établissement pour plus d'info.</p>
+            </div>
+        </div>
+    </div>
+</div>
+<?php $hide_menu = true;

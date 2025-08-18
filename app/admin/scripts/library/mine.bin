@@ -1,0 +1,37 @@
+ $('#addLibrary').on('submit', (e) => {
+     e.preventDefault();
+     var data = new FormData(e.currentTarget);
+     $.ajax({
+         url: "/app/settings/add/libraries.php?sending_by=mcisme",
+         data: data,
+         type: "POST",
+         contentType: false,
+         cache: false,
+         processData: false,
+         success: function(response) {
+             try { var res = JSON.parse(response); if (res.status == 'succes') { $('#tableLibraries').load('/node/get/?page=library--table'); } else if (res.status == 'error') { $('#errorContent', $('#errorRapport').removeClass('hidden')).text(res.content); } } catch (error) {
+                 console.error(response);
+                 $('#errorRapport').removeClass('hidden');
+             }
+         }
+     });
+ });
+ $('#editLibrary').on('submit', (e) => {
+     e.preventDefault();
+     var data = new FormData(e.currentTarget);
+     $.ajax({
+         url: "/app/settings/edit/libraries.php?sending_by=mcisme",
+         data: data,
+         type: "POST",
+         contentType: false,
+         cache: false,
+         processData: false,
+         success: function(response) {
+             try { var res = JSON.parse(response); if (res.status == 'succes') { $('#tableLibraries').load('/node/get/?page=library--table'); } else if (res.status == 'error') { $('#errorContent', $('#errorRapport').removeClass('hidden')).text(res.content); } } catch (error) {
+                 console.error(response);
+                 $('#errorRapport').removeClass('hidden');
+             }
+         }
+     });
+ });
+ $('#tableLibraries').load('/node/get/?page=library--table');

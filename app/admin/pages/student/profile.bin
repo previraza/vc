@@ -1,0 +1,82 @@
+<?php $pageTitle = "Profile" ?>
+
+<?php 
+    if (isset($links[2]) && is_numeric($links[2])){
+        $rqt = mysqli_query($db, "SELECT * FROM students WHERE id = $links[2] AND active = 1 AND valide = 1 ORDER BY firstname");
+        if ($rqt) $row = mysqli_fetch_array($rqt);
+    }
+
+    if (isset($row) && $row){$std = (object) $row; ?>
+        <div class="user-details-box" id="linkContent">
+            <div class="item-img">
+                <img src="/layouts/default/img/figure/user.webp" alt="user">
+            </div>
+            <div class="item-content">
+                <div class="info-table table-responsive">
+                    <table class="table text-nowrap">
+                        <tbody>
+                            <tr>
+                                <td>Name:</td>
+                                <td class="font-medium text-dark-medium"><?="$std->firstname $std->lastname"?></td>
+                            </tr>
+                            <tr>
+                                <td>Matricule:</td>
+                                <td class="font-medium text-dark-medium">MT-10005</td>
+                            </tr>
+                            <tr>
+                                <td>Gender:</td>
+                                <td class="font-medium text-dark-medium"><?=$std->gender?></td>
+                            </tr>
+                            <tr>
+                                <td>Father Name:</td>
+                                <td class="font-medium text-dark-medium"><?=$std->father?></td>
+                            </tr>
+                            <tr>
+                                <td>Mother Name:</td>
+                                <td class="font-medium text-dark-medium"><?=$std->mother?></td>
+                            </tr>
+                            <tr>
+                                <td>Tuthor Ocupation:</td>
+                                <td class="font-medium text-dark-medium"><?=$std->parent_work?></td>
+                            </tr>
+                            <tr>
+                                <td>Date Of Birth:</td>
+                                <td class="font-medium text-dark-medium"><?=$std->birthday?></td>
+                            </tr>
+                            <tr>
+                                <td>Religion:</td>
+                                <td class="font-medium text-dark-medium"><?=$std->religion?></td>
+                            </tr>
+                            <tr>
+                                <td>E-mail:</td>
+                                <td class="font-medium text-dark-medium"><a href="https://www.radiustheme.com/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="5c2f28392a3932363334322f33321c3b313d3530723f3331">[email&#160;protected]</a></td>
+                            </tr>
+                            <tr>
+                                <td>Admission Date:</td>
+                                <td class="font-medium text-dark-medium"><?=$std->joining_date?></td>
+                            </tr>
+                            <tr>
+                                <td>Address:</td>
+                                <td class="font-medium text-dark-medium"><?=$std->address?></td>
+                            </tr>
+                            <tr>
+                                <td>Phone:</td>
+                                <td class="font-medium text-dark-medium"><?=$std->phone?></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    <?php }else{ ?>
+        <div class="card height-auto">
+            <div class="card-body">
+                <div class="heading-layout1 mg-b-15">
+                    <div class="item-title p-5 text-center w-100">
+                        <h1 class="text-danger bg-blue-dark py-xl-5">Etudiant Introuvable : <?= isset($links[2]) && $links[2] ? $links[2] : NULL ?></h1>
+                        <h3>L'etudiant dont vous essayer de voire est introuvable</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+    <?php } ?>

@@ -1,0 +1,56 @@
+$('#addPayment').on('submit', (e) => {
+    $('#addPayment > div > div.col-lg-4.col-12.form-group.mg-t-8 > button.btn-fill-lg.btn-gradient-yellow.btn-hover-bluedark').fadeOut(0)
+    $('#errorRapport, #warningRapport').addClass('hidden');
+    e.preventDefault();
+    var data = new FormData(e.currentTarget);
+    $.ajax({
+        url: "/app/settings/add/payments.php?sending_by=mcisme",
+        data: data,
+        type: "POST",
+        contentType: false,
+        cache: false,
+        processData: false,
+        success: function(response) {
+            try {
+                var res = JSON.parse(response);
+                $("#responseMessage").html(`<div class="alert alert-${res.status} alert-dismissible fade show" role="alert" id="warningRapport"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>${res.content}</div>`);
+                location.reload();
+            } catch (error) {
+                console.error(response);
+                $("#responseMessage").html(`<div class="alert alert-danger alert-dismissible fade show" role="alert" id="warningRapport"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button><strong>Erreur : </strong>Une erreur s'est produit pendant l'ajout.<br>Si celà persiste veuillez contacter votre administrateur système.</div>`);
+            }
+            $('#addPayment > div > div.col-lg-4.col-12.form-group.mg-t-8 > button.btn-fill-lg.btn-gradient-yellow.btn-hover-bluedark').fadeIn()
+        }
+    });
+})
+
+$('#classes').on('change', (e) => {
+    var std = $("#students").html('');
+    $.ajax({
+        url: "/app/settings/get/students.php",
+        type: "POST",
+        dataType: "json",
+        data: {
+            class: e.currentTarget.value
+        },
+        success: function(res) {
+            try {
+                res.map(({ id, text }) => std.append(new Option(text, id)));
+            } catch (error) {
+                std.append(new Option(res.text, res.id));
+            }
+        }
+    });
+});
+
+mcibtn_c=$('#chooseMci');
+mcibtn_a=$('#afterChooseMci');
+mcibtn_c.on('change', e => {
+    if (mcibtn_c.val() != 'M'){
+        mcibtn_a.removeClass('d-none');
+        mcibtn_c.parent().addClass("col-xl-3").removeClass("col-xl-6");
+    }else {
+        mcibtn_a.addClass('d-none');
+        mcibtn_c.parent().removeClass("col-xl-3").addClass("col-xl-6");
+    }
+})

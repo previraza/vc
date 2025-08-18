@@ -1,0 +1,391 @@
+<?php isGuest(); $pageTitle = $card_title ?? "Demande de carte élève" ?>
+
+<div class="card height-auto">
+    <div class="card-body">
+        <div class="heading-layout1">
+            <div class="item-title">
+                <h3>Informations</h3>
+            </div>
+            <div class="dropdown">
+                <a class="dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-expanded="false">...</a>
+                <div class="dropdown-menu dropdown-menu-right">
+                    <a class="dropdown-item" href="#" data-action="print"><i class="fas fa-print"></i>print</a>
+                    <a class="dropdown-item" href="#" data-action="reload"><i class="fas fa-redo-alt text-orange-peel"></i>Actualiser</a>
+                </div>
+            </div>
+        </div>
+        <div class="content clearfix mx-5">
+            <section id="form-total-p-0" role="tabpanel" aria-labelledby="form-total-h-0" class="body current" aria-hidden="false" style="">
+              <div class="inner inner-0 row">
+                <div class="col">
+                    <div class="d-flex justify-content-between">
+                    <h3 class="pb-3">Reglementation</h3>
+                        <span>1/7</span>
+                    </div>
+                    <div class="form-row">
+                        <div class="description">
+                            Est éligible à effectuer une inscription à l'ISTA, le candidat :
+                            <ol class="m-0 ml--30">
+                                <li>Ayant payer les frais d'inscription.</li>
+                                <li>Ayant remplir le formulaire en ligne.</li>
+                                <li>Ayant déposer les documents ci-dessous.</li>
+                            </ol>
+                        </div>
+                        <p class="description">
+                            L'étudiant inscrit s'engage à respecter les conditions et le règlement intérieur de l'établissement, dont vous trouverez une copie dans le lien ci-dessous
+                            <a 
+                                class="btn btn-primary"
+                                href="#"
+                            >Telecharger...</a>
+                        </p>
+                    </div>
+                    <div class="d-flex justify-content-between">
+                        <h3 class="pb-3">Dossier d'Inscription</h3>
+                        <span>2/7</span>
+                    </div>
+                    <div class="form-row">
+                        <div class="description">
+                        Pour que votre inscription au sein de l'établissement soit validée, vous devez fournir les documents suivants :
+                            <ull class="ml-4">
+                                <li>Une copie formulaire d'iscription en ligne</li>
+                                <li>Une copie de la carte d'élève ou carte d'identité ou d'électeur / CENI.</li>
+                                <li>Deux photos passeports récentes;</li>
+                                <li>Certificat d'etude primaire (Légalisé);</li>
+                                <li>Bulletins 5ème et 6ème des Humanités ou 3ème et 4ème des Humanités selon le nouveau ou l'ancien système. (Légalisés);</li>
+                                <li>
+                                    Diplôme d'État (Baccalauréat) ou l'équivalent (Légalisé);
+                                    <ul>
+                                        <li>
+                                            Une attestation de réussite délivrée par l'IG de l'EPST ;
+                                        </li>
+                                        <li>
+                                            Une liste de la publication des résultats édition passée avec numéro du site internet de L'EPST ;
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li>Attestation de Naissance;</li>
+                                <li>Attestation de Bonne vie et Moeurs;</li>
+                                <li>Certificat médical ou aptitude physique (Voir Centre Médical de l'ISTA);</li>
+                                <li>Une copie du borderau de frais d'inscription.</li>
+                            </ull>
+                        </div>
+                        <p class="description">
+                            <b>N.B : </b> Ce formulaire est une demande officielle a une institution. L'Admission sera prononcée apres examen de son contenu.
+                        </p>
+                        <p class="description">
+                            Les nouveaux diplômés doivent joindre une photocopie de l'attestation de réussite du locataire.
+                            lieu du diplôme d'État délivré par l'Inspection Générale de l'E.P.S.T
+                        </p>
+                        <p class="description">
+                            Tout diplôme étranger du niveau secondaire doit obtenir l'équivalence auprès du Ministère qui en charge l'EPST.
+                        </p>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="d-flex justify-content-between">
+                      <h3 class="pb-3">Frais d'Inscription</h3>
+                      <span>3/7</span>
+                    </div>
+                    <div class="form-row">
+                      <div class="description">
+                        Pour s'inscrire a l'Institut National du Institut Supérieur de Techniques Appliquées - ISTA en sigle, vous devez vous acquiter des frais suivants en fonction de votre choix d'orientation :
+                        <table class="table table-dashed">
+                          <thead>
+                            <tr>
+                              <th>N°</th>
+                              <th>Niveau d'orientation</th>
+                              <th>Montant</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr>
+                              <td>1</td>
+                              <td>Inscriptions classes de recrutement</td>
+                              <td>50$</td>
+                            </tr>
+                            <tr>
+                              <td>2</td>
+                              <td>Inscriptions premaster</td>
+                              <td>50$</td>
+                            </tr>
+                            <tr>
+                              <td>3</td>
+                              <td>Inscriptions master</td>
+                              <td>50$</td>
+                            </tr>
+                            <tr>
+                              <td>4</td>
+                              <td>Inscription spécial</td>
+                              <td>100$</td>
+                            </tr>
+                          </tbody>
+                        </table>
+                        <p>Les frais payé ne peut être ni remboursé ni échangé, pour quelque raison que ce soit, veuillez contacter le service concerné pour plus d'informations.</p>
+                      </div>
+                    </div>
+                    <div class="d-flex justify-content-between">
+                      <h3 class="pb-3">Etape post soumission</h3>
+                      <span>4/7</span>
+                    </div>
+                    <div class="form-row">
+                      <div class="description">
+                        Après avoir soumis votre formulaire, veuillez suivre les étapes ci-dessous pour finaliser la validation de celle-ci dans un délai de moins de 30 jours.
+                        <ol class="m-0 ml--30">
+                            <li>Imprimer le profil généré par le formulaire après soumission et acceptation</li>
+                            <li>Déposez une copie imprimée du profil généré à l'aide du formulaire auprès des Services Académiques.</li>
+                            <li>Vous recevrez ensuite une notification concernant la date de publication de la liste des candidats sélectionnés, ainsi que la date de début des épreuves.</li>
+                        </ol>
+                      </div>
+                    </div>
+                </div>
+              </div>
+            </section>
+        </div>
+    </div>
+</div>
+
+<form id="addStudent" class="new-added-form">
+    <div class="card height-auto">
+        <div class="card-body">
+            <div class="heading-layout1">
+                <div class="item-title">
+                    <h3>Informations</h3>
+                </div>
+                <span>5/7</span>
+            </div>
+            <div>
+                <div class="row">
+                    <div class="col-xl-4 col-lg-6 col-12 form-group required">
+                        <label>Nom</label>
+                        <input type="text" placeholder="" name="firstname" class="form-control" required>
+                    </div>
+                    <div class="col-xl-4 col-lg-6 col-12 form-group required">
+                        <label>Post-nom</label>
+                        <input type="text" placeholder="" name="lastname" class="form-control" required>
+                    </div>
+                    <div class="col-xl-4 col-lg-6 col-12 form-group">
+                        <label>Prenom</label>
+                        <input type="text" placeholder="" name="homename" class="form-control">
+                    </div>
+                    <div class="col-xl-3 col-lg-6 col-12 form-group required">
+                        <label>Genre</label>
+                        <select class="select2" name="gender" required>
+                            <option value="M">Homme</option>
+                            <option value="F">Femme</option>
+                            <option value="A">Autre</option>
+                        </select>
+                    </div>
+                    <div class="col-xl-3 col-lg-6 col-12 form-group required">
+                        <label>État-civil</label>
+                        <select class="select2" name="marital_status" required>
+                            <option value="C">Célibataire</option>
+                            <option value="M">Marié (e)</option>
+                            <option value="V">Veuf / Veuve</option>
+                            <option value="M">Divorcé (e)</option>
+                            <option value="A">Autre</option>
+                        </select>
+                    </div>
+                    <div class="col-xl-3 col-lg-6 col-12 form-group required">
+                        <label>Lieu de naissance</label>
+                        <input type="text" placeholder="" class="form-control" name="place_of_birth" required>
+                    </div>
+                    <div class="col-xl-3 col-lg-6 col-12 form-group required">
+                        <label>Date de naissance</label>
+                        <input type="text" placeholder="yyyy/mm/dd" class="form-control air-datepicker" name="date_of_birth" required>
+                        <i class="far fa-calendar-alt"></i>
+                    </div>
+                    <div class="col-xl-3 col-lg-6 col-12 form-group">
+                        <label>Père</label>
+                        <input type="text" placeholder="" class="form-control" name="father">
+                    </div>
+                    <div class="col-xl-3 col-lg-6 col-12 form-group">
+                        <label>Mère</label>
+                        <input type="text" placeholder="" class="form-control" name="mother">
+                    </div>
+                    <div class="col-xl-3 col-lg-6 col-12 form-group">
+                        <label>Religion</label>
+                        <select class="select2" name="religion">
+                            <option value=""></option><option value="C">Chrétien</option> <option value="I">Islamiste</option> <option value="H">hindou</option> <option value="B">bouddhique</ option> <option value="O">Autres</option>
+                        </select>
+                    </div>
+                    <div class="col-xl-3 col-lg-6 col-12 form-group required">
+                        <label>Nationalité</label>
+                        <input type="text" placeholder="" class="form-control" name="nationality" required>
+                    </div>
+                    <div class="col-xl-3 col-lg-6 col-12 form-group required">
+                        <label>Province</label>
+                        <input type="hidden" name="title" value="DIP">
+                        <input type="text" placeholder="" class="form-control" name="province" required>
+                    </div>
+                    <div class="col-xl-3 col-lg-6 col-12 form-group required">
+                        <label>District</label>
+                        <input type="text" placeholder="" class="form-control" name="district" required>
+                    </div>
+                    <div class="col-xl-3 col-lg-6 col-12 form-group required">
+                        <label>Territoire</label>
+                        <input type="text" placeholder="" class="form-control" name="territory" required>
+                    </div>
+                    <div class="col-xl-3 col-lg-6 col-12 form-group required">
+                        <label>Secteur</label>
+                        <input type="text" placeholder="" class="form-control" name="sector" required>
+                    </div>
+                    <div class="col-xl-3 col-lg-6 col-12 form-group">
+                        <label>E-Mail</label>
+                        <input type="email" placeholder="" class="form-control" name="email">
+                    </div>
+                    <div class="col-xl-3 col-lg-6 col-12 form-group">
+                        <label>Phone</label>
+                        <input type="tel" placeholder="" class="form-control" name="phone">
+                    </div>
+                    <div class="col-xl-6 col-lg-6 col-12 form-group required">
+                        <label>Address</label>
+                        <input type="text" placeholder="" class="form-control" name="address" required>
+                    </div>
+                    <div class="col-lg-12 col-12 form-group">
+                        <label>Biographie</label>
+                        <textarea class="textarea form-control" name="biographie" id="form-message" cols="10" rows="5"></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="card height-auto">
+        <div class="card-body">
+            <div class="heading-layout1">
+                <div class="item-title">
+                    <h3>Provenance</h3>
+                </div>
+                <span>6/7</span>
+            </div>
+            <div class="new-added-form">
+                <div class="row">
+                    <div class="col-xl-4 col-lg-6 col-12 form-group required">
+                        <label>Nom de l'ecole secondaire</label>
+                        <input type="text" placeholder="" name="secondary_school_name" class="form-control" required>
+                    </div>
+                    <div class="col-xl-8 col-lg-6 col-12 form-group required">
+                        <label>Addresse de l'ecole secondaire</label>
+                        <textarea name="secondary_school_address" class="form-control" required></textarea>
+                    </div>
+                    <div class="col-xl-3 col-lg-6 col-12 form-group required">
+                        <label>Section suivi aux humanites</label>
+                        <select class="select2" name="humanities_monitoring_section">
+                            <option value=""></option>
+                            <option value="AVIA">Aviation Civile</option>
+                            <option value="ELEC">Electricité</option>
+                            <option value="ETRO">Electronique</option>
+                            <option value="MATH">Math-Physique</option>
+                            <option value="LANG">Latin-Philo</option>
+                            <option value="INFO">Informatique</option>
+                            <option value="PHYS">Commercial</option>
+                            <option value="MAIN">Pédagogie Générale</option>
+                            <option value="MANI">Bio-Chimie</option>
+                            <option value="MECA">Mécanique</option>
+                            <option value="TELE">Télécommunication</option>
+                        </select>
+                    </div>
+                    <div class="col-xl-3 col-lg-6 col-12 form-group required">
+                        <label>Nom du centre d'examination</label>
+                        <input type="text" placeholder="" name="name_of_examination_center" class="form-control" required>
+                    </div>
+                    <div class="col-xl-6 col-lg-6 col-12 form-group required">
+                        <label>Lieu d'obtention du diplome</label>
+                        <input type="text" placeholder="" name="place_of_obtaining_the_diploma" class="form-control" required>
+                    </div>
+                    <div class="col-xl-2 col-lg-6 col-12 form-group required">
+                        <label>Annee d'obtention</label>
+                        <input type="year" placeholder="" min="2000" max="<?=date('Y')?>" name="year_of_graduation" class="form-control" required>
+                    </div>
+                    <div class="col-xl-2 col-lg-6 col-12 form-group required">
+                        <label>Pourcentage</label>
+                        <input type="number" placeholder="" name="percentage" value="50" min="50" max="100" class="form-control" required>
+                    </div>
+                    <div class="col-xl-3 col-lg-6 col-12 form-group">
+                        <label>numero du diplome</label>
+                        <input type="text" placeholder="" name="diploma_number" class="form-control">
+                    </div>
+                    <div class="col-xl-5 col-lg-6 col-12 form-group">
+                        <label>Activite professionnelle</label>
+                        <input type="text" placeholder="" name="professional_activity" class="form-control">
+                    </div>
+                    <div class="col-xl-12 col-lg-6 col-12 form-group">
+                        <label>Etudes post-secondaires</label>
+                        <input type="text" placeholder="" name="post_secondary_studies" class="form-control">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="card height-auto">
+        <div class="card-body">
+            <div class="heading-layout1">
+                <div class="item-title">
+                    <h3>Finalisation</h3>
+                </div>
+                <span>7/7</span>
+            </div>
+            <div class="new-added-form">
+                <div class="row">
+                    <?php if(false): ?>
+                        <div class="col-xl-3 col-lg-6 col-12 form-group">
+                            <label><?=$mci?></label>
+                            <select class="select2" name="section" id="s_sec">
+                                <?php $rqt = mysqli_query($db, "SELECT * FROM sections WHERE sections.active = 1 AND sections.delete = 0") or die(debug(mysqli_error($db)));
+                                    while ($ROW = mysqli_fetch_array($rqt)){ $row = (object) $ROW; $_fs = isset($_fs) ? $_fs : $ROW['id']?>
+                                        <option value="<?= $row->id ?>"><?= $row->name ?></option>
+                                <?php } ?>
+                                <option value="*">Toutes les <?=$mci?>s</option>
+                            </select>
+                        </div>
+                        <div class="col-xl-3 col-lg-6 col-12 form-group">
+                            <label>Option</label>
+                            <select class="select2" name="option" id="s_opt">
+                                <?php $rqt = mysqli_query($db, "SELECT * FROM options WHERE active = 1 AND ".($_fs=='*'?'1':'section = '.$_fs)) or die(debug(mysqli_error($db)));
+                                    while ($ROW = mysqli_fetch_array($rqt)){ $row = (object) $ROW; ?>
+                                        <option value="<?= $row->id ?>"><?= $row->name ?></option>
+                                    <?php } ?>
+                                    <option value="*">Toutes les options</option>
+                            </select>
+                        </div>
+                        <div class="col-xl-3 col-lg-6 col-12 form-group">
+                            <label>Niveau</label>
+                            <select class="select2" name="level" id="s_level">
+                                <?php $rqt = mysqli_query($db, "SELECT * FROM level WHERE active = 1 AND `delete` = 0") or die(debug(mysqli_error($db)));
+                                    while ($ROW = mysqli_fetch_array($rqt)){ $row = (object) $ROW; ?>
+                                        <option value="<?= $row->id ?>"><?= $row->name ?></option>
+                                <?php } ?>
+                            </select>
+                        </div>
+                        <div class="col-xl-3 col-lg-6 col-12 form-group required">
+                            <label>Classe</label>
+                            <select class="select2" name="class" id="s_cla" required></select>
+                        </div>
+                    <?php endif ?>
+                    <div class="col-lg-4 col-12 form-group">
+                        <label for="profile" id="profileZone" class="btn w-100 h-100 rounded img-thumbnail" style="padding:80px 75px!important;width:0!important; background: url(/layouts/default/ico/default-avatar.webp) center center / contain no-repeat;"></label>
+                        <input type="file" name="profile" id="profile" class="d-none hidden" required>
+                    </div>
+                    <div class="col-lg-8 col-12 form-group mg-t-30 row pr-0">
+                        <div class="col-12 form-group mt-2 pr-0 required">
+                            <label>CODE DE CONFIRMATION (NUMERO DU BORDERAU)</label>
+                            <input type="text" placeholder="" class="form-control text-uppercase" name="checkcode" placeholder="OPS60/98262038" value="<?=$_GET['of']??''?>" required maxlength=18 minlength=10>
+                        </div>
+                        <div class="col-12 form-group pr-0 d-flex justify-content-end">
+                            <button type="reset" class="btn-fill-lg bg-blue-dark btn-hover-yellow">Réinitialiser</button>
+                            <button type="submit" class="btn-fill-lg btn-gradient-yellow btn-hover-bluedark">Envoyer</button>
+                            <input type="hidden" name="CON_47" value="true">
+                            <span></span>
+                        </div>
+                    </div>
+                    <div class="mx-4 alert hidden alert-danger alert-dismissible fade show w-100" role="alert" id="errorRapport">
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                            <span class="sr-only">Close</span>
+                        </button>
+                        <strong>Erreur : </strong>Une erreur s'est produit pendant l'ajout.<br>Si celà persiste veuillez contacter votre administrateur système.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>

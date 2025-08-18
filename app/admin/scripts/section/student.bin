@@ -1,0 +1,4 @@
+<?php
+    $link = __DIR__.DS.'dataStudent'.DS.(isset($links[2]) ? $links[2] : 'index') ;
+    require_once file_exists($link) ? $link : $PAGES['404']; 
+?>

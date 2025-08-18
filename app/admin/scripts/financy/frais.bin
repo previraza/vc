@@ -1,0 +1,56 @@
+$('#addFrais').on('submit', (e) => {
+    $('#errorRapport, #warningRapport').addClass('hidden');
+    e.preventDefault();
+    var data = new FormData(e.currentTarget);
+    if ($('#tranches').val() == 'multi' && $('.trancheIs input[type=number]').val()) { return $("#responseMessage").html(`<div class="alert alert-danger alert-dismissible fade show" role="alert" id="warningRapport"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>La veuleur du montant ne correcpond pas à celle de tranche</div>`) };
+    $.ajax({
+        url: "/app/settings/add/frais.php?sending_by=mcisme",
+        data: data,
+        type: "POST",
+        contentType: false,
+        cache: false,
+        processData: false,
+        success: function(response) {
+            try {
+                var res = JSON.parse(response);
+                if (res.status == 'succes') {
+                    $('#fraisLibraries').load('/node/get/?page=frais--table');
+                    $("#responseMessage").html(
+                        `<div class="alert alert-success alert-dismissible fade show" role="alert" id="warningRapport">
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                            <span class="sr-only">Close</span>
+                            </button>Enregistrer avec succès.
+                    </div>`);
+                } else if (res.status == 'error') $("#responseMessage").html(
+                    `<div class="alert alert-danger alert-dismissible fade show" role="alert" id="warningRapport">
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                            <span class="sr-only">Close</span>
+                            </button>${res.content}
+                    </div>`);
+                else if (res.status == 'warning') $("#responseMessage").html(
+                    `<div class="alert alert-primary alert-dismissible fade show" role="alert" id="warningRapport">
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                            <span class="sr-only">Close</span>
+                        </button>${res.content}
+                    </div>`);
+                console.log(res.content);
+            } catch (error) {
+                console.error(response);
+                $("#responseMessage").html(
+                    `<div class="alert alert-danger alert-dismissible fade show" role="alert" id="warningRapport">
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                            <span class="sr-only">Close</span>
+                            </button>
+                            <strong>Erreur : </strong>Une erreur s'est produit pendant l'ajout.<br>Si celà persiste veuillez contacter votre administrateur système.
+                    </div>`);
+            }
+        }
+    });
+});
+$('#tranches').on('change', e => {
+    e.currentTarget.value == 'multi' ? $('.trancheIs').fadeIn() : $('.trancheIs').fadeOut();
+})

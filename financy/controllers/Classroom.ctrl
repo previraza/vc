@@ -1,0 +1,15 @@
+<?php class Classroom extends Controller
+{
+    public function __construct()
+    {
+        parent::__construct();
+        $this->fees = $this->loadModel('users');
+        $this->Classroom = $this->loadModel('classroom');
+        $this->compact('Classroom', $this->Classroom);
+
+    }
+    public function index()
+    {
+        return $this->render();
+    }
+}

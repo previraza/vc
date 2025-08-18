@@ -1,0 +1,43 @@
+let $count = 0;
+class TrLine {
+    constructor(d) {
+            $count++;
+            let $TP1, $MOY, $INT1, $EXAM, $MG, $RATR, $TOT, $tr = document.createElement('tr'),
+                $tds = `
+            <td class="text-center"><img src="/layouts/default/img/figure/student2.webp" alt="student"></td>
+            <td>${d.firstname+' '+d.lastname}</td>
+            <td class="text-center writable activity-oin wrt-op <?=isset($TFE)&&$TFE==1?'d-none':null?>">${$TP1=parseFloat(d.TP1)?parseFloat(d.TP1):0}</td>
+            <td class="text-center writable activity-oin wrt-op <?=isset($TFE)&&$TFE==1?'d-none':null?>">${$INT1=parseFloat(d.INT1)?parseFloat(d.INT1):0}</td>
+            <td class="text-center static account-stable activity-oin wrt-op <?=isset($TFE)&&$TFE==1?'d-none':null?>">${$MOY=(parseFloat($TP1)+parseFloat($INT1))/2}</td>
+            <td class="text-center writable activity-oin wrt-op <?=isset($TFE)&&$TFE==1?'d-none':null?>">${$EXAM=(parseFloat(d.EXAM))?parseFloat(d.EXAM):0}</td>
+            <td class="text-center writable activity-oin wrt-op <?=isset($TFE)&&$TFE==1?'d-none':null?>">
+            `
+            $MG = ($MOY + $EXAM) / 2;
+            $RATR = d.RATR ? d.RATR : 0;
+            $TOT = ($MG < 10 && $RATR && $RATR != 0) ? $RATR : $MG;
+            $tds += `${($MG<10)?$RATR:'<i class="fas fa-check text-success"></i>'}
+            </td><td class="text-center static account-stable activity-oin wrt-op">${$TOT}</td>`;
+        $tr.innerHTML = $tds;
+        $tr.id = 'editing_'+$count;
+        $tr.dataset.coteOf = d.firstname+' '+d.lastname;
+        if (d.recours) {
+            $tr.className = 'bg-warning editable';
+            $tr.dataset.modify = true;
+        } else if (d.finished || (d.delib && !d.recours));
+        else $tr.className = 'editable';
+        return $tr;
+    }
+}
+$('tbody.dataTable-dyn-body').append(<?= json_encode($db_pdo->query("SELECT DISTINCT students.*, classes.delib, classes.finished, cotes.recours AS recours, cotes.id AS cote_id, courses.id AS course_id, courses.name AS course_name, cotes.TP1, cotes.TP2, cotes.TP3, cotes.INT1, cotes.INT2, cotes.EXAM, cotes.RATR FROM students JOIN classes ON classes.id = students.class JOIN courses ON courses.class = students.class LEFT JOIN teachers ON teachers.id = courses.titular LEFT JOIN cotes ON (cotes.student = students.id AND cotes.course = courses.id) WHERE students.active = 1 AND courses.delete = 0 AND courses.active = 1 AND courses.id = ".(isset($_POST['course']) ? $_POST['course'] : (isset($links[2]) ? $links[2] : 0))." ORDER BY firstname")->fetchAll(PDO::FETCH_OBJ));?>.map(i=>new TrLine(i)));
+$('table.dataTable-dyn-table').DataTable({
+    paging: false,
+    retrieve: true,
+    stateSave: true,
+    info: false,
+    lengthChange: false,
+    lengthMenu: [20, 50, 75, 100],
+    columnDefs: [{
+        targets: [0, -1],
+        orderable: false 
+    }],
+});

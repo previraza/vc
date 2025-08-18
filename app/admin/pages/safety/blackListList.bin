@@ -1,0 +1,138 @@
+<?php $pageTitle = "Liste Noire" ?>
+
+<div class="card height-auto">
+    <div class="card-body">
+        <div class="heading-layout1">
+            <div class="item-title">
+                <h3>Liste noire des étudiants</h3>
+            </div>
+            <div class="dropdown">
+                <a class="dropdown-toggle" href="#" role="button" data-toggle="dropdown"
+                    aria-expanded="false">...</a>
+
+                <div class="dropdown-menu dropdown-menu-right">
+                    <a class="dropdown-item" href="#" data-action="print"><i class="fas fa-print"></i>print</a>
+                    
+                    <a class="dropdown-item" href="#" data-action="reload"><i class="fas fa-redo-alt text-orange-peel"></i>Actualiser</a>
+                </div>
+            </div>
+        </div>
+        <form class="mg-b-20" method="POST">
+            <div class="row gutters-8">
+                                <div class="col-xl-3 col-lg-6 col-12 form-group">
+                    <label><?=$mci?></label>
+                    <select class="select2" name="section" id="s_sec">
+                        <?php $rqt = mysqli_query($db, "SELECT * FROM sections WHERE active = 1") or die(debug(mysqli_error($db)));
+                            while ($ROW = mysqli_fetch_array($rqt)){ $row = (object) $ROW; $_fs = isset($_fs) ? $_fs : $ROW['id']?>
+                                <option value="<?= $row->id ?>"><?= $row->name ?></option>
+                        <?php } ?>
+                        <option value="*">Toutes les <?=$mci?>s</option>
+                    </select>
+                </div>
+                <div class="col-xl-3 col-lg-6 col-12 form-group">
+                    <label>Option</label>
+                    <select class="select2" name="option" id="s_opt">
+                        <?php $rqt = mysqli_query($db, "SELECT * FROM options WHERE active = 1 AND ".($_fs=='*'?'1':'section = '.$_fs)) or die(debug(mysqli_error($db)));
+                            while ($ROW = mysqli_fetch_array($rqt)){ $row = (object) $ROW; ?>
+                                <option value="<?= $row->id ?>"><?= $row->name ?></option>
+                            <?php } ?>
+                            <option value="*">Toutes les options</option>
+                    </select>
+                </div>
+                <div class="col-xl-3 col-lg-6 col-12 form-group">
+                    <label>Niveau</label>
+                    <select class="select2" name="level">
+                        <option selected value="*">Tous les niveaux</option>
+                        <?php $rqt = mysqli_query($db, "SELECT * FROM level WHERE active = 1") or die(debug(mysqli_error($db)));
+                            while ($ROW = mysqli_fetch_array($rqt)){ $row = (object) $ROW; ?>
+                                <option value="<?= $row->id ?>"><?= $row->name ?></option>
+                        <?php } ?>
+                        <input type="hidden" name="CON_47" value="true">
+                    </select>
+                </div>
+                <div class="col-xl-2 col-lg-6 col-12 form-group">
+                    <label>Promotion *</label>
+                    <select class="select2" name="promotion">
+                        <option selected value="*">Année Académique </option>
+                        <?php $year = 2023;
+                            while ($year > 2021){ ?>
+                                <option value="<?= --$year ?>"><?= $year." - ".($year+1); ?></option>
+                        <?php } ?>
+                        <input type="hidden" name="CON_47" value="true">
+                    </select>
+                </div>
+                <div class="col-1-xxxl col-xl-2 col-lg-3 col-12 form-group">
+                    <label></label>
+                    <button type="submit" class="fw-btn-fill btn-gradient-yellow">RECHERCHE</button>
+                </div>
+            </div>
+        </form>
+        <div class="table-responsive">
+            <table class="table display data-table text-nowrap">
+                <thead>
+                    <tr>
+                        <th>
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input checkAll" id="assosLabel">
+                                <label for="assosLabel" class="form-check-label">Id</label>
+                            </div>
+                        </th>
+                        <th>Photo</th>
+                        <th>Nom Complet</th>
+                        <th>Unité</th>
+                        <th>Genre</th>
+                        <th><?=$mci?></th>
+                        <th>Option</th>
+                        <th>Niveau</th>
+                        <th>Promotion</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php $rqt = mysqli_query($db, 
+                                "SELECT students.*, sections.name AS section_name, options.name AS option_name, level.name AS level_name, promotion 
+                                    FROM students 
+                                    JOIN classes  ON classes.id  = students.class 
+                                    JOIN sections ON sections.id = classes.section 
+                                    JOIN options  ON options.id  = classes.option 
+                                    JOIN level    ON level.id    = classes.level 
+                                    WHERE students.credit < 3"
+                                        .((isset($_POST['promotion']) && $_POST['promotion'] != "*") ? " AND classes.promotion = $_POST[promotion]":'')
+                                        .((isset($_POST['section']) && $_POST['section'] != "*") ? " AND sections.id = $_POST[section]":'')
+                                        .((isset($_POST['option']) && $_POST['option'] != "*") ? " AND options.id = $_POST[option]":'')
+                                        .((isset($_POST['level']) && $_POST['level'] != "*") ? " AND level.id = $_POST[level]":'')." ORDER BY firstname"
+                                    );
+                        while($row = mysqli_fetch_array($rqt)){ $res = (object) $row;?>
+                        <tr>
+                            <td <?= ($res->user_id == '0') ? 'class="bg-warning"' : null ?>>
+                                <div class="form-check">
+                                    <input type="checkbox" class="form-check-input" id="assosLabelSS">
+                                <label for="assosLabelSS" class="form-check-label">Id</label>
+                                </div>
+                            </td>
+                            <td class="text-center"><img src="/layouts/default/img/figure/student2.webp" alt="student"></td>
+                            <td><?= "$res->firstname $res->lastname" ?></td>
+                            <td><?= $res->credit ?></td>
+                            <td><?= $res->gender ?></td>
+                            <td><?= $res->section_name ?></td>
+                            <td><?= $res->option_name ?></td>
+                            <td><?= $res->level_name ?></td>
+                            <td><?= "$res->promotion - ".++$res->promotion ?></td>
+                            <td>
+                                <div class="dropdown">
+                                    <a href="#" class="dropdown-toggle" data-toggle="dropdown"
+                                        aria-expanded="false">
+                                        <span class="flaticon-more-button-of-three-dots"></span>
+                                    </a>
+                                    <div class="dropdown-menu dropdown-menu-right">
+                                        <a class="dropdown-item" href="?fa69951bc733eb82713e936be33597e1=DATA_CRYPTING_ON:fa69951bc733eb82713e936be33597e1=WABTECHS_CRYPTING_ON: e91497f38407364c8e86ade9098950d978814190&MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3VIRAZA_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3&MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3&WABTECHS_CRYPTING_ON_LAVINGOL&MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3&b557c222c8ddcdf87e033706aad08e4ef7cf90d3=student--details--<?= $res->id ?>"><i class="fas fa-redo-alt text-orange-peel"></i>Profile</a>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    <?php } ?>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

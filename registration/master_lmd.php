@@ -1,0 +1,618 @@
+<link rel="stylesheet" type="text/css" href="assets/css/style.css" />
+<link rel="stylesheet" href="/layouts/default/css/select2.min.css">
+<?php require_once '../app/settings/params/connect'; require_once "../public/_header.php" ?>
+<style>
+    table {
+        color: #fff;
+        font-size: 18px;
+    }
+
+    tbody>tr td:first-child {
+        width: auto;
+    }
+    .form-group input, .form-group select {
+        height: 50px;
+        font-size: 16px;
+        padding: 0 15px;
+        background: #888;
+        color: aliceblue;
+        border: 2px solid #cdd3da;
+    }
+    .form-group {padding-top:10px;}
+    .form-group input:focus, .form-group select:focus {
+        background: #AAA;
+        color: #FFF;
+        border-color: currentColor;
+    }     
+    footer#ft-footer{padding:20px 0 0;}section#ft-blog{padding:75px 0 0;}.form-row {
+        display: -ms-flexbox;
+        display: flex;
+        -ms-flex-wrap: wrap;
+        flex-wrap: wrap;
+        margin-right: -5px;
+        margin-left: -5px
+    }.description {font-weight:300;color:#eee;padding:0 1.5rem}.description a{color:#1d1d24}table>*>tr>*{min-width:60px;padding:10px 20px!important;}table{margin-top:20px;}.pure-material-checkbox {
+        z-index: 0;
+        position: relative;
+        display: inline-block;
+        color: rgba(var(--pure-material-onsurface-rgb, 0, 0, 0), 0.87);
+        font-family: var(--pure-material-font, "Roboto", "Segoe UI", BlinkMacSystemFont, system-ui, -apple-system);
+        font-size: 16px;
+        line-height: 1.5;
+    }.button-70 {
+        background-image: linear-gradient(#0dccea, #0d70ea);
+        border: 0;
+        border-radius: 4px;
+        box-shadow: rgba(0, 0, 0, .3) 0 5px 15px;
+        box-sizing: border-box;
+        color: #fff;
+        cursor: pointer;
+        font-family: Montserrat,sans-serif;
+        font-size: .9em;
+        margin: 5px;
+        padding: 10px 15px;
+        text-align: center;
+        user-select: none;
+        -webkit-user-select: none;
+        touch-action: manipulation;
+    }.col-12.form-heading{margin:30px 0 10px;border-radius:5px;padding:10px;}#form-total > div.steps.clearfix > ul {
+        margin-bottom: 0;
+    }.img-costom-element .img-element {
+        width: 100%;
+        height: calc(100% - 40px);
+        margin: 20px 0;
+        background: center / cover no-repeat url(images/profile.webp);
+        border-radius: 10px;
+    }.ft-blog-feed-content{padding-top: 20px;}#form-total > div.steps.clearfix > ul > li.error {display:block;padding:0;background:#fbc;}
+</style>
+<section id="ft-blog" class="ft-blog-section" ng-app>
+    <div class="container d-block">
+        <div class="ft-blog-top-content d-flex justify-content-between align-items-end flex-wrap">
+            <div class="ft-section-title pera-content w-100 mw-100">
+                <h2 class="w-100 text-center">Inscription en ligne</h2>
+                <span class="sub-title">Session 2022-2023</span>
+           <!-- <marquee><center><h3 class="text-primary">Le deuxième test d'admission est prévu ce dimanche 22/01/2023 à 07h30.</h3></center></marquee> -->
+            </div>
+        </div>
+        <div class="ft-blog-feed-content">
+            <div class="row">
+                <div class="wizard-v6-content w-100 bg-secondary">
+                    <div class="wizard-form bg-transparent">
+                        <form class="form-register" id="form-register" action="#" method="post">
+                            <div id="form-total">
+                            <h2>
+                                <p class="step-icon"><span>1</span></p>
+                                <span class="step-text">Choix & Programme</span>
+                            </h2>
+                            <section>
+                                <div class="inner inner-1">
+                                <div class="form-heading">
+                                    <h3 class=pb-3>Cycle de la formation souhaité</h3>
+                                    <span>1/10</span>
+                                </div>
+                                <div class="form-row">
+                                    <div class="container">
+                                    <h2>Choose your favorites</h2>
+                                    <div class="list">
+                                        <div class="form-element">
+                                        <input type="radio" name="cycle" value="c1" id="c1" disabled>
+                                        <label for="c1">
+                                            <div class="title">
+                                            Premier Cycle
+                                            </div>
+                                        </label>
+                                        </div>
+                                        <div class="form-element">
+                                        <input type="radio" name="cycle" value="c2" id="c2">
+                                        <label for="c2">
+                                            <div class="title">
+                                            Passerelle pour Master
+                                         </div>
+                                        </label>
+                                        </div>
+                                        <div class="form-element">
+                                        <input type="radio" name="cycle" value="c3" id="c3" disabled>
+                                        <label for="c3">
+                                            <div class="title">
+                                            Troisième cycle
+                                            </div>
+                                        </label>
+                                        </div>
+                                    </div>
+                                    </div>
+                                </div>
+                                <div class="form-heading">
+                                    <h3 class=pb-3>orientation de la formation souhaitée</h3>
+                                    <span>2/10</span>
+                                </div>
+                                <div class="form-row">
+                                    <div class="container">
+                                    <h2>Choose your favorites</h2>
+                                    <div class="list">
+                                        <div class="form-element" style="display: none;">
+                                            <input type="radio" name=orientation class="orientation c1" value="c1-btp" id="c1-prepa">
+                                            <label for="c1-prepa">
+                                                <div class="title">
+                                                <h6>Préparatoire</h6>
+                                                </div>
+                                            </label>
+                                        </div>
+                                        <div class="form-element" style="display: none;">
+                                            <input type="radio" name=orientation_ class="orientation c1" value="c1-btp" id="c1-prepa">
+                                            <label for="c1-prepa">
+                                                <div class="title">
+                                                <h6>Tronc commun de l'ingenieur</h6>
+                                                </div>
+                                            </label>
+                                        </div>
+                                        <div class="form-element d-none" style="display: none;">
+                                        <input type="radio" name=orientation class="orientation c1" value="c2-l1" id="c2-l1">
+                                        <label for="c2-l1">
+                                            <div class="title">
+                                            <h6>Premier Licence</h6>
+                                            </div>
+                                        </label>
+                                        </div>
+                                        <div class="form-element d-none" style="display: none;">
+                                        <input type="radio" name=orientation class="orientation c1" value="c2-l2" id="c2-l2">
+                                        <label for="c2-l2">
+                                            <div class="title">
+                                            <h6>Deuxième Licence</h6>
+                                            </div>
+                                        </label>
+                                        </div>
+                                        <div class="form-element" style="display: none;">
+                                        <input type="radio" name=orientation class="orientation c2" value="c3-m1" id="c3-m1" checked>
+                                        <label for="c3-m1">
+                                            <div class="title">
+                                            <h6>Master</h6>
+                                            </div>
+                                        </label>
+                                        </div>
+                                        <div class="form-element" style="display: none;">
+                                        <input type="radio" name=orientation class="orientation c3" value="c3-m2" id="c3-m2">
+                                        <label for="c3-m2">
+                                            <div class="title">
+                                            <h6>Master 2</h6>
+                                            </div>
+                                        </label>
+                                        </div>
+                                        <div class="form-element" style="display: none;">
+                                        <input type="radio" name=orientation class="orientation c3" value="c3-m3" id="c3-m3">
+                                        <label for="c3-m3">
+                                            <div class="title">
+                                            <h6>Master 3</h6>
+                                            </div>
+                                        </label>
+                                        </div>
+                                    </div>
+                                    </div>
+                                </div>
+                                </div>
+                            </section>
+                            <h2>
+                                <p class="step-icon"><span>2</span></p>
+                                <span class="step-text">Condition Generale</span>
+                            </h2>
+                            <section class = d-none>
+                                <div class="inner inner-0">
+                                    <div class="form-heading">
+                                        <h3 class=pb-3>Classe de recrutement TCI ET PRÉPARATOIRE</h3>
+                                        <span>3/10</span>
+                                    </div>
+                                    <div class="form-row mt-3">
+                                        <div class="description">
+                                            Le candidat doit :
+                                            <ol class="m-0 ml--30">
+                                                <li>Etre détenteur d'un diplôme d'Etat ou son équivalent.</li>
+                                                <li>Payer les frais d'inscription.</li>
+                                                <li>Remplir le formulaire en ligne.</li>
+                                                <li>Avoir déposé les éléments du dossier physique complet (originaux et photocopies) ci-après au local 41</li>
+                                            </ol>
+                                        </div>
+                                        <p class="description">
+                                            L'etudiant inscrit s'engage a respecter les conditions et reglement d'ordre interieur de l'etablissement.
+                                        </p>
+                                    </div>
+                                    <div class="form-heading">
+                                        <h3 class=pb-3>Dossier d'Inscription</h3>
+                                        <span>4/10</span>
+                                    </div>
+                                    <div class="form-row mt-3">
+                                        <div class="description">
+                                            L'inscription au sein de l'etablissement exige la
+                                            fourniture de documents suivants :
+                                            <ol class="m-0 ml--30">
+                                                <li class="bg-secondary">Formulaire d'iscription en ligne.</li>
+                                                <li>
+                                                    Diplôme d'État (Baccalauréat) ou l'équivalent (Légalisé) :
+                                                    <ul>
+                                                        <li>Une attestation de réussite délivrée par l'IG de l'EPST ;</li>
+                                                        <li>Une liste de la publication des résultats édition passée avec numéro du site internet de L'EPST ;</li>
+                                                    </ul>
+                                                </li>
+                                                <li>Bulletins 5ème et 6ème des Humanités ou 3ème et 4ème des Humanités selon le nouveau ou l'ancien système.</li>
+                                                <li>Carte d'élève ou carte d'identité ou d'électeur / CENI.</li>
+                                                <li>2 photos passeports récentes.</li>
+                                                <li>Une attestation de naissance.</li>
+                                                <li>Certificat de bonne conduite, vie et mœurs.</li>
+                                                <li>Certificat d'aptitude physique délivré par l'ISTA (Voir le Centre Médical de l'ISTA);</li>
+                                                <li>Bordereau de paiement de Frais d'inscription.</li>
+                                            </ol>
+                                        </div>
+                                        <p class="description">
+                                            <b>N.B : </b> Tout diplôme étranger du niveau secondaire doit obtenir l'équivalence auprès du Ministère qui en charge l'EPST.
+                                        </p>
+                                    </div>
+                                    <div class="form-row justify-content-center hide-printer d-none">
+                                        <div class="button-70 m-3 p-2" role="button" onclick="window.print()">Imprimer la page atuelle</div>
+                                    </div>
+                                </div>
+                            </section>
+                            <h2>
+                                <p class="step-icon"><span>3</span></p>
+                                <span class="step-text">Formulaire</span>
+                            </h2>
+                            <section>
+                                <div class="inner inner-2">
+                                    <div id="content-form-wrapper">
+                                        <div class="row">
+                                            <div class="form-heading col-12">
+                                                <h3 class=pb-3>Identité</h3>
+                                                <span>6/10</span>
+                                            </div>
+                                            <input type="hidden" id=dt_type ng-model=type name=register[type] class="form-control" required value="master">
+                                            <div class="col-xl-4 col-lg-6 col-12 form-group">
+                                                <label>Nom *</label>
+                                                <input type="text" placeholder="" id=dt_nom ng-model=nom name=register[nom] 
+                                                class="form-control" required>
+                                            </div>
+                                            <div class="col-xl-4 col-lg-6 col-12 form-group">
+                                                <label>Post Nom *</label>
+                                                <input type="text" placeholder="" id=dt_postnom ng-model=postnom name=register[postnom]
+                                                class="form-control" required>
+                                            </div>
+                                            <div class="col-xl-4 col-lg-6 col-12 form-group">
+                                                <label>Prenom *</label>
+                                                <input type="text" placeholder="" id=dt_prenom ng-model=prenom name=register[prenom]
+                                                class="form-control" required>
+                                            </div>
+
+
+                                            <div class="col-xl-8 col-lg-6 col-12 form-group">
+                                                <label>Lieu de naissance *</label>
+                                                <input type="text" placeholder=""
+                                                ng-model=lieu_de_naissance name="register[lieu_de_naissance]"
+                                                class="form-control" required>
+                                            </div>
+                                            <div class="col-xl-4 col-lg-6 col-12 form-group">
+                                                <label>Date de naissance *</label>
+                                                <input type="date" placeholder="yyyy/mm/dd"
+                                                class="form-control air-datepicker"
+                                                ng-model=date_de_naissance name="register[date_de_naissance]" required>
+                                            </div>
+
+                                            <div class="col-xl-4 col-lg-6 col-12 form-group">
+                                                <label>Genre *</label>
+                                                <select class="select2" ng-model=sexe name=register[sexe] required>
+                                                <option value="M">Masculin</option>
+                                                <option value="F">Feminin</option>
+                                                <option value="A">Autres</option>
+                                                </select>
+                                            </div>
+                                            <div class="col-xl-4 col-lg-6 col-12 form-group">
+                                                <label>Etat-Civil *</label>
+                                                <select class="select2" ng-model=etat_civil name="register[etat_civil]"
+                                                required>
+                                                <option value="C">Celibataire</option>
+                                                <option value="M">Marie (e)</option>
+                                                <option value="V">Veuf (ve)</option>
+                                                <option value="D">Divorce (e)</option>
+                                                <option value="A">Autres</option>
+                                                </select>
+                                            </div>
+                                            <div class="col-xl-4 col-lg-6 col-12 form-group">
+                                                <label>Nationalité *</label>
+                                                <input type="text" placeholder="" ng-model=pays name="register[pays]"
+                                                class="form-control" required>
+                                            </div>
+
+                                            <div class="col-xl-6 col-lg-6 col-12 form-group">
+                                                <label>Nom du Père</label>
+                                                <input type="text" placeholder=""
+                                                class="form-control" ng-model=pere name="register[pere]">
+                                            </div>
+                                            <div class="col-xl-6 col-lg-6 col-12 form-group">
+                                                <label>Nom de la Mère</label>
+                                                <input type="text" placeholder=""
+                                                class="form-control" ng-model=mere name="register[mere]">
+                                            </div>
+
+                                            <div class="col-xl-3 col-lg-6 col-12 form-group">
+                                                <label>Province d'origine</label>
+                                                <input type="text" placeholder=""
+                                                ng-model=province name="register[province]"
+                                                class="form-control" required>
+                                            </div>
+                                            <div class="col-xl-3 col-lg-6 col-12 form-group">
+                                                <label>District d'origine</label>
+                                                <input type="text" placeholder=""
+                                                ng-model=district name="register[district]"
+                                                class="form-control" required>
+                                            </div>
+                                            <div class="col-xl-3 col-lg-6 col-12 form-group">
+                                                <label>Territoire d'origine</label>
+                                                <input type="text" placeholder=""
+                                                ng-model=territoire name="register[territoire]"
+                                                class="form-control" required>
+                                            </div>
+                                            <div class="col-xl-3 col-lg-6 col-12 form-group">
+                                                <label>Secteur d'origine</label>
+                                                <input type="text" placeholder=""
+                                                ng-model=secteur name="register[secteur]"
+                                                class="form-control" required>
+                                            </div>
+
+                                            <div class="col-xl-9 col-lg-6 col-12 form-group">
+                                                <label>Addresse du candidat</label>
+                                                <input type="text" placeholder="Avenue / N° / Quartier / Commune" ng-model=adresse name="register[adresse]"
+                                                class="form-control" required>
+                                            </div>
+                                            <div class="col-xl-3 col-lg-6 col-12 form-group">
+                                                <label>Numero de téléphone</label>
+                                                <input type="text" placeholder="+243 987 654 321"
+                                                ng-model=telephone name="register[telephone]"
+                                                class="form-control" required>
+                                            </div>
+
+                                            <div class="form-heading col-12">
+                                                <h3 class=pb-3>Etudes de Licence</h3>
+                                                <span>7/10</span>
+                                            </div>
+
+                                            <div class="col-xl-6 col-lg-4 col-12 form-group">
+                                                <label>Nom de l'Universté *</label>
+                                                <input type="text" placeholder="" ng-model=ecole name=register[ecole]
+                                                class="form-control" required>
+                                            </div>
+                                            <div class="col-xl-6 col-lg-4 col-12 form-group">
+                                                <label>Addresse de l'Universté *</label>
+                                                <input type="text" placeholder=""
+                                                ng-model=ecole_addresse name=register[ecole_addresse]
+                                                class="form-control" required>
+                                            </div>
+
+                                            <div class="col-xl-6 col-lg-6 col-12 form-group">
+                                                <label>Section d'orientation suivi *</label>
+                                                <input type="text" placeholder="" ng-model=section name=register[section]
+                                                class="form-control" required>
+                                            </div>
+                                            
+                                            <div class="col-xl-6 col-lg-6 col-12 form-group">
+                                                <label>Annee d'obtention du diplome *</label>
+                                                <select class="select2" ng-model=year_exetat name=register[year_exetat] required>
+                                                <option value="2022">2023</option>
+                                                <option value="2021">2022</option>
+                                                <option value="2020">2021</option>
+                                                <option value="2019">2020</option>
+                                                <option value="2018">2019</option>
+                                                <option value="2018">2018</option>
+                                                <option value="2017">2017</option>
+                                                <option value="2016">2016</option>
+                                                <option value="2015">2015</option>
+                                                <option value="2014">2014</option>
+                                                <option value="2013">2013</option>
+                                                <option value="2012">2012</option>
+                                                <option value="2011">2011</option>
+                                                <option value="2010">2010</option>
+                                                <option value="2009">2009</option>
+                                                <option value="2008">2008</option>
+                                                <option value="2007">2007</option>
+                                                <option value="2006">2006</option>
+                                                <option value="2005">2005</option>
+                                                <option value="2004">2004</option>
+                                                <option value="2003">2003</option>
+                                                <option value="2002">2002</option>
+                                                <option value="2001">2001</option>
+                                                <option value="2000">2000</option>
+                                                </select>
+                                            </div>
+                                            <div class="col-xl-6 col-lg-6 col-12 form-group">
+                                                <label>Pourcentage *</label>
+                                                <input type="number" min="50" max="99" placeholder=""
+                                                ng-model=pourcentage name=register[pourcentage]
+                                                class="form-control" required>
+                                            </div>
+                                            <div class="col-xl-6 col-lg-6 col-12 form-group">
+                                                <label>Numero du diplome</label>
+                                                <input type="number" placeholder=""
+                                                ng-model=numero_diplome name=register[numero_diplome]
+                                                class="form-control">
+                                            </div>
+
+                                            <div class="form-heading col-12">
+                                                <h3 class=pb-3>Orientation</h3>
+                                                <span>8/10</span>
+                                            </div>
+
+                                            <div class="col-12 form-group">
+                                                <label>Section d'orientation</label>
+                                                <select class="select2" ng-model=year_exetat name=register[year_exetat] required>
+                                                <option value="AVC">Aviation Civile</option>
+                                                <option value="INF">Informatique</option>
+                                                <option value="MMM">Maintenance</option>
+                                                <option value="MEC">Mecanique</option>
+                                                <option value="MTO">Meteorologie</option>
+                                                <option value="ETRO">Electronique</option>
+                                                <option value="ETRI">Electricité</option>
+                                                </select>
+                                            </div>
+                                            <div class="col-12 form-group">
+                                                <label>Option d'orientation</label>
+                                                <select class="select2" ng-model=year_exetat name=register[year_exetat] required>
+                                                <option value="avc-mta" for=''>Management du transport aérien</option>
+                                                <option value="avc-mea">Management de l'espace aérien</option>
+                                                <option value="avc-to">Télécommunication aéronautique</option>
+                                                <option value="inf-gl">Génie logiciel</option>
+                                                <option value="inf-rsc">Réseaux et syber sécurité</option>
+                                                <option value="mmm-mi">Maintenance induqtrielle</option>
+                                                <option value="mec-cm">Construction mécanique</option>
+                                                <option value="mec-the">Thermo-Energétique</option>
+                                                <option value="mec-pro">Production</option>
+                                                <option value="mto-pm">Prévision météorologique</option>
+                                                <option value="mto-bcc">Blodiversité et changement climatique</option>
+                                                <option value="etri-en">Energie renouvelables</option>
+                                                <option value="etri-ire">Ingénierie des réseaux éléctrique</option>
+                                                <option value="Etro-tel">Télécommunication</option>
+                                                <option value="Etro-ei">Electronique industrielle</option>
+                                                </select>
+                                            </div>
+
+                                            <div class="form-heading col-12">
+                                                <h3 class=pb-3>Occupations</h3>
+                                                <span>9/10</span>
+                                            </div>
+
+                                            <div class="col-12 form-group">
+                                                <label>Activite professionnelle</label>
+                                                <input type="text" placeholder="" ng-model=activite_professionnelle name=register[activite_professionnelle] class="form-control">
+                                            </div>
+                                            <div class="col-12 form-group">
+                                                <label>Etudes post-de Licence</label>
+                                                <input type="text" placeholder="Annee, Etablissement, Faculté/Section, Resultat" ng-model=autres_formations name=register[autres_formations] class="form-control">
+                                            </div>
+
+                                            <div class="col-12 form-row mx-3">
+                                                <label class="pure-material-checkbox">
+                                                <input type="checkbox" required>
+                                                <span class="description">Je reconnais avoir pris
+                                                    connaissance et accepte les conditions
+                                                    d'inscription mentionnées ci-dessus</span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </section>
+                            <h2>
+                                <p class="step-icon"><span>4</span></p>
+                                <span class="step-text">Confirmation & Payement</span>
+                            </h2>
+                            <section>
+                                <div class="inner inner-3">
+                                <div class="form-heading">
+                                    <h3 class=pb-3>Verification d'informations</h3>
+                                    <span>9/10</span>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-holder form-holder-2">
+                                        <h4>Verifier si les informations ci-dessous sont celle dont vous souhaitez transmettre...</h4>
+                                        <div class="row">
+                                            <div class="img-costom-element col-xl-3 col-lg-6 col-12" style="background: #1234;min-height: 200px;">
+                                                <label for='std_profile' class="img-element">
+                                                    <input type="file" name="profile" id="std_profile" class="d-none" required>
+                                                </label>
+                                            </div>
+                                            <div class="contact-information col-xl-9 col-lg-6 col-12">
+                                                <h3>Identité du candidat </h3>
+                                                <table class=w-100>
+                                                    <tbody>
+                                                        <tr>
+                                                            <td>Nom complet</td>
+                                                            <td>: {{nom+' '+postnom+' '+prenom}}</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>Lieu et date de naissance</td>
+                                                            <td>: {{lieu_de_naissance+' '+date_de_naissance}}</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>Civilité</td>
+                                                            <td>: {{sexe+' '+etat_civil}} de nationalité {{nationalite}}</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>Fille ou Fils de  </td>
+                                                            <td>: {{pere+' et '+mere}}</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>Originaire de </td>
+                                                            <td>: la province de {{province+', distrinct de '+district+' dans le Territoire et Secteur de '+territoire+'/'+secteur}}</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>Adresse </td>
+                                                            <td>: a contacter au numero {{telephone+' a l\'adresse '+adresse}}</td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                            <div class="contact-information col-xl-12 col-lg-6 col-12 mt-3">
+                                                <h3>Etudes de Licence faites</h3>
+                                                <table class=w-100>
+                                                    <tbody>
+                                                        <tr>
+                                                            <td>Nom de l'ecole</td>
+                                                            <td>: {{ecole}}</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>Sise a l'adresse</td>
+                                                            <td>: {{ecole_addresse}}</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>Resultat</td>
+                                                            <td>: a obtenue {{pourcentage+'% dans la section '+section+', option '+option+' au centre d\'examination '+centre_exetat+' dans la province de '+ld_exetat+' en l\'an '+year_exetat}}</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>Numero du diplome</td>
+                                                            <td>: {{numero_diplome}}</td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                            <div class="contact-information col-xl-12 col-lg-6 col-12">
+                                                <h3>Autres Information</h3>
+                                                <div class="fa-2x text-white" ng-if=activite_professionnelle>
+                                                    Occupation professionnelle : {{activite_professionnelle}}
+                                                </div>
+                                                <div class="fa-2x text-white" ng-if=autres_formations>
+                                                    Etude poste secondaire : {{activite_professionnelle}}
+                                                </div>
+                                                
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-heading">
+                                    <h3 class=pb-3>Confirmation de la demande</h3>
+                                    <span>10/10</span>
+                                </div>
+                                 <div class="form-row">
+                                    <div class="form-holder form-holder-2">
+                                    <label for="room" class="special-label-1">Numero de facturation du borderaux d'inscription</la$
+                                    <input type="text" placeholder="#0xx0000000000000000" ng-model=numero_bordereau name=registers[$
+                                    <span class="select-btn">
+                                        <i class="zmdi zmdi-chevron-down"></i>
+                                    </span>
+                                    </div>
+                                </div>
+
+                                <div class="form-row">
+                                    <div class="alert alert-danger w-100" style="display: none;">
+                                    Erreur : Enregistrement incomplet
+                                    </div>
+                                </div>
+                                </div>
+                            </section>
+                            </div>
+                            <div class="form-total-loader" id="form-loader"></div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<?php require_once "../public/_footer.php" ?>
+<script src="/layouts/default/js/select2.min.js"></script>
+<script src="assets/js/jquery.steps.js"></script>
+<script src="assets/js/jquery-ui.min.js"></script>
+<script src="assets/js/main.js"></script>
+<script src="assets/js/angularJs.js"></script>

@@ -1,0 +1,6 @@
+! function(t) {
+    "use strict";
+    t.fn.changeClass = function(searchValue, replaceValue) {
+        return this.removeClass(searchValue || '').addClass(replaceValue || '');
+    }
+}(jQuery);

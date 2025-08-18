@@ -1,0 +1,8 @@
+<?php $pageTitle = "Edition du profile" ?>
+
+<h1 class="text-danger bg-blue-dark p-xl-4 rounded">Completez votre profile</h1>
+<?php 
+    $in_admin = $hide_menu = true;
+    // require_once dirname(__DIR__).DS.$user->role.DS.'aff.bin';
+    require_once dirname(__DIR__).DS.$user->role.DS.'add.bin';
+?>

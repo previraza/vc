@@ -1,0 +1,79 @@
+<?php viewOnlyBy('ADMIN'); $pageTitle = "level" ?>
+
+
+<?php 
+    if (isset($links[2]) && is_numeric($links[2])){
+        $rqt = mysqli_query($db, "SELECT * FROM level WHERE id = $links[2] AND active = 1");
+        if ($rqt) $row = mysqli_fetch_array($rqt);
+    }
+
+    if (isset($row) && $row){$lev = (object) $row; ?>
+        <div class="card height-auto">
+            <div class="card-body">
+                <div class="heading-layout1">
+                    <div class="item-title">
+                        <h3>Modification d'un niveau</h3>
+                    </div>
+                    <div class="dropdown">
+                        <a class="dropdown-toggle" href="#" role="button" 
+                        data-toggle="dropdown" aria-expanded="false">...</a>
+
+                        <div class="dropdown-menu dropdown-menu-right">
+                            <a class="dropdown-item" href="#"><i class="fas fa-times text-orange-red"></i>Close</a>
+                            <a class="dropdown-item" href="#"><i class="fas fa-redo-alt text-orange-peel"></i>Refresh</a>
+                        </div>
+                    </div>
+                </div>
+                <form class="new-added-form" id="addLevel">
+                    <div class="row">
+                        <div class="col-xl-12 col-lg-6 col-12 form-group">
+                            <label>Nom complet de la level *</label>
+                            <input type="text" name="name" placeholder="" class="form-control" value="<?= $lev->name ?>">
+                        </div>
+                        <div class="col-xl-4 col-lg-6 col-12 form-group">
+                            <label>Nom court *</label>
+                            <input type="text" name="short" placeholder="" class="form-control" value="<?= $lev->short ?>">
+                        </div>
+                        <div class="col-xl-4 col-lg-6 col-12 form-group">
+                            <label>Système *</label>
+                            <input type="hidden" name="mine" value="<?= $lev->id ?>">
+                            <select class="select2" name="system">
+                                <option <?= ($lev->system == "LG") ? "selected" : null ?> value="LG">Licence, Génie</option>
+                                <option <?= ($lev->system == "LMD") ? "selected" : null ?> value="LMD">Licence Master Doctorat</option>
+                                <input type="hidden" name="CON_47" value="true">
+                            </select>
+                        </div>
+                        <div class="col-xl-4 col-lg-6 col-12 form-group">
+                            <label>Type de niveau *</label>
+                            <select class="select2" name="terminal">
+                                <option <?= ($lev->terminal == "0") ? "selected" : null ?> value="0">Non Terminal</option>
+                                <option <?= ($lev->terminal == "1") ? "selected" : null ?> value="1">Terminal</option>
+                            </select>
+                        </div>
+                        <div class="mx-4 alert hidden alert-danger alert-dismissible fade show" role="alert" id="errorRapport">
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                                <span class="sr-only">Close</span>
+                            </button>
+                            <strong>Erreur : </strong>Une erreur s'est produit pendant l'ajout.<br>Si celà persiste veuillez contacter votre administrateur système.
+                        </div>
+                        <div class="col-12 form-group mg-t-8">
+                            <button type="submit" class="btn-fill-lg btn-gradient-yellow btn-hover-bluedark">Save</button>
+                            <button type="reset" class="btn-fill-lg bg-blue-dark btn-hover-yellow">Reset</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    <?php }else{ ?>
+        <div class="card height-auto">
+            <div class="card-body">
+                <div class="heading-layout1 mg-b-15">
+                    <div class="item-title p-5 text-center w-100">
+                        <h1 class="text-danger bg-blue-dark py-xl-5">Level Introuvable : <?= isset($links[2]) && $links[2] ? $links[2] : NULL ?></h1>
+                        <h3>La level dont vous essayer de voire est introuvable</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+    <?php } ?>

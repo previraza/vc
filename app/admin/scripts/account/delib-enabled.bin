@@ -1,0 +1,39 @@
+randomize = (length = 4, prefix = "SNEN", separator = "-") => {
+    let res = pre_res = '';
+    for (let i = 0; i < length; i++) {
+        pre_res = parseInt(Math.random() * 35).toString(35)
+        res += ((!(i % 4) ? separator : '') + ((Math.random() * 2) > 1 ? pre_res.toUpperCase() : pre_res));
+    }
+    return prefix + separator + res;
+}
+
+function format_number(number = 0, length = 1, complement = 0) {
+    let n = number.toString();
+    while (n.length < length)
+        n = '0' + n;
+    return n;
+}
+
+$('#GenerateAll').on('click', () => {
+    keyCode = prompt('Veuillez insérer une clé de cryptage : ')
+    $('.generatorZone').each((i, e) => {
+        $.ajax({
+            url: "/app/settings/edit/create-key.php?sending_by=mcisme",
+            data: {
+                CON_47: 'loveStorage',
+                user_id: e.dataset.id,
+                key_code: keyCode
+            },
+            type: "POST",
+            success: function(response) {
+                try {
+                    let res = JSON.parse(response);
+                    if(res.status === 'succes') window.mine = e;
+                        e.querySelector('.keyCode').innerText = res.content;
+                } catch (error) {
+                    console.error(response);
+                }
+            }
+        })
+    });
+});

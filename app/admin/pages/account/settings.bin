@@ -1,0 +1,145 @@
+<?php viewOnlyBy('ADMIN', 'SG', 'DG','SR','AB','SA'); 
+    $pageTitle = "Politique d'utilisation de l'établissement" ; 
+    $r = (object) mysqli_fetch_array(mysqli_query($db, "SELECT * FROM settings WHERE id = 1")) ;
+?>
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="heading-layout1">
+                    <div class="item-title">
+                        <h3><?=$r->name?></h3>
+                    </div>
+                    <div class="dropdown">
+                        <a class="dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-expanded="false">...</a>
+
+                        <div class="dropdown-menu dropdown-menu-right">
+                            <a class="dropdown-item" href="#" data-action="print"><i class="fas fa-print"></i>print</a>
+                            
+                            <a class="dropdown-item" href="#" data-action="reload"><i class="fas fa-redo-alt text-orange-peel"></i>Actualiser</a>
+                        </div>
+                    </div>
+                </div>
+                <form class="new-added-form">
+                    <div class="row">
+                        <div class="col-xl-3 col-lg-6 col-12 form-group">
+                            <label>Dévise *</label>
+                            <text type="text" placeholder="" name="devise" class="form-control" value="<?=$r->devise?>">
+                        </div>
+                        <div class="col-xl-3 col-lg-6 col-12 form-group">
+                            <label>Début de delibération *</label>
+                            <input type="datetime" placeholder="yyyy/mm/dd" name="delib_start" class="form-control air-datepicker" data-position='bottom right' value="<?=$r->delib_start?>">
+                            <i class="far fa-calendar-alt"></i>
+                        </div>
+                        <div class="col-xl-3 col-lg-6 col-12 form-group">
+                            <label>Fin de delibération *</label>
+                            <input type="datetime" placeholder="yyyy/mm/dd" name="delib_end" class="form-control air-datepicker" data-position='bottom right' value="<?=$r->delib_end?>">
+                            <i class="far fa-calendar-alt"></i>
+                        </div>
+                        <div class="col-lg-3 col-12 form-group">
+                            <label>Fin Déposition des cotes *</label>
+                            <input type="datetime" placeholder="yyyy/mm/dd" name="depo_cotes_end" class="form-control air-datepicker" data-position='bottom right' value="<?=$r->depo_cotes_end?>">
+                            <i class="far fa-calendar-alt"></i>
+                        </div>
+                        <div class="col-xl-6 col-lg-6 col-12 form-group">
+                            <label>Congés *</label>
+                            <select class="select2" name="vac">
+                                <option value="">Please Select*</option>
+                                <option <?= ($r->devise=='holiday')?'selected':null?> value="holiday">Journée Ferrier</option>
+                                <option <?= ($r->devise=='endYear')?'selected':null?> value="endYear">Fin de l'Année Académique</option>
+                                <option <?= ($r->devise=='ghostTown')?'selected':null?> value="ghostTown">Ville morte</option>
+                                <option <?= ($r->devise=='others')?'selected':null?> value="others">Autres</option>
+                            </select>
+                        </div>
+                        <div class="col-lg-3 col-12 form-group">
+                            <label>Début Congés *</label>
+                            <input type="datetime" placeholder="yyyy/mm/dd" name="vac_start" class="form-control air-datepicker" data-position='bottom right' value="<?= $r->vac_start?>">
+                            <i class="far fa-calendar-alt"></i>
+                        </div>
+                        <div class="col-lg-3 col-12 form-group">
+                            <label>Fin Congés *</label>
+                            <input type="datetime" placeholder="yyyy/mm/dd" name="vac_end" class="form-control air-datepicker" data-position='bottom right' value="<?=$r->vac_end?>">
+                            <i class="far fa-calendar-alt"></i>
+                        </div>
+                        <div class="col-lg-3 col-12 form-group">
+                            <label>Début Déposition des mémoires *</label>
+                            <input type="datetime" placeholder="yyyy/mm/dd" name="depo_memoire_start" class="form-control air-datepicker" data-position='bottom right' value="<?=$r->depo_memoire_start?>">
+                            <i class="far fa-calendar-alt"></i>
+                        </div>
+                        <div class="col-lg-3 col-12 form-group">
+                            <label>Fin Déposition des mémoires *</label>
+                            <input type="datetime" placeholder="yyyy/mm/dd" name="depo_memoire_end" class="form-control air-datepicker" data-position='bottom right' value="<?=$r->depo_memoire_end?>">
+                            <i class="far fa-calendar-alt"></i>
+                        </div>
+                        <div class="col-lg-3 col-12 form-group">
+                            <label>Début Déposition des documents *</label>
+                            <input type="datetime" placeholder="yyyy/mm/dd" name="depo_document_start" class="form-control air-datepicker" data-position='bottom right' value="<?=$r->depo_document_start?>">
+                            <i class="far fa-calendar-alt"></i>
+                        </div>
+                        <div class="col-lg-3 col-12 form-group">
+                            <label>Fin Déposition des documents *</label>
+                            <input type="datetime" placeholder="yyyy/mm/dd" name="depo_document_end" class="form-control air-datepicker" data-position='bottom right' value="<?=$r->depo_document_end?>">
+                            <i class="far fa-calendar-alt"></i>
+                        </div>
+                        <div class="col-lg-3 col-12 form-group">
+                            <label>Début des activités *</label>
+                            <input type="datetime" placeholder="yyyy/mm/dd" name="ets_activity_start" class="form-control air-datepicker" data-position='bottom right' value="<?=$r->ets_activity_start?>">
+                            <i class="far fa-calendar-alt"></i>
+                        </div>
+                        <div class="col-lg-3 col-12 form-group">
+                            <label>Fin des activités *</label>
+                            <input type="datetime" placeholder="yyyy/mm/dd" name="ets_activity_end" class="form-control air-datepicker" data-position='bottom right' value="<?=$r->ets_activity_end?>">
+                            <i class="far fa-calendar-alt"></i>
+                        </div>
+                        <div class="col-xl-3 col-lg-6 col-12 form-group">
+                            <label>Plateform *</label>
+                            <select class="select2" name="plateform">
+                                <option <?= ($r->plateform == 1)?'selected':null?> value="1">Activé</option>
+                                <option <?= ($r->plateform == 0)?'selected':null?> value="0">Desactivé</option>
+                            </select>
+                        </div>
+                        <div class="col-xl-3 col-lg-6 col-12 form-group">
+                            <label>Mode de la plateforme *</label>
+                            <select class="select2" name="plateform_mode">
+                                <option <?= ($r->plateform_mode == 'active')?'selected':null?> value="active">En activité</option>
+                                <option <?= ($r->plateform_mode == 'dev')?'selected':null?> value="dev">En dévélopement</option>
+                                <option <?= ($r->plateform_mode == 'repair')?'selected':null?> value="repair">En Maitenance</option>
+                                <option <?= ($r->plateform_mode == 'suspens')?'selected':null?> value="suspens">En Suspension</option>
+                            </select>
+                        </div>
+                        <div class="col-xl-3 col-lg-6 col-12 form-group">
+                            <label>Délibération *</label>
+                            <select class="select2" name="delib_auto">
+                                <option <?= ($r->delib_auto == 1)?'selected':null?> value="1">Automatique</option>
+                                <option <?= ($r->delib_auto == 0)?'selected':null?> value="0">Manuel</option>
+                            </select>
+                        </div>
+                        <div class="col-xl-3 col-lg-6 col-12 form-group">
+                            <label>Profile Sans délibération *</label>
+                            <select class="select2" name="profile_auto">
+                                <option <?= ($r->profile_auto == 1)?'selected':null?> value="1">Activé</option>
+                                <option <?= ($r->profile_auto == 0)?'selected':null?> value="0">Desactivé</option>
+                            </select>
+                        </div>
+                        <div class="col-xl-3 col-lg-6 col-12 form-group">
+                            <label>Délibération Générale *</label>
+                            <select class="select2" name="delib_all">
+                                <option <?= ($r->delib_all == 0)?'selected':null?> value="0">Désactivé</option>
+                                <option <?= ($r->delib_all == 1)?'selected':null?> value="1">Activé</option>
+                            </select>
+                        </div>
+                        <div class="col-xl-3 col-lg-6 col-12 form-group">
+                            <label>Pourcentage Bonus *</label>
+                            <input type="number" placeholder="" name="res_bonus" class="form-control" name="<?=$r->res_bonus?>">
+                        </div>
+                        <div class="col-12 form-group mg-t-8">
+                            <button type="submit" class="btn-fill-lg btn-gradient-yellow btn-hover-bluedark">Save</button>
+                            <button type="reset" class="btn-fill-lg bg-blue-dark btn-hover-yellow">Reset</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

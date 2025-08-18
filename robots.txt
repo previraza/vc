@@ -1,0 +1,5 @@
+User-agent: *
+Disallow: /app
+Disallow: /sql
+Disallow: /services
+Disallow: /layouts

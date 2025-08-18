@@ -1,0 +1,198 @@
+<?php viewOnlyBy('ADMIN'); $pageTitle = "Inscription étudiant" ?>
+
+<div class="card height-auto">
+    <div class="card-body">
+        <div class="heading-layout1">
+            <div class="item-title">
+                <h3>Formulaire d'inscription étudiant</h3>
+            </div>
+           <div class="dropdown">
+                <a class="dropdown-toggle" href="#" role="button" 
+                data-toggle="dropdown" aria-expanded="false">...</a>
+
+                <div class="dropdown-menu dropdown-menu-right">
+                    
+                    <a class="dropdown-item" href="#" data-action="print"><i class="fas fa-print"></i>print</a>
+                    
+                    <a class="dropdown-item" href="#" data-action="reload"><i class="fas fa-redo-alt text-orange-peel"></i>Actualiser</a>
+                </div>
+            </div>
+        </div>
+        <form class="new-added-form" id="addStudent">
+            <div class="row">
+                <div class="col-xl-3 col-lg-6 col-12 form-group">
+                    <label>First Name *</label>
+                    <input type="text" placeholder="" name="firstname" class="form-control">
+                </div>
+                <div class="col-xl-3 col-lg-6 col-12 form-group">
+                    <label>Last Name *</label>
+                    <input type="text" placeholder="" name="lastname" class="form-control">
+                </div>
+                <div class="col-xl-3 col-lg-6 col-12 form-group">
+                    <label>Gender *</label>
+                    <select class="select2" name="gender">
+                        <option value="">Please Select Gender *</option>
+                        <option value="Male">Male</option>
+                        <option value="Female">Female</option>
+                        <option value="Others">Others</option>
+                    </select>
+                </div>
+                <div class="col-xl-3 col-lg-6 col-12 form-group">
+                    <label>Date Of Birth *</label>
+                    <input type="text" placeholder="yyyy/mm/dd" class="form-control air-datepicker" name="birthday">
+                    <i class="far fa-calendar-alt"></i>
+                </div>
+                <div class="col-xl-3 col-lg-6 col-12 form-group">
+                    <label>Père</label>
+                    <input type="text" placeholder="" class="form-control" name="father">
+                </div>
+                <div class="col-xl-3 col-lg-6 col-12 form-group">
+                    <label>Mère</label>
+                    <input type="text" placeholder="" class="form-control" name="mother">
+                </div>
+                <div class="col-xl-3 col-lg-6 col-12 form-group">
+                    <label>Tuthor Work</label>
+                    <input type="text" placeholder="" name="parent_work" class="form-control">
+                </div>
+                <div class="col-xl-3 col-lg-6 col-12 form-group">
+                    <label>Attribution *</label>
+                    <select class="select2" name="role">
+                        <option value="">Please Select Gender *</option>
+                        <option value="CP">Chef de Promotion</option>
+                        <option value="CPA">Chef de Promotion Adjoint</option>
+                        <option value="SEC">Secretaire Generale de la Promotion</option>
+                    </select>
+                </div>
+                <div class="col-xl-3 col-lg-6 col-12 form-group">
+                    <label>Titre *</label>
+                    <select class="select2" name="title">
+                        <option value="">Please Select Group *</option>
+                        <option value="DIP">Diplome d'Etat</option>
+                        <option value="G">Titre de Graduat</option>
+                        <option value="L">Titre de Licence</option>
+                        <option value="M">Titre de Master</option>
+                        <option value="D">Titre de Doctorat</option>
+                    </select>
+                </div>
+                <div class="col-xl-3 col-lg-6 col-12 form-group">
+                    <label>Branche *</label>
+                    <select class="select2" name="speciality">
+                        <option value="">Please Select Class *</option>
+                        <option value="AVIA">Aviation Civile</option>
+                        <option value="ELEC">Electricité</option>
+                        <option value="ETRO">Electronique</option>
+                        <option value="MATH">Math-Physique</option>
+                        <option value="LANG">Latin-Philo</option>
+                        <option value="INFO">Informatique</option>
+                        <option value="PHYS">Commercial</option>
+                        <option value="MAIN">Pédagogie Générale</option>
+                        <option value="MANI">Bio-Chimie</option>
+                        <option value="MECA">Mécanique</option>
+                        <option value="TELE">Télécommunication</option>
+                    </select>
+                </div>
+                <div class="col-xl-2 col-lg-6 col-12 form-group">
+                    <label>Pourcentage</label>
+                    <input type="number" placeholder="" min="50" max="99" value="50" class="form-control" name="pourcentage">
+                </div>
+                <div class="col-xl-4 col-lg-6 col-12 form-group">
+                    <label>Numéro du document</label>
+                    <input type="number" placeholder="" class="form-control" name="titleCode">
+                </div>
+                <div class="col-xl-3 col-lg-6 col-12 form-group">
+                    <label>Religion *</label>
+                    <select class="select2" name="religion">
+                        <option value="">Please Select Religion *</option>
+                        <option value="1">Islam</option>
+                        <option value="2">Hindu</option>
+                        <option value="3">Christian</option>
+                        <option value="3">Buddish</option>
+                        <option value="Others">Others</option>
+                    </select>
+                </div>
+                <div class="col-xl-3 col-lg-6 col-12 form-group">
+                    <label>E-Mail</label>
+                    <input type="email" placeholder="" class="form-control" name="email">
+                </div>
+                <div class="col-xl-3 col-lg-6 col-12 form-group">
+                    <label>Address</label>
+                    <input type="text" placeholder="" class="form-control" name="address">
+                </div>
+                <div class="col-xl-3 col-lg-6 col-12 form-group">
+                    <label>Phone</label>
+                    <input type="tel" placeholder="" class="form-control" name="phone">
+                </div>
+                <div class="col-xl-3 col-lg-6 col-12 form-group">
+                    <label><?=$mci?></label>
+                    <select class="select2" name="section" id="s_sec">
+                        <?php $rqt = mysqli_query($db, "SELECT * FROM sections WHERE sections.active = 1 AND sections.delete = 0") or die(debug(mysqli_error($db)));
+                            while ($ROW = mysqli_fetch_array($rqt)){ $row = (object) $ROW; $_fs = isset($_fs) ? $_fs : $ROW['id']?>
+                                <option value="<?= $row->id ?>"><?= $row->name ?></option>
+                        <?php } ?>
+                        <option value="*">Toutes les <?=$mci?>s</option>
+                        <input type="hidden" name="CON_47" value="true">
+                    </select>
+                </div>
+                <div class="col-xl-3 col-lg-6 col-12 form-group">
+                    <label>Option *</label>
+                    <select class="select2" name="option" id="s_opt">
+                        <?php $rqt = mysqli_query($db, "SELECT * FROM options WHERE active = 1 AND ".($_fs=='*'?'1':'section = '.$_fs)) or die(debug(mysqli_error($db)));
+                            while ($ROW = mysqli_fetch_array($rqt)){ $row = (object) $ROW; ?>
+                                <option value="<?= $row->id ?>"><?= $row->name ?></option>
+                            <?php } ?>
+                            <option value="*">Toutes les options</option>
+                    </select>
+                </div>
+                <div class="col-xl-3 col-lg-6 col-12 form-group">
+                    <label>Niveau *</label>
+                    <select class="select2" name="level" id="s_level">
+                        <?php $rqt = mysqli_query($db, "SELECT *, CONCAT(level.name, ' ', level.system) AS `name` FROM level WHERE active = 1 AND `delete` = 0") or die(debug(mysqli_error($db)));
+                            while ($ROW = mysqli_fetch_array($rqt)){ $row = (object) $ROW; ?>
+                                <option value="<?= $row->id ?>"><?= $row->name ?></option>
+                        <?php } ?>
+                    </select>
+                </div>
+                <div class="col-xl-3 col-lg-6 col-12 form-group">
+                    <label>Promotion *</label>
+                    <select class="select2" name="promotion" id="s_promo">
+                        <?php $year = date("Y");
+                            while ($year > 2021){ ?>
+                            <option value="<?= $year ?>"><?= --$year." - ".($year+1); ?></option>
+                        <?php } ?>
+                        <input type="hidden" name="CON_47" value="true">
+                    </select>
+                </div>
+                <div class="col-xl-6 col-lg-6 col-12 row">
+                    <div class="col-xl-12 col-lg-12 col-12 form-group">
+                        <label>Classe *</label>
+                        <select class="select2" name="class" id="s_cla">
+                            <option value="0">Aucune classe trouvé...</option>
+                        </select>
+                    </div>
+                    <div class="col-lg-12 col-12 form-group mg-t-30">
+                        <label class="text-dark-medium">Télécharger la photo de l'élève (150px X 150px)</label>
+                        <input type="file" class="form-control-file" name="profile">
+                        <input type="hidden" name="CON_47">
+                        <input type="hidden" name="mine" value="<?= isset($in_admin) ? $user->id : 0; ?>">
+                        <input type="hidden" name="username" value="<?= isset($in_admin) ? "'$user->username'" : 'NULL'; ?>">
+                    </div>
+                </div>
+                <div class="col-lg-6 col-12 form-group">
+                    <label>Courte biographie</label>
+                    <textarea class="textarea form-control" name="biographie" id="form-message" cols="10" rows="5"></textarea>
+                </div>
+                <div class="mx-4 alert hidden alert-danger alert-dismissible fade show" role="alert" id="errorRapport">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                        <span class="sr-only">Close</span>
+                    </button>
+                    <strong>Erreur : </strong>Une erreur s'est produit pendant l'ajout.<br>Si celà persiste veuillez contacter votre administrateur système.
+                </div>
+                <div class="col-12 form-group mg-t-8">
+                    <button type="submit" class="btn-fill-lg btn-gradient-yellow btn-hover-bluedark">Sauvegarder</button>
+                    <button type="reset" class="btn-fill-lg bg-blue-dark btn-hover-yellow">Réinitialiser</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

@@ -1,0 +1,69 @@
+<?php class AdminSpace extends Controller
+{
+    public function __construct()
+    {
+        parent::__construct();
+        $this->Fee = $this->loadModel('fees');
+        $this->User = $this->loadModel('users');
+        $this->Slip = $this->loadModel('slips');
+        $this->Payment = $this->loadModel('payments');
+
+        $this->app->ASSETS['_css'] .= '<link rel="stylesheet" href="/assets/vendor/choiceJS/style/choices.min.css">';
+        $this->app->ASSETS['css'] .= '<link rel="stylesheet" href="/assets/css/blog.min.css"/>';
+        $this->app->ASSETS['_js'] .= '
+            <script src="/assets/js/plugins/signaturepad.js"defer></script>
+            <script src="/assets/vendor/signature_pad/dist/signature_pad.umd.js" async></script>
+            <script src="/assets/vendor/choiceJS/script/choices.min.js"></script>
+            <script src="/assets/js/plugins/choice.js" defer></script>';
+        $this->app->ASSETS['js'] .= '<script src="/assets/js/appointment.js"></script>';
+    }
+    public function index()
+    {
+        $this->compact('payments', array_merge($this->Payment->all(), $this->Slip->all()));
+        return $this->render();
+    }
+    
+    public function slip()
+    {
+        $this->compact('payments', $this->Slip->all());
+        return $this->render();
+    }
+    
+    public function payment()
+    {
+        $this->compact('payments', $this->Payment->all());
+        return $this->render();
+    }
+
+    public function finder()
+    {
+        $this->compact('finding', array_merge($this->Payment->finder($_POST['data']['search'] ?? ''), $this->Slip->finder($_POST['data']['search'] ?? '')));
+        return $this->render('finder');
+    }
+
+    public function delete()
+    {
+        $exemptedRoles = ['A:F:A:ES', 'A:A:A:AA', '*:A:A:AA'];
+        $response = 0;
+        $data = (object) ($_POST ?? []);
+        if(isset($data->entity, $data->id, $data->action)){
+            $payment = (object) ($data->entity == "payment" ? $this->Payment->find($data->id ?? -1) : (
+                $data->entity == "slip" ? $this->Slip->find($data->id ?? -1) : []
+            ));
+
+            if ($payment && isset($payment->enc, $payment->id)) {
+                if ($payment->created_by == auth()->id || in_array(auth()->role, $exemptedRoles)) {
+                    $table = $this->Payment->_getTable();
+                    $rqt = $this->Payment->get_exec("UPDATE $table SET $table.deleted_at = CURRENT_TIMESTAMP() WHERE $table.id = $payment->id");
+                    $response = $rqt ? 204 : 502;
+                } else $response = 405;
+            } else $response = 400;
+        } else $response = 502;
+
+        $_POST['data']['allower'] = '';
+        if ((isset($_GET['method']) && $_GET['method'] == 'JSON') || (isset($_POST['accept']) && $_POST['accept'] == 'JSON'))
+            return json($response);
+        Session::init()->set('MSG::ACTION:RESTORE', $response);
+        return $this->app->request->back();
+    }
+}

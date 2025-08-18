@@ -1,0 +1,112 @@
+<?php $pageTitle = "Exploration d'une classe" ?>
+
+<div class="card height-auto">
+    <div class="card-body">
+        <div class="heading-layout1">
+            <div class="item-title">
+                <h3>Les cours de la classe</h3>
+            </div>
+            <div class="dropdown">
+                <a class="dropdown-toggle" href="#" role="button" 
+                data-toggle="dropdown" aria-expanded="false">...</a>
+                <div class="dropdown-menu dropdown-menu-right">
+                    <a class="dropdown-item" href="#" data-action="print"><i class="fas fa-print"></i>print</a>
+                    <a class="dropdown-item" href="#" data-action="reload"><i class="fas fa-redo-alt text-orange-peel"></i>Actualiser</a>
+                </div>
+            </div>
+        </div>
+        <div class="table-responsive">
+            <table class="table display data-table text-nowrap">
+                <thead>
+                    <tr>
+                        <th>
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input checkAll" id="assosLabel">
+                                <label for="assosLabel" class="form-check-label">Id</label>
+                            </div>
+                        </th>
+                        <th>Designation</th>
+                        <th>Credit</th>
+                        <th>Titulaire</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php $rqt = mysqli_query($db, 
+                        "SELECT courses.id, courses.name, courses.code, courses.credit, CONCAT(teachers.firstname, ' ', teachers.lastname) AS titulary 
+                            FROM courses 
+                            LEFT JOIN teachers ON teachers.id = courses.titular 
+                            WHERE courses.active = 1 AND courses.delete = 0 AND courses.class =".(isset($links[2])&&is_numeric($links[2])?$links[2]:0)) or die(debug(mysqli_error($db)));
+                        while ($ROW = mysqli_fetch_array($rqt)){ $row = (object) $ROW; ?>
+                            <tr id="Element-<?= $ROW[0] ?>">
+                                <td>
+                                    <div class="form-check">
+                                        <input type="checkbox" class="form-check-input">
+                                        <label class="form-check-label"><?= $row->code ?></label>
+                                    </div>
+                                </td>
+                                <td><?= $row->name ?></td>
+                                <td><?= $row->credit ?></td>
+                                <td><?= $row->titulary ?></td>
+                            </tr>
+                    <?php } ?>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-4-xxxl col-xl-5">
+        <div class="card account-settings-box height-auto">
+            <div class="card-body">
+                <div class="heading-layout1 mg-b-20">
+                    <div class="item-title">
+                        <h3>Etudiants</h3>
+                    </div>
+                    <div class="dropdown">
+                        <a class="dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-expanded="false">...</a>
+                        <div class="dropdown-menu dropdown-menu-right">
+                    <a class="dropdown-item" href="#" data-action="print"><i class="fas fa-print"></i>print</a>
+                    
+                    <a class="dropdown-item" href="#" data-action="reload"><i class="fas fa-redo-alt text-orange-peel"></i>Actualiser</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="all-user-box">
+                    <?php $rqt = mysqli_query($db, "SELECT students.* FROM students WHERE students.active = 1 AND students.valide = 1 AND students.delete = 0 AND students.class =".(isset($links[2])&&is_numeric($links[2])?$links[2]:'NULL')); while($res = mysqli_fetch_array($rqt)) {$row = (object) $res ?>
+                        <a class="media media-none--xs" href="/?fa69951bc733eb82713e936be33597e1=DATA_CRYPTING_ON:fa69951bc733eb82713e936be33597e1=WABTECHS_CRYPTING_ON: e91497f38407364c8e86ade9098950d978814190&MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3VIRAZA_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3&MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3&WABTECHS_CRYPTING_ON_LAVINGOL&MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3&b557c222c8ddcdf87e033706aad08e4ef7cf90d3=student--profile--<?= $row->id ?>" link-content="#linkContent">
+                            <div class="item-img">
+                                <img src="<?= $row->profile?>" class="media-img-auto" alt="user">
+                            </div>
+                            <div class="media-body space-md">
+                                <h5 class="item-title"><?= "$row->firstname $row->lastname" ?></h5>
+                                <div class="item-subtitle"><?= $row->gender ?></div>
+                            </div>
+                        </a>
+                    <?php } ?>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-8-xxxl col-xl-7">
+        <div class="card account-settings-box">
+            <div class="card-body">
+                <div class="heading-layout1 mg-b-20">
+                    <div class="item-title">
+                        <h3>Detail de l'étudiant</h3>
+                    </div>
+                   <div class="dropdown">
+                        <a class="dropdown-toggle" href="#" role="button" 
+                        data-toggle="dropdown" aria-expanded="false">...</a>
+
+                        <div class="dropdown-menu dropdown-menu-right">
+                    <a class="dropdown-item" href="#" data-action="print"><i class="fas fa-print"></i>print</a>
+                    <a class="dropdown-item" href="#" data-action="reload"><i class="fas fa-redo-alt text-orange-peel"></i>Actualiser</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="user-details-box" id="linkContent">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

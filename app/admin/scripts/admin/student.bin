@@ -1,0 +1,36 @@
+$('.current_datetime').dateCounter();
+window.sendingRecours = function(id_ = 0) {
+    $.ajax({
+        url: "/app/settings/set/recours.php?sending_by=mcisme",
+        type: "POST",
+        data: {
+            id: id_,
+            CON_47: 'MCISME',
+        },
+        success: function(response) {
+            try {
+                var res = JSON.parse(response);
+                if (res.status == 'succes') $('#editing_' + id_).changeClass('bg-danger', 'bg-success text-white');
+                else if (res.status == 'error') {
+                    $('#editing_' + id_).changeClass('bg-success text-white', 'bg-warning')
+                    console.log(response);
+                }
+            } catch (error) {
+                $('#editing_' + id_).changeClass('bg-success text-white', 'bg-warning')
+                console.log(response, error);
+            }
+        }
+    });
+}
+$('a[data-sShare]').on('click', e => {
+    e.preventDefault();
+    url = e.currentTarget.dataset.slink;
+    text = 'Voici mon profile étudiants';
+    window.sLink = {
+        wa: `https://wa.me/?text=${url}. \n${text}`,
+        te: `https://t.me/share/url?url=${url}&text=${text}`,
+        tw: `https://twitter.com/intent/tweet?text${url}. \n${text}`,
+        fb: `https://web.facebook.com/sharer/sharer.php?u=${url}`,
+    }
+    window.ssw = window.open(url = sLink[e.currentTarget.dataset.sshare], target = 'black');
+});

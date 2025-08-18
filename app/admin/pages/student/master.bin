@@ -1,0 +1,181 @@
+<?php $pageTitle = "Etudiants";
+    $std_sex = (object) ['male'=>0,'female'=>0,'other'=>0];
+    $pourcentage = $age = 0;
+
+    $all_std  = $db_pdo->query("SELECT register.sexe, register.pourcentage, DATE_FORMAT(FROM_DAYS(DATEDIFF(NOW(), register.date_de_naissance)), '%Y') + 0 AS age FROM register LEFT JOIN payments ON (payments.student = register.id AND payments.type = 'INSMT') WHERE register.type = 'master' AND register.delete = 0");
+    $all_std2 = $db_pdo->query("SELECT register.id FROM register LEFT JOIN payments ON (payments.student = register.id AND payments.type = 'INSMT') WHERE register.type = 'master' AND register.delete = 0 AND traite = 1");
+    $all_std3 = $db_pdo->query("SELECT register.id FROM register LEFT JOIN payments ON (payments.student = register.id AND payments.type = 'INSMT') WHERE register.type = 'master' AND register.delete = 0 AND DATE(register.date) = DATE(CURRENT_TIMESTAMP)");
+    
+    $tot_std  = $all_std->rowCount();
+    $tot_std2 = $all_std2->rowCount();
+    $tot_std3 = $all_std3->rowCount();
+
+    foreach ($all_std->fetchAll(PDO::FETCH_OBJ) as $std) {
+        $pourcentage+=$std->pourcentage;
+        $age+=$std->age;
+        if ($std->sexe == 'F') $std_sex->female++; else if ($std->sexe == 'M') $std_sex->male++; else $std_sex->other++; 
+    } $pourcentage=$pourcentage??1/$tot_std??1; $age=$age??1/$tot_std??1;
+?>
+<div class="row">
+    <div class="col-12 col-8-xxxl">
+        <div class="row">
+            <div class="col-9-xxxl col-lg-9 col-sm-12 col-12">
+                <div class="dashboard-summery-two">
+                    <div class="item-icon bg-light-magenta"> <i class="flaticon-classmates text-magenta"></i> </div>
+                    <div class="item-content">
+                        <div class="item-number"><span class="counter"
+                                data-num="<?=$tot_std?>"><?=$tot_std?></span></div>
+                        <div class="item-title">Total général des inscriptions</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-3-xxxl col-lg-3 col-sm-6 col-12">
+                <div class="dashboard-summery-two">
+                    <div class="item-icon bg-light-green"> <i class="flaticon-shopping-list text-green"></i> </div>
+                    <div class="item-content">
+                        <div class="item-number"><span class="counter"
+                                data-num="<?=$tot_std2?>"><?=$tot_std2?></span></div>
+                        <div class="item-title">inscriptions validées</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-3-xxxl col-lg-3 col-sm-6 col-12">
+                <div class="dashboard-summery-two">
+                    <div class="item-icon bg-light-green"> <i
+                            class="flaticon-calendar text-green"></i> </div>
+                    <div class="item-content">
+                        <div class="item-number"><span class="counter"
+                                data-num="<?=$tot_std3?>"><?=$tot_std3?></span></div>
+                        <div class="item-title">Inscriptions du jour</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-3-xxxl col-lg-3 col-sm-6 col-12">
+                <div class="dashboard-summery-two">
+                    <div class="item-icon bg-light-blue"> <i class="flaticon-multiple-users-silhouette text-blue"></i> </div>
+                    <div class="item-content">
+                        <div class="item-number">
+                            <span class="counter" data-num="<?=floor($age)?>"><?=floor($age)?></span> +
+                            <span class="counter" data-num="<?=floor(($age-floor($age))*12)?>"><?=floor(($age-floor($age))*12)?></span> M
+                        </div>
+                        <div class="item-title">Age Moyenne</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-3-xxxl col-lg-3 col-sm-6 col-12">
+                <div class="dashboard-summery-two">
+                    <div class="item-icon bg-light-red"> <i class="flaticon-mortarboard text-red"></i> </div>
+                    <div class="item-content">
+                        <div class="item-number"><span class="counter"
+                                data-num="<?=number_format($pourcentage,2)?>"><?=number_format($pourcentage,2)?></span> %</div>
+                        <div class="item-title">Poucentage Moyenne</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-3-xxxl col-lg-3 col-sm-6 col-12">
+                <div class="dashboard-summery-two">
+                    <div class="item-icon bg-light-magenta"> <i class="flaticon-shopping-list text-danger"></i> </div>
+                    <div class="item-content">
+                        <div class="item-number"><span class="counter"
+                                data-num="<?=$tot_std-$tot_std2?>"><?=$tot_std-$tot_std2?></span></div>
+                        <div class="item-title">En attente de validation</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-6 col-4-xxxl col-xl-6">
+        <div class="card dashboard-card-three pd-b-20">
+            <div class="card-body">
+                <div class="heading-layout1">
+                    <div class="item-title">
+                        <h3>Etudiants</h3>
+                    </div>
+                    <div class="dropdown"> <a class="dropdown-toggle" href="#" role="button" data-toggle="dropdown"
+                            aria-expanded="false">...</a>
+                        <div class="dropdown-menu dropdown-menu-right"> <a class="dropdown-item" href="#"
+                                data-action="print"><i class="fas fa-print"></i>print</a> 
+                                <a class="dropdown-item" href="#" data-action="reload">
+                                <i class="fas fa-redo-alt text-orange-peel"></i>Actualiser</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="doughnut-chart-wrap">
+                    <div class="chartjs-size-monitor"
+                        style="position: absolute; inset: 0px; overflow: hidden; pointer-events: none; visibility: hidden; z-index: -1;">
+                        <div class="chartjs-size-monitor-expand"
+                            style="position:absolute;left:0;top:0;right:0;bottom:0;overflow:hidden;pointer-events:none;visibility:hidden;z-index:-1;">
+                            <div style="position:absolute;width:1000000px;height:1000000px;left:0;top:0"></div>
+                        </div>
+                        <div class="chartjs-size-monitor-shrink"
+                            style="position:absolute;left:0;top:0;right:0;bottom:0;overflow:hidden;pointer-events:none;visibility:hidden;z-index:-1;">
+                            <div style="position:absolute;width:200%;height:200%;left:0; top:0"></div>
+                        </div>
+                    </div> <canvas chart-values="<?= "$std_sex->female|$std_sex->other|$std_sex->male" ?>"
+                        chart-bgColor="#304ffe|#d8dfe5|#ffa601"
+                        chart-labels="Etudiantes Féminin|Autres|Etudiants Madculin" chart-label="Totale des Etudiants"
+                        id="student-doughnut-chart" width="612" height="300"
+                        style="display: block; width: 612px; height: 300px;" class="chartjs-render-monitor"></canvas>
+                </div>
+                <div class="student-report">
+                    <div class="student-count pseudo-bg-blue">
+                        <h4 class="item-title">Féminin</h4>
+                        <div class="item-number"><?= $std_sex->female ?></div>
+                    </div>
+                    <div class="student-count pseudo-bg-default">
+                        <h4 class="item-title">Autres</h4>
+                        <div class="item-number"><?= $std_sex->other ?></div>
+                    </div>
+                    <div class="student-count pseudo-bg-yellow">
+                        <h4 class="item-title">Masculin</h4>
+                        <div class="item-number"><?= $std_sex->male ?></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="card height-auto">
+    <div class="card-body">
+        <div class="heading-layout1">
+            <div class="item-title">
+                <h3>Liste des inscrits en master</h3>
+            </div>
+            <div class="dropdown">
+                <a class="dropdown-toggle" href="#" role="button" data-toggle="dropdown"
+                    aria-expanded="false">...</a>
+
+                <div class="dropdown-menu dropdown-menu-right">
+                    <a class="dropdown-item" href="#" data-action="print"><i class="fas fa-print"></i>print</a>
+                    
+                    <a class="dropdown-item" href="#" data-action="reload"><i class="fas fa-redo-alt text-orange-peel"></i>Actualiser</a>
+                </div>
+            </div>
+        </div>
+        <div class="table-responsive">
+            <table class="table display dataTable-dyn-table text-nowrap">
+                <thead>
+                    <tr>
+                        <th>
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input checkAll" id="assosLabel">
+                                <label for="assosLabel" class="form-check-label">Id</label>
+                            </div>
+                        </th>
+                        <th>Photo</th>
+                        <th>Nom Complet</th>
+                        <th>Genre</th>
+                        <th>age</th>
+                        <th>Code</th>
+                        <th>%</th>
+                        <th><?=$mci?></th>
+                        <th>Frais</th>
+                        <th>date</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,102 @@
+class DataFromRows {
+    constructor($rows) {
+        let r = []
+        $rows.map((i, e) => {
+            let l = e.children;
+            r.push({
+                fn: l[1].innerText,
+                ln: l[2].innerText,
+                gr: l[3].innerText,
+                mt: l[4].innerText
+            })
+        });
+        return r;
+    }
+};
+class TableTrait {
+    constructor($table) {
+        $table.each((i, e) => {
+            let r = e.children[1].innerText + e.children[2].innerText + e.children[3].innerText + e.children[4].innerText
+            if (r == '') e.remove();
+        });
+        return $table;
+    }
+}
+
+$('#s_sec,#s_opt,#s_level,#s_promo').on('change', e => {
+    var a = $("#s_cla").html('');
+    $.ajax({
+        url: "/app/settings/get/classes.php",
+        type: "POST",
+        dataType: "json",
+        data: {
+            option: $('#s_opt').val(),
+            promotion: $('#s_promo').val(),
+            level: $('#s_level').val(),
+        },
+        success: function(r) {
+            try {
+                r.map(({ id, text }) => a.append(new Option(text, id)));
+            } catch (error) {
+                a.append(new Option(r.text, r.id))
+            }
+        }
+    });
+});
+
+$('#addRow').on('click', e => {
+    e.preventDefault();
+    let t = $('#listMineTable tbody')[0],
+        r = document.createElement('tr');
+    r.innerHTML = `<td>${t.rows.length+1}</td><td class="writable"></td><td class="writable"></td><td class="writable"></td><td class="writable"></td>`;
+    t.appendChild(r);
+});
+
+$('#upXlsx').on('change', e => {
+    let f = new FileReader(),
+        t = $('#listMineTable tbody');
+    new TableTrait(t.children());
+    f.onload = e => {
+        let a = XLSX.read(e.target.result, { type: "binary" });
+        a.SheetNames.forEach(s => XLSX.utils.sheet_to_row_object_array(a.Sheets[s]).forEach((l, ts) => {
+            r = document.createElement('tr');
+            r.innerHTML = `<td>${t[0].rows.length+1}</td><td class="writable">${(l.NOM)?l.NOM:''}</td><td class="writable">${l.POSTNOM?l.POSTNOM:''}</td><td class="writable">${l.GENRE?l.GENRE:''}</td><td class="writable">${l.MATRIICULE?l.MATRIICULE:''}</td>`;
+            t.append(r);
+        }));
+    };
+    f.readAsBinaryString(e.currentTarget.files[0]);
+});
+
+$('#addMultipleStudent').on('submit', e => {
+    e.preventDefault();
+    let t = $('#listMineTable tbody');
+    $.ajax({
+        url: "/app/settings/add/studentsMultiple.php?sending_by=mcisme",
+        type: "POST",
+        data: {
+            cla: $("#s_cla").val(),
+            dte: $("#s_dte").val(),
+            CON_47: 'MOVE_UPLOAD_STRINGING',
+            SNEN: $("#s_promo").val()=='2022'?true:undefined,
+            std: new DataFromRows(new TableTrait(t.children()))
+        },
+        success: function(r) {
+            try {
+                var res = JSON.parse(r);
+                if (res.status == 'succes') location.reload();
+                else if (res.status == 'error') {
+                    console.log(res.content);
+                    $('#errorRapport').removeClass('hidden').html(`<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span>
+                        <span class="sr-only">Close</span></button><strong>Erreur : ` + res.content);
+                } else if (res.status == 'save') {
+                    $('#errorRapport').removeClass('hidden alert-danger').addClass('alert-succes').removeClass('hidden').html(`<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span>
+                        <span class="sr-only">Close</span></button><strong>Enregistrement N° : ` + res.content);
+                }
+            } catch (error) {
+                console.error(r);
+                $('#errorRapport').removeClass('hidden alert-danger').addClass('alert-succes').removeClass('hidden').html(`<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span>
+                        <span class="sr-only">Close</span></button><strong>Erreur : </strong>Une erreur s'est produit pendant l'ajout.<br>Si celà persiste veuillez contacter votre administrateur système.`);
+            }
+        }
+    });
+})

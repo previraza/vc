@@ -1,0 +1,244 @@
+<?php 
+    $std_trancon = $_POST['trancon']??1;
+    $pageTitle = "Tableau de Bord Enseignants"; 
+    $stdFemale = $stdOthers = $stdMale = 0; $stdCount = []; 
+    $coursQuery = "SELECT courses.*, classes.section, classes.option, classes.level, sections.name AS section_name, options.name AS option_name, level.name AS level_name, promotion, classes.name AS designation FROM courses JOIN classes ON classes.id = courses.class JOIN sections ON sections.id = classes.section JOIN options ON options.id = classes.option JOIN level ON level.id = classes.level JOIN teachers ON teachers.id = courses.titular WHERE courses.active = 1 AND classes.active = 1 AND courses.delete = 0 AND classes.delete = 0 AND level.active = 1 AND options.active = 1 AND sections.active = 1 AND teachers.user_id = $user->id" .((isset($_POST['cla_promotion']) && $_POST['cla_promotion'] != "*") ? " AND classes.promotion = $_POST[cla_promotion]":'') .((isset($_POST['cla_section']) && $_POST['cla_section'] != "*") ? " AND sections.id = $_POST[cla_section]":'') .((isset($_POST['cla_option']) && $_POST['cla_option'] != "*") ? " AND options.id = $_POST[cla_option]":'') .((isset($_POST['cla_level']) && $_POST['cla_level'] != "*") ? " AND level.id = $_POST[cla_level]":'');
+    $rqtCours = mysqli_query($db, $coursQuery.(isset($std_trancon)&&$std_trancon!=0?' LIMIT 100 OFFSET '.(--$std_trancon):null)); 
+    $rqtStudent = mysqli_query($db, "SELECT students.*, sections.name AS section_name, options.name AS option_name, level.name AS level_name, promotion FROM students JOIN classes ON classes.id = students.class JOIN courses ON classes.id = courses.class JOIN sections ON sections.id = classes.section JOIN options ON options.id = classes.option JOIN level ON level.id = classes.level JOIN teachers ON teachers.id = courses.titular WHERE students.active = 1 AND courses.active = 1 AND classes.active = 1 AND level.active = 1 AND options.active = 1 AND sections.active = 1 AND students.valide = 1 AND teachers.user_id = $user->id" ); 
+    while($row = mysqli_fetch_array($rqtStudent)){ if (!isset($stdCount[$row[0]])) ($row['gender'] == 'M') ? $stdMale++ : (($row['gender'] == 'F') ? $stdFemale++ : $stdOthers++); $stdCount[$row[0]] = (object) $row; } 
+    $Total_Credit = mysqli_fetch_array(mysqli_query($db, "SELECT SUM(credit) FROM courses JOIN teachers ON teachers.id = courses.titular WHERE courses.active = 1 AND teachers.user_id = $user->id"))[0]; $nbrStudents = count($stdCount); 
+    $nbrCours = $db_poo->query($coursQuery)->num_rows;?>
+<div class="row">
+    <div class="col-12 col-4-xxxl">
+        <div class="row">
+            <div class="col-6-xxxl col-lg-3 col-sm-6 col-12">
+                <div class="dashboard-summery-two">
+                    <div class="item-icon bg-light-magenta"> <i class="flaticon-classmates text-magenta"></i> </div>
+                    <div class="item-content">
+                        <div class="item-number"><span class="counter"
+                                data-num="<?=$nbrStudents?>"><?=$nbrStudents?></span></div>
+                        <div class="item-title">Total Etudiants</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6-xxxl col-lg-3 col-sm-6 col-12">
+                <div class="dashboard-summery-two">
+                    <div class="item-icon bg-light-blue"> <i class="flaticon-shopping-list text-blue"></i> </div>
+                    <div class="item-content">
+                        <div class="item-number"><span class="counter" data-num="<?=$nbrCours?>"><?=$nbrCours?></span>
+                        </div>
+                        <div class="item-title">Total Cours</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6-xxxl col-lg-3 col-sm-6 col-12">
+                <div class="dashboard-summery-two">
+                    <div class="item-icon bg-light-red"> <i class="flaticon-mortarboard text-red"></i> </div>
+                    <div class="item-content">
+                        <div class="item-number"><span class="counter"
+                                data-num="<?=$Total_Credit?>"><?=$Total_Credit?></span></div>
+                        <div class="item-title">Total Crédit</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6-xxxl col-lg-3 col-sm-6 col-12">
+                <div class="dashboard-summery-two">
+                    <div class="item-icon bg-light-green"> <i
+                            class="flaticon-back-arrow-circular-symbol text-green"></i> </div>
+                    <div class="item-content">
+                        <div class="item-number"><span class="counter"
+                                data-num="<?=$Total_Credit * 15?>"><?=$Total_Credit * 15?></span></div>
+                        <div class="item-title">Nombres d'Heures</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-6 col-4-xxxl col-xl-6">
+        <div class="card dashboard-card-three pd-b-20">
+            <div class="card-body">
+                <div class="heading-layout1">
+                    <div class="item-title">
+                        <h3>Etudiants</h3>
+                    </div>
+                    <div class="dropdown"> <a class="dropdown-toggle" href="#" role="button" data-toggle="dropdown"
+                            aria-expanded="false">...</a>
+                        <div class="dropdown-menu dropdown-menu-right"> <a class="dropdown-item" href="#"
+                                data-action="print"><i class="fas fa-print"></i>print</a> <a class="dropdown-item"
+                                href="#" data-action="reload"><i
+                                    class="fas fa-redo-alt text-orange-peel"></i>Actualiser</a> </div>
+                    </div>
+                </div>
+                <div class="doughnut-chart-wrap">
+                    <div class="chartjs-size-monitor"
+                        style="position: absolute; inset: 0px; overflow: hidden; pointer-events: none; visibility: hidden; z-index: -1;">
+                        <div class="chartjs-size-monitor-expand"
+                            style="position:absolute;left:0;top:0;right:0;bottom:0;overflow:hidden;pointer-events:none;visibility:hidden;z-index:-1;">
+                            <div style="position:absolute;width:1000000px;height:1000000px;left:0;top:0"></div>
+                        </div>
+                        <div class="chartjs-size-monitor-shrink"
+                            style="position:absolute;left:0;top:0;right:0;bottom:0;overflow:hidden;pointer-events:none;visibility:hidden;z-index:-1;">
+                            <div style="position:absolute;width:200%;height:200%;left:0; top:0"></div>
+                        </div>
+                    </div> <canvas chart-values="<?= "$stdFemale|$stdOthers|$stdMale" ?>"
+                        chart-bgColor="#304ffe|#d8dfe5|#ffa601"
+                        chart-labels="Etudiantes Féminin|Autres|Etudiants Madculin" chart-label="Totale des Etudiants"
+                        id="student-doughnut-chart" width="612" height="300"
+                        style="display: block; width: 612px; height: 300px;" class="chartjs-render-monitor"></canvas>
+                </div>
+                <div class="student-report">
+                    <div class="student-count pseudo-bg-blue">
+                        <h4 class="item-title">Féminin</h4>
+                        <div class="item-number"><?= $stdFemale ?></div>
+                    </div>
+                    <div class="student-count pseudo-bg-default">
+                        <h4 class="item-title">Autres</h4>
+                        <div class="item-number"><?= $stdOthers ?></div>
+                    </div>
+                    <div class="student-count pseudo-bg-yellow">
+                        <h4 class="item-title">Masculin</h4>
+                        <div class="item-number"><?= $stdMale ?></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-6 col-4-xxxl col-xl-6">
+        <div class="card dashboard-card-six">
+            <div class="card-body">
+                <div class="heading-layout1 mg-b-17 py-3">
+                    <div class="item-title">
+                        <h3>Notifications</h3>
+                    </div>
+                </div>
+                <div class="notice-board-wrap" style="max-height:370px;">
+                    <?php $to_class = array( 'all' => 'bg-primary', 'sec' => 'bg-dark-pastel-green', 'opt' => 'bg-skyblue', 'lev' => 'bg-pink', 'cla' => 'bg-yellow', 'pmt' => 'bg-orange', 'std' => 'bg-secondary', 'ens' => 'bg-green', 'agn' => 'bg-dark', 'adm' => 'bg-blue-dark', ); $rqt = mysqli_query($db, "SELECT * FROM notifications WHERE notifications.active = 1 AND notifications.delete = 0" .((isset($_POST['posted_on']) && $_POST['posted_on']) ? " AND posted_on = '$_POST[posted_on]'" : NULL ) .((isset($_POST['posted_to']) && $_POST['posted_to']) ? " AND posted_to = $_POST[posted_to]" : NULL ) .' ORDER BY posted_date DESC' ) ; while ($row = mysqli_fetch_array($rqt)) { ?>
+                    <div class="notice-list">
+                        <div class="post-date text-title-specimen <?= $to_class[$row['posted_on']] ?>">
+                            <?= $row['title'] ?> </div>
+                        <h6 class="notice-title"> <a href="#"> <?= $row['content'] ?> </a> </h6>
+                        <div class="entry-meta"> <?= $row['posted_by'] ?> / <span><?= $row['posted_date'] ?></span>
+                        </div>
+                    </div> <?php } ?> 
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-12">
+        <div class="card dashboard-card-eleven">
+            <div class="card-body">
+                <div class="heading-layout1">
+                    <div class="item-title">
+                        <h3>Mes Cours</h3>
+                    </div>
+                    <div class="dropdown"> <a class="dropdown-toggle" href="#" role="button" data-toggle="dropdown"
+                            aria-expanded="false">...</a>
+                        <div class="dropdown-menu dropdown-menu-right"> <a class="dropdown-item" href="#"
+                                data-action="print"><i class="fas fa-print"></i>print</a> <a class="dropdown-item"
+                                href="#" data-action="reload"><i
+                                    class="fas fa-redo-alt text-orange-peel"></i>Actualiser</a> </div>
+                    </div>
+                </div>
+                <div class="table-box-wrap">
+                    <form class="mg-b-20" method="POST" id="formSearchCourses">
+                        <div class="row gutters-8">
+                            <div class="col-xl-3 col-lg-6 col-12 form-group"> <label><?=$mci?></label> <select
+                                    class="select2" name="cla_section">
+                                    <option selected value="*"><?=$mci?></option>
+                                    <?php $rqt = mysqli_query($db, "SELECT * FROM sections WHERE active = 1") or die(debug(mysqli_error($db))); while ($ROW = mysqli_fetch_array($rqt)){ $row = (object) $ROW; ?>
+                                    <option value="<?= $row->id ?>"><?= $row->name ?></option> <?php } ?> <input
+                                        type="hidden" name="CON_47" value="true">
+                                </select> </div>
+                            <div class="col-xl-3 col-lg-6 col-12 form-group"> <label>Option</label> <select
+                                    class="select2" name="cla_option">
+                                    <option selected value="*">Option</option>
+                                    <?php $rqt = mysqli_query($db, "SELECT * FROM options WHERE active = 1") or die(debug(mysqli_error($db))); while ($ROW = mysqli_fetch_array($rqt)){ $row = (object) $ROW; ?>
+                                    <option value="<?= $row->id ?>"><?= $row->name ?></option> <?php } ?> <input
+                                        type="hidden" name="CON_47" value="true">
+                                </select> </div>
+                            <div class="col-xl-3 col-lg-6 col-12 form-group"> <label>Niveau</label> <select
+                                    class="select2" name="cla_level">
+                                    <option selected value="*">Tous les niveaux</option>
+                                    <?php $rqt = mysqli_query($db, "SELECT * FROM level WHERE active = 1") or die(debug(mysqli_error($db))); while ($ROW = mysqli_fetch_array($rqt)){ $row = (object) $ROW; ?>
+                                    <option value="<?= $row->id ?>"><?= $row->name ?></option> <?php } ?> <input
+                                        type="hidden" name="CON_47" value="true">
+                                </select> </div>
+                                    <div class="col-xl-3 col-lg-6 col-12 form-group">
+                                    <label>Grille Par Traçons  : </label>
+                                        <select class="select2" name="trancon">
+                                            <?php $i = 0; while ($nbrCours > 100) {?>
+                                                <option <?=(isset($std_trancon)&&$std_trancon==++$i)?'SELECTED':null?> value="<?=$i?>">Traçons <?=$i?> (<?=($i).' - '.($i+=99)?>) </option>
+                                            <?php $nbrCours -= 100; } ?>
+                                                <option <?=(isset($std_trancon)&&$std_trancon==++$i)?'SELECTED':null?> value="<?=$i?>">Traçons <?=$i?> (<?=($i).' - '.($i+=$nbrCours)?>) </option>
+                                                <option <?=(isset($std_trancon)&&$std_trancon==0)?'SELECTED':null?> value="0">Toutes les traçons</option>
+                                        </select>
+                                </div>
+                        </div>
+                    </form> <button type="submit" form="formSearchCourses"
+                        class="fw-btn-fill btn-gradient-yellow">RECHERCHE</button>
+                    <div class="table-responsive student-table-box">
+                        <table class="table display data-table text-nowrap">
+                            <thead>
+                                <tr>
+                                    <th>
+                                        <div class="form-check"> <input type="checkbox"
+                                                class="form-check-input checkAll" id="assosLabelS1"> <label
+                                                for="assosLabelS1" class="form-check-label">Id</label> </div>
+                                    </th>
+                                    <th>Designation</th>
+                                    <th>Credit</th>
+                                    <th><?=$mci?></th>
+                                    <th>Option</th>
+                                    <th>Niveau</th>
+                                    <th>Promotion</th>
+                                    <th>Classe</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody> <?php while ($ROW = mysqli_fetch_array($rqtCours)){ $row = (object) $ROW; ?> <tr
+                                    id="Element-<?= $ROW[0] ?>">
+                                    <td>
+                                        <div class="form-check"> <input type="checkbox" class="form-check-input"> <label
+                                                class="form-check-label">#<?= $ROW[0] ?></label> </div>
+                                    </td>
+                                    <td> <?= $row->name ?> </td>
+                                    <td> <?= $row->credit ?> </td>
+                                    <td> <?= $row->section_name ?> </td>
+                                    <td> <?= $row->option_name ?> </td>
+                                    <td> <?= $row->level_name ?> </td>
+                                    <td> <?= $row->promotion.' - '.++$row->promotion ?> </td>
+                                    <td> <?= $row->designation ?> </td>
+                                    <td>
+                                        <div class="dropdown">
+                                            <a href="#" class="dropdown-toggle" data-toggle="dropdown"
+                                                aria-expanded="false">
+                                                <span class="flaticon-more-button-of-three-dots"></span>
+                                            </a>
+                                            <div class="dropdown-menu dropdown-menu-right">
+                                                <?php if($row->TFE != 1){ ?>
+                                                    <a class="dropdown-item" href="?fa69951bc733eb82713e936be33597e1=DATA_CRYPTING_ON:fa69951bc733eb82713e936be33597e1=WABTECHS_CRYPTING_ON: e91497f38407364c8e86ade9098950d978814190&MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3VIRAZA_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3&MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3&WABTECHS_CRYPTING_ON_LAVINGOL&MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3&b557c222c8ddcdf87e033706aad08e4ef7cf90d3=course--cote--<?= $row->id ?>"><i class="fas fa-grip-vertical text-blue"></i>Grille</a>
+                                                    <a class="dropdown-item" href="?fa69951bc733eb82713e936be33597e1=DATA_CRYPTING_ON:fa69951bc733eb82713e936be33597e1=WABTECHS_CRYPTING_ON: e91497f38407364c8e86ade9098950d978814190&MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3VIRAZA_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3&MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3&WABTECHS_CRYPTING_ON_LAVINGOL&MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3&b557c222c8ddcdf87e033706aad08e4ef7cf90d3=course--recours--<?= $row->id ?>"><i class="fas fa-grip-vertical text-blue"></i>Grille (Recours)</a>
+                                                    <a class="dropdown-item" href="?fa69951bc733eb82713e936be33597e1=DATA_CRYPTING_ON:fa69951bc733eb82713e936be33597e1=WABTECHS_CRYPTING_ON: e91497f38407364c8e86ade9098950d978814190&MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3VIRAZA_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3&MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3&WABTECHS_CRYPTING_ON_LAVINGOL&MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3&b557c222c8ddcdf87e033706aad08e4ef7cf90d3=course--cote-s2--<?= $row->id ?>"><i class="fas fa-grip-vertical text-blue"></i>Rattrapage</a>
+                                                    <a class="dropdown-item" href="?fa69951bc733eb82713e936be33597e1=DATA_CRYPTING_ON:fa69951bc733eb82713e936be33597e1=WABTECHS_CRYPTING_ON: e91497f38407364c8e86ade9098950d978814190&MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3VIRAZA_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3&MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3&WABTECHS_CRYPTING_ON_LAVINGOL&MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3&b557c222c8ddcdf87e033706aad08e4ef7cf90d3=course--recours-s2--<?= $row->id ?>"><i class="fas fa-grip-vertical text-blue"></i>Rattrapage (Recours)</a>
+                                                <?php } else { ?>
+                                                    <!-- <a class="dropdown-item" href="?fa69951bc733eb82713e936be33597e1=DATA_CRYPTING_ON:fa69951bc733eb82713e936be33597e1=WABTECHS_CRYPTING_ON: e91497f38407364c8e86ade9098950d978814190&MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3VIRAZA_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3&MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3&WABTECHS_CRYPTING_ON_LAVINGOL&MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3&b557c222c8ddcdf87e033706aad08e4ef7cf90d3=course--cote-mem--<?= $row->id ?>"><i class="fas fa-grip-vertical text-blue"></i>Cotation</a> -->
+                                                    <a class="dropdown-item" href="?fa69951bc733eb82713e936be33597e1=DATA_CRYPTING_ON:fa69951bc733eb82713e936be33597e1=WABTECHS_CRYPTING_ON: e91497f38407364c8e86ade9098950d978814190&MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3VIRAZA_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3&MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3&WABTECHS_CRYPTING_ON_LAVINGOL&MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3&b557c222c8ddcdf87e033706aad08e4ef7cf90d3=course--cote-mem2--<?= $row->id ?>"><i class="fas fa-grip-vertical text-blue"></i>Rattrapage</a>
+                                                    <a class="dropdown-item" href="?fa69951bc733eb82713e936be33597e1=DATA_CRYPTING_ON:fa69951bc733eb82713e936be33597e1=WABTECHS_CRYPTING_ON: e91497f38407364c8e86ade9098950d978814190&MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3VIRAZA_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3&MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3&WABTECHS_CRYPTING_ON_LAVINGOL&MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3&b557c222c8ddcdf87e033706aad08e4ef7cf90d3=course--cote-mem3--<?= $row->id ?>"><i class="fas fa-grip-vertical text-blue"></i>Rattrapage (recours)</a>
+                                                <?php } ?>
+                                                <a data-action-type="active" class="dropdown-item" href="" data-action="is:<?= $row->id ?>">
+                                                    <i class="fas fa-times text-orange-red"></i>
+                                                    ACTIVATE
+                                                </a> 
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr> <?php } ?> </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

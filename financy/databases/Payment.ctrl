@@ -1,0 +1,116 @@
+<?php class PaymentDataBase extends database
+{
+    public static $db;
+
+    public function all($trash = false)
+    {
+        return $this->get_mine($trash, null, false, false);
+    }
+
+    public function mineFromDay($mine = true, $date = 'CURRENT_DATE()', $type = '*', $fee = false){
+        return $this->mineWhere("DAY(p.created_at) = DAY(CURRENT_DATE())", $type, $fee, $mine);
+    }
+
+    public function mineFromMonth($mine = true, $date = 'CURRENT_DATE()', $type = '*', $fee = false){
+        return $this->mineWhere("MONTH(p.created_at) = MONTH(CURRENT_DATE())", $type, $fee, $mine);
+    }
+
+    public function mineFromYear($mine = true, $date = 'CURRENT_DATE()', $type = '*', $fee = false){
+        return $this->mineWhere("YEAR(p.created_at) = YEAR(CURRENT_DATE())", $type, $fee, $mine);
+    }
+
+    public function mineWhere($clause = '1', $type = '*', $fee = false, $mine = true){
+        return $this->get_mine(false, $type, $fee, $mine, null, $clause);
+    }
+
+    public function mine($type = '*', $fee = false)
+    {
+        return $this->get_mine(false, $type, $fee);
+    }
+
+    public function mine_($type = 'selective', $fee = false)
+    {
+        return $this->get_mine(true, $type, $fee);
+    }
+
+    public function get_mine(bool $deleted_at = false, $type = '*', $fee = false, $mine = true, $me = null, $where_clause = '1'){
+        $me = $me ?? auth()->id;
+        $typed = $fee ? " AND p.fee = $fee" : '';
+        return $this->get_result(
+            "SELECT DISTINCT
+                p.id, p.printed, p.deleted_at,
+                CASE 
+                    WHEN ('$this->table' = 'financy_slip') THEN 'Enregistrement de Borderau'
+                    WHEN ('$this->table' = 'financy_payment') THEN 'Perception de Paeiment'
+                    ELSE 'Non defini'
+                END AS `type`,
+                CASE 
+                    WHEN p.student THEN CONCAT(std.firstname, ' ', std.lastname) 
+                    ELSE p.client_name 
+                END AS `name`,
+                c.name AS class,
+                s.name AS section,
+                o.name AS option,
+                l.name AS promotion,
+                a.fullname AS agent,
+                CONCAT(
+                    '<span class=copyTextToClipboard><span>',
+                    CASE 
+                        WHEN p.student 
+                            THEN std.key 
+                        ELSE '<i>Undefined</i> (<a href=javascript:promptedGenerateNewStdKey()>Generate</a>)' 
+                    END, '</span> (<a href=# onclick=copyTextToClipboard(event)>Copie</a>)</span>'
+                ) AS `stdKey`, f.transh, f.year AS acad_year, p.transhis, ".($this->table == '$this->table'?'p.number':'\'\'')." AS number, '$this->name' AS TypeOfPay,
+                p.ref, p.contact, p.created_at, p.code, 
+                DATE(p.created_at) AS today, MONTH(p.created_at) AS `month`, f.name AS fee, f.value, f.devise 
+            FROM $this->table p
+                JOIN      financy_fee f         ON (f.id=p.fee) 
+                JOIN      users_financy a       ON (a.id=p.created_by)
+                LEFT JOIN snem.students std     ON (std.id=p.student)
+                LEFT JOIN snem.classes c        ON (c.id = std.class AND p.student AND f.year = ".(app()->promotion).")
+                LEFT JOIN snem.sections s       ON (s.id = c.section)
+                LEFT JOIN snem.options o        ON (o.id = c.option)
+                LEFT JOIN snem.level l          ON (l.id = c.level)
+            WHERE ($where_clause) AND p.id $typed AND (p.deleted_at IS ".($deleted_at===true?'NOT':null)." NULL) ".($mine?"AND (p.created_by = ".$me.")":null)." ORDER BY id");
+    }
+    
+    public function finder(string $code)
+    {
+        return $this->_select([
+            'id', 'deleted_at', 'client_name AS name', 'ref', 'contact', 'created_at', "code, DATE($this->table.created_at) AS today, MONTH($this->table.created_at) AS month",
+            ['financy_fee' => 'name AS fee'],
+            ['financy_fee' => 'value'],
+            ['financy_fee' => 'devise']
+        ], null, ['created_by = '.auth()->id, "code LIKE '%$code%'"], ['financy_fee'=> [
+            'id' => 'fee'
+        ]]);
+    }
+
+    public function filterMine($user = false):object
+    {
+        $SUM = ['USD'=>0, 'CFD'=>0];
+        $payments = ($user?$this->get_mine(false, '*', false, true, $user->id):$this->mine()) ?? [];
+        foreach ($payments as $payment)
+            $SUM[$payment->devise] += (!($payment->transh??false)||$payment->transhis=='full') ? $payment->value : filterValue($payment->transh, $payment->transhis);
+        return (object) $SUM;
+    }
+
+    public function getMoth()
+    {
+        return $this->select(
+            "SELECT month, SUM(solde) AS value, devise, transh, transhis
+                FROM (
+                    SELECT MONTH($this->table.created_at) AS month, financy_fee.value, financy_fee.transh, $this->table.transhis, (COUNT($this->table.id) * value) AS solde, financy_fee.devise
+                        FROM $this->table 
+                            JOIN financy_fee ON financy_fee.id = $this->table.fee
+                        WHERE $this->table.deleted_at IS NULL
+                    GROUP BY month, value, transhis, devise
+                ) AS payment
+            GROUP BY month, devise, transhis;"
+        );
+    }
+
+    public function inscription () {
+        return $this->get_mine(false, 'free', false, true, null, 'f.id in (9, 34, 35, 36)');
+    }
+}

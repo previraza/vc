@@ -1,0 +1,102 @@
+<thead>
+    <!-- MATIERES LISTES -->
+    <?php $COTES = array(
+            'credit' => array(),
+            'courses' => array(),
+            'students' => array(),
+        );
+        $rqt = mysqli_query($db, "SELECT * FROM courses WHERE active = 1 AND class = ".$class->id);
+        $class_course = mysqli_num_rows($rqt);
+    ?>
+    <tr>
+        <th colspan="2" rowspan="3"><?= "$class->level_name | $class->option_name".($class->name ? " - $class->name" : null) ?></th>
+        <?= $class_course ? '<th colspan="'.$class_course.'">Matières</th>' : NULL ?>
+        <th colspan="7">Résultats</th>
+        <th rowspan="5"></th>
+    </tr>
+    <tr>
+        <!-- MATIERES LISTES -->
+        <?php
+            while ($ROW = mysqli_fetch_array($rqt)){ $course = (object) $ROW;
+            $rqt_cote = $db_poo->query("SELECT `student`, `course`, ROUND((`TP1`+`TP2`+`TP3`)/12+(`INT1`+`INT2`)/8+`EXAM`/2,2) AS TOTAL, `RATR`, `JURY` FROM cotes WHERE active = 1 AND course = ".$course->id) or die($db_poo->error);
+            while($row_cote = $rqt_cote->fetch_array()) $COTES['students'][$row_cote['student']][$row_cote['course']] = $row_cote; 
+            $COTES['credit'][$course->id] = $course->credit;
+            echo '<th class="write-mode-tb"><span>'.$course->name.'</span></th>';
+        } ?>
+        <!-- RESULT CALC -->
+        <th class="write-mode-tb"><span><?= $class->system == "LMD" ? 'Crédit Validé' : 'Total Pondérée' ?></span></th>
+        <th class="write-mode-tb"><span><?= $class->system == "LMD" ? 'Totale Cotes avec Crédit' : 'Total avec Pondération' ?></span></th>
+        <th class="write-mode-tb"><span><?= $class->system == "LMD" ? 'Matière Non Validé' : 'Total Echecs' ?></span></th>
+        <th class="write-mode-tb"><span><?= $class->system == "LMD" ? 'Matière Validé' : 'Total Réussite' ?></span></th>
+        <th class="write-mode-tb"><span><?= $class->system == "LMD" ? 'Matière Non Présenté' : 'Total Matières Non Présenté' ?></span></th>
+        <th class="write-mode-tb"><span><?= $class->system == "LMD" ? 'Résultat Finale' : 'Pourcentage Général' ?></span></th>
+        <th class="write-mode-tb"><span>Mention</span></th>
+    </tr>
+    <tr>
+        <?php for ($i=1; $i <= $class_course; $i++) echo '<th>'.$i.'</th>'?>
+        <th colspan="7"></th>
+    </tr>
+    <tr>
+        <th class="text-left" colspan="2">Pondération</th>
+        <?php foreach($COTES['credit'] AS $credit) echo '<th>'.$credit.'</th>'?>
+        <th><?= $credits = array_sum($COTES['credit']) ?></th>
+        <th><?= $class_res_tot = $credits * 20 ?></th>
+        <th colspan="5"></th>
+    </tr>
+    <tr>
+        <th>N°</th>
+        <th class="text-left">Etudiants</th>
+        <?php for ($i=1; $i <= $class_course; $i++) echo '<th>20</th>'?>
+        <th colspan="7"></th>
+    </tr>
+</thead>
+<tbody>
+    <?php $rqt_std = mysqli_query($db, "SELECT * FROM students WHERE active = 1 AND class = ".$class->id." ORDER BY firstname");
+        $count = 0;
+        while($row_std = mysqli_fetch_array($rqt_std)) {
+            $std = (object) $row_std; 
+            $echec = $success = $np = $credits = $cote_credit = 0 ; $cote = array();
+        ?><tr>
+            <!-- DATA STUDENT -->
+            <td><?= ++$count ?></td>
+            <td class="text-left"><?= "$std->firstname $std->lastname" ?></td>
+
+            <!-- RESULT STUDENT -->
+            <?php foreach($COTES['credit'] AS $course => $credit) {
+                $jury=$cote=0;
+                if(isset($COTES['students'][$std->id][$course])){
+                    $pre_cote = $COTES['students'][$std->id][$course]['TOTAL']+0;
+                    $cote = ($pre_cote < 10 && $COTES['students'][$std->id][$course]['RATR']) ? $COTES['students'][$std->id][$course]['RATR'] : $pre_cote ;
+                    $jury = $COTES['students'][$std->id][$course]['JURY'];
+                } else $np++; if($cote < 10) $echec++ ; else {$success++; $credits+=$credit;}
+                $cote_credit += ($final = $jury&&$jury!=$cote?$jury:$cote)*$credit;
+                echo "<th data-student='$std->id' data-course='$course' data-cote='$cote'".($jury && $jury != $cote?"data-toggle=tooltip data-placement=top data-original-title='$cote' data-simbing":null).' class="text-center '.($final < 10 ? 'text-danger' : 'text-success').'">'.$final.'</th>';
+            } ?>
+
+            <!-- RESULT CALC -->
+            <td><?= $credits ?></td>
+            <td><?= $cote_credit ?></td>
+            <td><?= $echec ?></td>
+            <td><?= $success ?></td>
+            <td><?= $np ?></td>
+            <td><?= $res = number_format(($cote_credit * 100 / ($class->system == 'LMD' ? 5 : 1)) / $class_res_tot, 2) ?></td>
+            <td><?= $decision = $class->system == "LMD"
+                                ? (($res >= 20) ? 'S' : (($res >= 18) ? 'A' : (($res >= 16) ? 'B' : (($res >= 14) ? 'C' : (($res >= 12) ? 'D' : (($res >= 10) ? 'E' : (($res >= 8) ? 'F' : (($res >= 6) ? 'G' : (($res >= 4) ? 'H' : (($res >= 2) ? 'I' : 'J'))))))))))
+                                : (($res >= 85) ? 'G-D' : (($res >= 70) ? 'DIS' : (($res >= 50) ? 'SAT' : (($res >= 40) ? 'A' : 'AA'))))
+                    ?>
+            </td>
+            <td>
+                <div class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false" aria-label="Plus d'option">
+                        <span class="flaticon-more-button-of-three-dots"></span>
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-right">
+                        <a class="dropdown-item delibereBtn" href="#" data-userid="<?= $std->id ?>" data-action="null"><i class="fas fa-play text-dark-pastel-green"></i>Déliberer</a>
+                        <a class="dropdown-item" href="?fa69951bc733eb82713e936be33597e1=DATA_CRYPTING_ON:fa69951bc733eb82713e936be33597e1=WABTECHS_CRYPTING_ON: e91497f38407364c8e86ade9098950d978814190&MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3VIRAZA_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3&MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3&WABTECHS_CRYPTING_ON_LAVINGOL&MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3&b557c222c8ddcdf87e033706aad08e4ef7cf90d3=student--details--<?= $std->id ?>"><i class="fas fa-cogs text-dark-pastel-green"></i>Profile</a>
+                        <a class="dropdown-item" href="?fa69951bc733eb82713e936be33597e1=DATA_CRYPTING_ON:fa69951bc733eb82713e936be33597e1=WABTECHS_CRYPTING_ON: e91497f38407364c8e86ade9098950d978814190&MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3VIRAZA_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3&MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3&WABTECHS_CRYPTING_ON_LAVINGOL&MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3&b557c222c8ddcdf87e033706aad08e4ef7cf90d3=student--bulletin--<?= $std->id ?>"><i class="fas fa-redo-alt text-orange-peel"></i>Bulletin</a>
+                    </div>
+                </div>
+            </td>
+        </tr>
+    <?php } ?>
+</tbody>

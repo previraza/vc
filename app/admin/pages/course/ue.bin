@@ -1,0 +1,97 @@
+<?php $pageTitle = "Liste des Unités d'Enseignement";
+    $_SESSION['DATA_CURRENT_SELECT'] = isset($_SESSION['DATA_CURRENT_SELECT']) ? $_SESSION['DATA_CURRENT_SELECT'] : [];
+    $_POST['section_select_value'] = isset($_POST['section_select_value']) ? $_POST['section_select_value'] : (isset($_SESSION['DATA_CURRENT_SELECT']['section_select_value']) ? $_SESSION['DATA_CURRENT_SELECT']['section_select_value'] : NULL);
+    $_SESSION['DATA_CURRENT_SELECT']['section_select_value'] = $_POST['section_select_value'] ;
+    $_POST['option_select_value'] = isset($_POST['option_select_value']) ? $_POST['option_select_value'] : (isset($_SESSION['DATA_CURRENT_SELECT']['option_select_value']) ? $_SESSION['DATA_CURRENT_SELECT']['option_select_value'] : NULL);
+    $_SESSION['DATA_CURRENT_SELECT']['option_select_value'] = $_POST['option_select_value'] ;
+?>
+
+<div class="card height-auto">
+    <div class="card-body">
+        <div class="heading-layout1">
+            <div class="item-title">
+                <h3>Liste des UE</h3>
+            </div>
+            <div class="dropdown">
+                <a class="dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-expanded="false">...</a>
+                <div class="dropdown-menu dropdown-menu-right">
+                    <a class="dropdown-item" href="?fa69951bc733eb82713e936be33597e1=DATA_CRYPTING_ON:fa69951bc733eb82713e936be33597e1=WABTECHS_CRYPTING_ON: e91497f38407364c8e86ade9098950d978814190&MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3VIRAZA_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3&MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3&WABTECHS_CRYPTING_ON_LAVINGOL&MCISME_LAVINGOL&b557c222c8ddcdf87e033706aad08e4ef7cf90d3&b557c222c8ddcdf87e033706aad08e4ef7cf90d3=course--addUe"><i class="fas fa-plus text-dark-pastel-green"></i>Add UE</a>
+                    <a class="dropdown-item" href="#" data-action="print"><i class="fas fa-print"></i>print</a>
+                    <a class="dropdown-item" href="#" data-action="reload"><i class="fas fa-redo-alt text-orange-peel"></i>Actualiser</a>
+                </div>
+            </div>
+        </div>
+        <form class="mg-b-20" method="POST">
+            <div class="row gutters-8">
+                <div class="col-xl-3 col-lg-6 col-12 form-group">
+                    <input type="hidden" name="CON_47" value="true">
+                    <label><?=$mci?></label>
+                    <select class="select2" name="section_select_value" id="s_sec">
+                        <option value="*">Toutes les <?=$mci?>s</option>
+                        <?php $rqt = mysqli_query($db, "SELECT id, name FROM sections WHERE active = 1") or die(debug(mysqli_error($db)));
+                            while ($row = mysqli_fetch_object($rqt)){ ?>
+                                <option value="<?= $row->id ?>" <?php if(isset($_POST['section_select_value']) && $row->id == $_POST['section_select_value']) {echo 'selected'; $_fs = $row->id;} ?>><?= $row->name ?></option>
+                        <?php } ?>
+                    </select>
+                </div>
+                <div class="col-xl-3 col-lg-6 col-12 form-group">
+                    <label>Option</label>
+                    <select class="select2" name="option_select_value" id="s_opt">
+                        <option value="*">Toutes les options</option>
+                        <?php $rqt = mysqli_query($db, "SELECT id, name FROM options WHERE active = 1") or die(debug(mysqli_error($db)));
+                            while ($row = mysqli_fetch_object($rqt)){ ?>
+                                <option value="<?= $row->id ?>" <?php if(isset($_POST['option_select_value']) && $row->id == $_POST['option_select_value']) {echo 'selected'; $_fo = $row->id;} ?>><?= $row->name ?></option>
+                            <?php } ?>
+                    </select>
+                </div>
+                <div class="col-xl-3 col-lg-6 col-12 form-group">
+                    <label>Niveau</label>
+                    <select class="select2" name="level">
+                        <option selected value="*">Tous les niveaux</option>
+                        <?php $rqt = mysqli_query($db, "SELECT * FROM level WHERE active = 1") or die(debug(mysqli_error($db)));
+                            while ($row = mysqli_fetch_object($rqt)){ ?>
+                                <option value="<?= $row->id ?>"><?= $row->name ?></option>
+                        <?php } ?>
+                        <input type="hidden" name="CON_47" value="true">
+                    </select>
+                </div>
+                <div class="col-xl-3 col-lg-6 col-12 form-group">
+                    <label>Promotion *</label>
+                    <select class="select2" name="promotion">
+                        <?php $year = 2023;
+                            while ($year > 2021){ ?>
+                                <option value="<?= --$year ?>"><?= $year." - ".($year+1); ?></option>
+                        <?php } ?>
+                        <input type="hidden" name="CON_47" value="true">
+                    </select>
+                </div>
+                <div class="col-12 form-group">
+                    <label></label>
+                    <button type="submit" class="fw-btn-fill btn-gradient-yellow">RECHERCHE</button>
+                </div>
+            </div>
+        </form>
+        <div class="table-responsive">
+            <table class="table display data-tables text-nowrap">
+                <thead>
+                    <tr>
+                        <th>
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input checkAll" id="assosLabel">
+                                <label for="assosLabel" class="form-check-label">Id</label>
+                            </div>
+                        </th>
+                        <th>Code</th>
+                        <th>Designation</th>
+                        <th>CMI</th>
+                        <th>TD</th>
+                        <th>TP</th>
+                        <th>UE</th>
+                        <th>Titulaire</th>
+                        <th></th>
+                    </tr>
+                </thead>
+            </table>
+        </div>
+    </div>
+</div>

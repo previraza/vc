@@ -1,0 +1,3 @@
+<?php
+    $link = __DIR__.DS.'services'.DS.$user->data->role.'.bin' ;
+    require_once file_exists($link) ? $link : __DIR__.DS.'services/undefined.bin'; 

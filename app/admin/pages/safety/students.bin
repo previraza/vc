@@ -1,0 +1,170 @@
+<?php $pageTitle = "Etudiants" ?>
+
+
+<div class="card height-auto">
+    <div class="card-body">
+        <div class="heading-layout1">
+            <div class="item-title">
+                <h3>Liste des étudiants</h3>
+            </div>
+            <div class="dropdown">
+                <a class="dropdown-toggle" href="#" role="button" data-toggle="dropdown"
+                    aria-expanded="false">...</a>
+
+                <div class="dropdown-menu dropdown-menu-right">
+                    <a class="dropdown-item" href="#" data-action="print"><i class="fas fa-print"></i>print</a>
+                    
+                    <a class="dropdown-item" href="#" data-action="reload"><i class="fas fa-redo-alt text-orange-peel"></i>Actualiser</a>
+                </div>
+            </div>
+        </div>
+        <form class="mg-b-20" method="POST">
+            <div class="row gutters-8">
+                                <div class="col-xl-3 col-lg-6 col-12 form-group">
+                    <label><?=$mci?></label>
+                    <select class="select2" name="section" id="s_sec">
+                        <?php $rqt = mysqli_query($db, "SELECT * FROM sections WHERE active = 1") or die(debug(mysqli_error($db)));
+                            while ($ROW = mysqli_fetch_array($rqt)){ $row = (object) $ROW; $_fs = isset($_fs) ? $_fs : $ROW['id']?>
+                                <option value="<?= $row->id ?>"><?= $row->name ?></option>
+                        <?php } ?>
+                        <option value="*">Toutes les <?=$mci?>s</option>
+                    </select>
+                </div>
+                <div class="col-xl-3 col-lg-6 col-12 form-group">
+                    <label>Option</label>
+                    <select class="select2" name="option" id="s_opt">
+                        <?php $rqt = mysqli_query($db, "SELECT * FROM options WHERE active = 1 AND ".($_fs=='*'?'1':'section = '.$_fs)) or die(debug(mysqli_error($db)));
+                            while ($ROW = mysqli_fetch_array($rqt)){ $row = (object) $ROW; ?>
+                                <option value="<?= $row->id ?>"><?= $row->name ?></option>
+                            <?php } ?>
+                            <option value="*">Toutes les options</option>
+                    </select>
+                </div>
+                <div class="col-xl-3 col-lg-6 col-12 form-group">
+                    <label>Niveau</label>
+                    <select class="select2" name="level">
+                        <option selected value="*">Tous les niveaux</option>
+                        <?php $rqt = mysqli_query($db, "SELECT * FROM level WHERE active = 1") or die(debug(mysqli_error($db)));
+                            while ($ROW = mysqli_fetch_array($rqt)){ $row = (object) $ROW; ?>
+                                <option value="<?= $row->id ?>"><?= $row->name ?></option>
+                        <?php } ?>
+                        <input type="hidden" name="CON_47" value="true">
+                    </select>
+                </div>
+                <div class="col-xl-2 col-lg-6 col-12 form-group">
+                    <label>Promotion *</label>
+                    <select class="select2" name="promotion">
+                        <option selected value="*">Année Académique </option>
+                        <?php $year = 2023;
+                            while ($year > 2021){ ?>
+                                <option value="<?= --$year ?>"><?= $year." - ".($year+1); ?></option>
+                        <?php } ?>
+                        <input type="hidden" name="CON_47" value="true">
+                    </select>
+                </div>
+                <div class="col-1-xxxl col-xl-2 col-lg-3 col-12 form-group">
+                    <label></label>
+                    <button type="submit" class="fw-btn-fill btn-gradient-yellow">RECHERCHE</button>
+                </div>
+            </div>
+        </form>
+        <div class="table-responsive">
+            <table class="table display data-table text-nowrap">
+                <thead>
+                    <tr>
+                        <th>
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input checkAll" id="assosLabel">
+                                <label for="assosLabel" class="form-check-label">Id</label>
+                            </div>
+                        </th>
+                        <th>Photo</th>
+                        <th>Nom Complet</th>
+                        <th>Genre</th>
+                        <th>Unité</th>
+                        <th><?=$mci?></th>
+                        <th>Option</th>
+                        <th>Niveau</th>
+                        <th>Promotion</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php $rqt = mysqli_query($db, 
+                            "SELECT students.*, sections.name AS section_name, options.name AS option_name, level.name AS level_name, promotion 
+                                FROM students 
+                                JOIN classes  ON classes.id  = students.class 
+                                JOIN sections ON sections.id = classes.section 
+                                JOIN options  ON options.id  = classes.option 
+                                JOIN level    ON level.id    = classes.level 
+                                WHERE students.active = 1 AND students.valide = 1"
+                                    .((isset($_POST['promotion']) && $_POST['promotion'] != "*") ? " AND classes.promotion = $_POST[promotion]":'')
+                                    .((isset($_POST['section']) && $_POST['section'] != "*") ? " AND sections.id = $_POST[section]":'')
+                                    .((isset($_POST['option']) && $_POST['option'] != "*") ? " AND options.id = $_POST[option]":'')
+                                    .((isset($_POST['level']) && $_POST['level'] != "*") ? " AND level.id = $_POST[level]":'')." ORDER BY firstname"
+                                );
+                        while($row = mysqli_fetch_array($rqt)){ $res = (object) $row;?>
+                        <tr>
+                            <td <?= ($res->user_id == '0') ? 'class="bg-warning"' : null ?>>
+                                <div class="form-check">
+                                    <input type="checkbox" class="form-check-input" id="assosLabelSS">
+                                <label for="assosLabelSS" class="form-check-label">Id</label>
+                                </div>
+                            </td>
+                            <td class="text-center"><img src="/layouts/default/img/figure/student2.webp" alt="student"></td>
+                            <td><?= "$res->firstname $res->lastname" ?></td>
+                            <td><?= $res->gender ?></td>
+                            <td id="std_credit_<?= $res->id ?>"><?= $res->credit ?></td>
+                            <td><?= $res->section_name ?></td>
+                            <td><?= $res->option_name ?></td>
+                            <td><?= $res->level_name ?></td>
+                            <td><?= "$res->promotion - ".++$res->promotion ?></td>
+                            <td>
+                                <a class="dropdown-item p-0" href="#" onclick='JavaScript: sactionize(<?= "$res->id , \"$res->firstname $res->lastname\"" ?>)'><i class="mx-3 fas fa-edit text-dark-pastel-green"></i></a>
+                            </td>
+                        </tr>
+                    <?php } ?>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<button type="button" class="modal-trigger d-none" data-toggle="modal" id="feedbackBtn" data-target="#feedback">Feedback</button>
+
+<!-- Feedback Modal -->
+<div class="modal mcisme feedback-modal fade" id="feedback" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="close-btn">
+                    <button type="button" id="closeModal" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                </div>
+                <h3 class="item-title">Disciplinaire</h3>
+                <p>Reduction des unités des étudiants par infractions</p>
+                <form class="feedback-form" type="POST" id="feedbackForm">
+                    <div class="form-group">
+                        <select class="select2" name="order" id="inf_order">
+                            <option value="1">Première Ordre</option>
+                            <option value="2">Deuxième Ordre</option>
+                            <option value="3">Troisième Ordre</option>
+                            <option value="5">Quatrième Ordre</option>
+                            <option value="7">Cinquième Ordre</option>
+                            <option value="10">Dernière Ordre</option>
+                            <input type="hidden" name="CON_47" value="true">
+                            <input type="hidden" name="student_id" id="student_id" value="0">
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <div class="form-check">
+                            <input type="checkbox" class="form-check-input" id="feedback5" required>
+                            <label for="feedback5" class="form-check-label">Est-ce : <span id="student_name">Undefined</span></label>
+                        </div>
+                    </div>
+                    <div class="form-group mt-5">
+                        <input type="submit" value="Enregistrer" class="item-btn">
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

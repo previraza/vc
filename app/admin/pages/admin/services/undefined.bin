@@ -1,0 +1,10 @@
+<div class="card height-auto">
+    <div class="card-body">
+        <div class="heading-layout1 mg-b-15">
+            <div class="item-title p-5 text-center w-100">
+                <h1 class="text-info bg-blue-dark py-xl-5">Undefined : Service</h1>
+                <h3>Votre service est soit non defini ou ne dispose d'aucun tableau de bord</h3>
+            </div>
+        </div>
+    </div>
+</div>
