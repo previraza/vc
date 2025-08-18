@@ -1,15 +1,6 @@
-./tar.gz/
-./vendor/
-./sql/
-./DataBases/
-./rva/
-./files/
-./file-edit/
-./index.php_save/
-./app/archive/
+./files
+./file-edit
+./index.php_save
 
-./public/data/
-./public/profile/
-./public/back_code/
-
-./formation/
+vendor
+app/archive
