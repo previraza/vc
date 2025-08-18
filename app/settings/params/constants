@@ -10,60 +10,6 @@
                 'user' => 'root',
                 'pass' => '',
             ),
-            'localhost' => array(
-                'host' => 'localhost',
-                'name' => 'landasrc',
-                'user' => 'root',
-                'pass' => '',
-            ),
-            'faseg.viraza.net' => array(
-                'host' => 'localhost',
-                'name' => 'u199665259_faseg',
-                'user' => 'u199665259_faseg',
-                'pass' => '8F1V641=Fr',
-            ),
-            'fseg.viraza.net' => array(
-                'host' => 'localhost',
-                'name' => 'u199665259_faseg',
-                'user' => 'u199665259_faseg',
-                'pass' => '8F1V641=Fr',
-            ),
-            'univ.viraza.net' => array(
-                'host' => 'localhost',
-                'name' => 'u199665259_univ',
-                'user' => 'u199665259_univ',
-                'pass' => '8NO@9kjx7kH/H2SDF>Hu@o6^9IsftE',
-            ),
-            'ista.viraza.net' => array(
-                'host' => 'localhost',
-                'name' => 'u199665259_ista',
-                'user' => 'u199665259_ista',
-                'pass' => 'cT?0d8x&Fn1g~Aq~7R;0Wlj|7xM&',
-            ),
-            'ista.ac.test' => array(
-                'host' => 'localhost',
-                'name' => 'ista.ac',
-                'user' => 'root',
-                'pass' => '',
-            ),
-            'www.ista.ac.cd' => array(
-                'host' => 'localhost',
-                'name' => $MINE_dbn??'snem',
-                'user' => 'root',
-                'pass' => '$%Tudent2022',
-            ),
-            'ISTA.viraza.net' => array(
-                'host' => 'localhost',
-                'name' => 'u199665259_ISTA_db',
-                'user' => 'u199665259_ISTA_nm',
-                'pass' => 'B1d+JgoaRicl@>7~0Uh^3o1ULGimN',
-            ),
-            'ISTA.ac.cd' => array(
-                'host' => 'localhost',
-                'name' => 'u199665259_ISTA_db',
-                'user' => 'u199665259_ISTA_nm',
-                'pass' => 'B1d+JgoaRicl@>7~0Uh^3o1ULGimN',
-            ),
         )
     );
 
