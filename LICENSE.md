@@ -2,7 +2,7 @@
 
 ## 🇬🇧 Non-Commercial Use License – SNEN System (Viraza SARL)
 
-Copyright © [year] Viraza SARL. All rights reserved.
+Copyright © 2021 Viraza SARL. All rights reserved.
 
 The “SNEN” software developed by Viraza SARL is provided strictly for academic, educational, and research purposes.  
 Any commercial use, resale, rental, sublicensing, or integration into a commercial product is strictly prohibited without prior written consent from Viraza SARL.
@@ -25,7 +25,7 @@ Email: commercial@viraza.net
 
 ## 🇫🇷 Licence d’Utilisation – Système SNEN (Viraza SARL)
 
-Copyright © [année] Viraza SARL. Tous droits réservés.
+Copyright © 2021 Viraza SARL. Tous droits réservés.
 
 Le logiciel « SNEN » développé par Viraza SARL est mis à disposition uniquement à des fins académiques, pédagogiques et de recherche.  
 Toute utilisation commerciale, revente, location, sous-licence ou intégration dans un produit commercial est strictement interdite sans l’autorisation écrite préalable de Viraza SARL.
