@@ -58,6 +58,12 @@ Le projet est distribué sous une **licence propriétaire non commerciale**.
 
 ---
 
+## 📜 Structure du code
+La structure du projet est décrite dans le fichier :  
+👉 Voir [Structure du code](STRUCTURE.md) pour plus de détails.  
+
+---
+
 ## 📬 Contact
 Pour toute question, partenariat ou demande de licence commerciale :  
 📧 contact@viraza.net
